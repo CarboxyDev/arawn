@@ -29,7 +29,7 @@ export default async function Home() {
 
   // Extract ports from configuration
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-  const backendPort = apiUrl.match(/:(\d+)/)?.[1] || '8080';
+  const backendPort = new URL(apiUrl).port || '8080';
   const frontendPort = process.env.PORT || '3000';
 
   return (

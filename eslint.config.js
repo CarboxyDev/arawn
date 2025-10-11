@@ -31,6 +31,7 @@ export default [
         clearInterval: 'readonly',
         fetch: 'readonly',
         React: 'readonly',
+        URL: 'readonly',
       },
     },
     plugins: {
