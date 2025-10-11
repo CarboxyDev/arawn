@@ -3,6 +3,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 import { Toaster } from '@/components/ui/sonner';
+import { isDevelopment } from '@/lib/env';
 import { Providers } from '@/providers';
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className={isDevelopment() ? 'debug-screens' : ''}>
         <Providers>
           {children}
           <Toaster />
