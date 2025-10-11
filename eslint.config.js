@@ -2,7 +2,9 @@ import eslint from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
 import prettier from 'eslint-config-prettier';
+import n from 'eslint-plugin-n';
 import promise from 'eslint-plugin-promise';
+import security from 'eslint-plugin-security';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unicorn from 'eslint-plugin-unicorn';
 import unusedImports from 'eslint-plugin-unused-imports';
@@ -44,6 +46,8 @@ export default [
       'simple-import-sort': simpleImportSort,
       unicorn,
       promise,
+      n,
+      security,
     },
     rules: {
       ...tseslint.configs.recommended.rules,
@@ -74,6 +78,17 @@ export default [
       'unicorn/no-null': 'off',
       'unicorn/prevent-abbreviations': 'off',
       'unicorn/no-array-reduce': 'off',
+
+      // Node.js best practices
+      'n/no-unsupported-features/node-builtins': 'off',
+      'n/no-missing-import': 'off', // TypeScript handles this
+      'n/no-unpublished-import': 'off', // Monorepo workspaces
+      'n/prefer-global/process': ['error', 'always'],
+
+      // Security
+      'security/detect-object-injection': 'off', // Too many false positives
+      'security/detect-non-literal-regexp': 'warn',
+      'security/detect-unsafe-regex': 'error',
     },
   },
   {
