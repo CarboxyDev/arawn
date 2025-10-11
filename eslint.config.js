@@ -2,6 +2,10 @@ import eslint from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
 import prettier from 'eslint-config-prettier';
+import promise from 'eslint-plugin-promise';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import unicorn from 'eslint-plugin-unicorn';
+import unusedImports from 'eslint-plugin-unused-imports';
 
 export default [
   eslint.configs.recommended,
@@ -36,26 +40,44 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tseslint,
+      'unused-imports': unusedImports,
+      'simple-import-sort': simpleImportSort,
+      unicorn,
+      promise,
     },
     rules: {
       ...tseslint.configs.recommended.rules,
-      '@typescript-eslint/no-unused-vars': [
+      // Disable base rule in favor of unused-imports
+      '@typescript-eslint/no-unused-vars': 'off',
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       '@typescript-eslint/no-explicit-any': 'warn',
+
+      // Import sorting
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
+
+      // Promise best practices
+      'promise/prefer-await-to-then': 'error',
+      'promise/prefer-await-to-callbacks': 'warn',
+
+      // Unicorn rules (opinionated, adjust as needed)
+      'unicorn/filename-case': [
+        'error',
+        {
+          cases: { kebabCase: true, camelCase: true, pascalCase: true },
+        },
+      ],
+      'unicorn/no-null': 'off',
+      'unicorn/prevent-abbreviations': 'off',
+      'unicorn/no-array-reduce': 'off',
     },
   },
   {
-    ignores: [
-      'dist/**',
-      'build/**',
-      '.next/**',
-      'node_modules/**',
-      '**/*.config.js',
-      '**/*.config.ts',
-      'eslint.config.js',
-    ],
+    ignores: ['dist/**', 'build/**', '.next/**', 'node_modules/**'],
   },
   prettier,
 ];

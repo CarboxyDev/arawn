@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import {
-  type User,
   type CreateUser,
   type HealthCheck,
+  type User,
 } from '@repo/shared-types';
 import { randomUUID } from 'crypto';
 

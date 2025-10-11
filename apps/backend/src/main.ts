@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
 import { loadEnv } from '@repo/shared-config';
 import { apiReference } from '@scalar/nestjs-api-reference';
+
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const env = loadEnv();

@@ -1,10 +1,11 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { counterAtom, userPreferenceAtom } from '@/store/atoms';
+
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { counterAtom, userPreferenceAtom } from '@/store/atoms';
 
 export function ExampleJotai() {
   const [count, setCount] = useAtom(counterAtom);

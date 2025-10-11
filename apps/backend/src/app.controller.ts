@@ -1,12 +1,13 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import {
-  CreateUserSchema,
-  type CreateUser,
-  type User,
-  type HealthCheck,
   type ApiResponse,
+  type CreateUser,
+  CreateUserSchema,
+  type HealthCheck,
+  type User,
 } from '@repo/shared-types';
+
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {

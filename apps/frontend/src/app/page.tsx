@@ -1,15 +1,16 @@
-import Link from 'next/link';
 import { type HealthCheck } from '@repo/shared-types';
 import { formatDateTime } from '@repo/shared-utils';
-import { Button } from '@/components/ui/button';
 import {
-  PackageOpen,
-  Zap,
-  Shield,
   Activity,
-  Terminal,
   ArrowRight,
+  PackageOpen,
+  Shield,
+  Terminal,
+  Zap,
 } from 'lucide-react';
+import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
 
 async function getHealth(): Promise<HealthCheck | null> {
   try {

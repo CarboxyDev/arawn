@@ -1,7 +1,9 @@
-import type { Metadata } from 'next';
-import { Providers } from '@/providers';
-import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
+
+import type { Metadata } from 'next';
+
+import { Toaster } from '@/components/ui/sonner';
+import { Providers } from '@/providers';
 
 export const metadata: Metadata = {
   title: 'Arawn',

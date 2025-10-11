@@ -1,8 +1,8 @@
 'use client';
 
 import { ExampleForm } from '@/components/examples/example-form';
-import { ExampleQuery } from '@/components/examples/example-query';
 import { ExampleJotai } from '@/components/examples/example-jotai';
+import { ExampleQuery } from '@/components/examples/example-query';
 import { ThemeToggle } from '@/components/examples/theme-toggle';
 import { Separator } from '@/components/ui/separator';
 
