@@ -7,7 +7,7 @@ import {
   type User,
 } from '@repo/shared-types';
 
-import { AppService } from './app.service';
+import { AppService } from '@/app.service';
 
 @Controller()
 export class AppController {

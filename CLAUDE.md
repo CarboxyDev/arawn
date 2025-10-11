@@ -77,14 +77,26 @@ All shared packages (`@repo/shared-types`, `@repo/shared-utils`, `@repo/shared-c
 
 ### Environment Configuration
 
-Environment variables are managed via `dotenv-flow` and validated with Zod v4:
+Environment variables are managed per-app:
 
-- Configuration defined in `shared/config/src/index.ts`
-- Backend required: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`
-- Frontend required: `NODE_ENV`, `NEXT_PUBLIC_API_URL`
+- **Backend**: Uses `@repo/shared-config` with `dotenv-flow` and Zod v4 validation
+  - Configuration defined in `shared/config/src/index.ts`
+  - Required: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`
+  - Uses `loadEnv()` from `@repo/shared-config` on startup
+- **Frontend**: Uses Next.js environment variables
+  - Required: `NEXT_PUBLIC_API_URL` (exposed to browser)
+  - Configured in `apps/frontend/src/lib/env.ts`
+  - Only `NEXT_PUBLIC_*` variables are exposed to the client
 - Each app has `.env.local.example` files showing expected variables
-- Backend uses `loadEnv()` from `@repo/shared-config` on startup
-- CORS is configured to allow requests from `FRONTEND_URL`
+
+### Security
+
+Backend security middleware configured in `main.ts`:
+
+- **Helmet**: Secure HTTP headers with dev-friendly CSP settings
+- **Rate Limiting**: 10 requests per 60 seconds per IP via @nestjs/throttler
+- **CORS**: Strict origin policy allowing only `FRONTEND_URL`
+- ThrottlerGuard is applied globally to all routes
 
 ### Type Safety
 
@@ -95,6 +107,55 @@ The codebase emphasizes runtime and compile-time type safety:
 - Environment variables are validated at runtime using Zod
 - All packages use strict TypeScript settings from `tsconfig.base.json`
 - All shared packages use Zod v4.1.12 for consistency
+
+## Coding Standards
+
+### Import Aliases
+
+**IMPORTANT**: Always use import aliases for local files. This is a strict requirement.
+
+**Frontend (Next.js):**
+
+```typescript
+// ✅ CORRECT - Use @/* alias
+import { Button } from '@/components/ui/button';
+import { api } from '@/lib/api';
+import { env } from '@/lib/env';
+
+// ❌ WRONG - Never use relative paths
+import { Button } from '../../components/ui/button';
+import { api } from '../lib/api';
+```
+
+**Backend (NestJS):**
+
+```typescript
+// ✅ CORRECT - Use @/* alias
+import { AppService } from '@/app.service';
+import { UserDto } from '@/users/dto/user.dto';
+
+// ❌ WRONG - Never use relative paths
+import { AppService } from './app.service';
+import { UserDto } from '../users/dto/user.dto';
+```
+
+**Shared Packages:**
+
+```typescript
+// ✅ CORRECT - Use workspace package names
+import { UserSchema } from '@repo/shared-types';
+import { formatDate } from '@repo/shared-utils';
+import { loadEnv } from '@repo/shared-config';
+```
+
+### Import Order
+
+ESLint is configured with `simple-import-sort` to automatically organize imports:
+
+1. External packages (React, Next.js, etc.)
+2. Workspace packages (@repo/\*)
+3. Absolute imports (@/\*)
+4. Relative imports (only when absolutely necessary)
 
 ## Development Workflow
 

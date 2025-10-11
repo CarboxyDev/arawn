@@ -2,12 +2,22 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { loadEnv } from '@repo/shared-config';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const env = loadEnv();
   const app = await NestFactory.create(AppModule);
+
+  // Security: Helmet for HTTP headers
+  app.use(
+    helmet({
+      contentSecurityPolicy: env.NODE_ENV === 'production' ? undefined : false,
+      crossOriginEmbedderPolicy:
+        env.NODE_ENV === 'production' ? undefined : false,
+    })
+  );
 
   // CORS configuration
   app.enableCors({

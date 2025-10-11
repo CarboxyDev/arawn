@@ -29,8 +29,9 @@ An opinionated, production-ready TypeScript monorepo template using pnpm workspa
 ### Backend Batteries 🔋
 
 - 📚 **Swagger + Scalar** - Auto-generated API documentation at `/docs`
-- 🔒 **CORS** - Configured for secure cross-origin requests
-- 🌐 **NestJS** - Production-ready architecture with dependency injection
+- 🔒 **Security** - Helmet for secure HTTP headers, rate limiting with @nestjs/throttler
+- 🌐 **CORS** - Configured for secure cross-origin requests
+- 🛡️ **NestJS** - Production-ready architecture with dependency injection
 - ✅ **Zod v4** - Runtime validation for requests and responses
 
 ## Prerequisites
@@ -134,15 +135,26 @@ The template enforces type safety at multiple levels:
 
 ### Environment Configuration
 
-Environment variables are managed centrally:
+Environment variables are managed per-app:
 
-- `dotenv-flow` handles `.env`, `.env.local`, and environment-specific files
-- Zod v4 schemas in `@repo/shared-config` validate configuration
-- Apps fail fast with clear errors for missing/invalid variables
-- Type-safe access to environment variables throughout the codebase
+- **Backend**: Uses `@repo/shared-config` with `dotenv-flow` and Zod v4 validation
+  - Required: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`
+  - Validated on startup with clear error messages
+- **Frontend**: Uses Next.js environment variables
+  - Required: `NEXT_PUBLIC_API_URL` (exposed to browser)
+  - Configured in `lib/env.ts` with intelligent fallbacks
+  - Only `NEXT_PUBLIC_*` variables are exposed to the client
 
-Backend expects: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`
-Frontend expects: `NODE_ENV`, `NEXT_PUBLIC_API_URL`
+Both apps fail fast with clear errors for missing/invalid variables.
+
+### Security
+
+Backend security features:
+
+- **Helmet**: Secure HTTP headers (CSP, HSTS, X-Frame-Options, etc.)
+- **Rate Limiting**: 10 requests per 60 seconds per IP via @nestjs/throttler
+- **CORS**: Strict origin policy (only `FRONTEND_URL` allowed)
+- **Credentials**: Cookie-based authentication support
 
 ### Code Quality
 

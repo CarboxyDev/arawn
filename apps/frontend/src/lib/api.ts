@@ -1,7 +1,5 @@
 /* eslint-disable no-undef */
-import { loadEnv } from '@repo/shared-config';
-
-const env = loadEnv();
+import { env } from './env';
 
 export class ApiError extends Error {
   constructor(
@@ -26,7 +24,7 @@ async function fetcher<T>(
   const { params, timeout, signal, ...init } = options;
 
   // Build URL with query params
-  const url = new URL(`${env.API_URL}${endpoint}`);
+  const url = new URL(`${env.apiUrl}${endpoint}`);
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
       url.searchParams.append(key, String(value));
