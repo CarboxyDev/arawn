@@ -6,5 +6,7 @@
   },
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.validate.enable": true
 }

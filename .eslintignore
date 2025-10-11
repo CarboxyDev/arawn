@@ -1,8 +1,0 @@
-node_modules
-dist
-build
-.next
-coverage
-.turbo
-*.config.js
-*.config.ts

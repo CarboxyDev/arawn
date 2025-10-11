@@ -2,9 +2,10 @@
   "name": "arawn-monorepo",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Production-ready TypeScript monorepo with Next.js and NestJS",
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "pnpm --filter \"@repo/shared-*\" build && turbo run dev --output-logs=new-only",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
