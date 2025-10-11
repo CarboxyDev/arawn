@@ -71,7 +71,7 @@ export function ExampleForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 max-w-2xl"
+        className="max-w-2xl space-y-6"
       >
         <FormField
           control={form.control}

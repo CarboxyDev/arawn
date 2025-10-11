@@ -12,14 +12,14 @@ export function ExampleJotai() {
   const [preferences, setPreferences] = useAtom(userPreferenceAtom);
 
   return (
-    <div className="space-y-6 max-w-2xl">
-      <div className="p-6 border rounded-lg space-y-4">
+    <div className="max-w-2xl space-y-6">
+      <div className="space-y-4 rounded-lg border p-6">
         <h3 className="text-lg font-semibold">Counter Example</h3>
         <div className="flex items-center gap-4">
           <Button onClick={() => setCount((c) => c - 1)} variant="outline">
             Decrement
           </Button>
-          <span className="text-2xl font-bold w-16 text-center">{count}</span>
+          <span className="w-16 text-center text-2xl font-bold">{count}</span>
           <Button onClick={() => setCount((c) => c + 1)}>Increment</Button>
         </div>
         <Button onClick={() => setCount(0)} variant="secondary" size="sm">
@@ -27,7 +27,7 @@ export function ExampleJotai() {
         </Button>
       </div>
 
-      <div className="p-6 border rounded-lg space-y-4">
+      <div className="space-y-4 rounded-lg border p-6">
         <h3 className="text-lg font-semibold">User Preferences</h3>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -61,7 +61,7 @@ export function ExampleJotai() {
             />
           </div>
         </div>
-        <div className="mt-4 p-4 bg-muted rounded-md">
+        <div className="bg-muted mt-4 rounded-md p-4">
           <p className="text-sm font-medium">Current State:</p>
           <pre className="mt-2 text-xs">
             {JSON.stringify(preferences, null, 2)}

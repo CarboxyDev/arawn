@@ -50,7 +50,7 @@ export function ExampleQuery() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4 max-w-2xl">
+      <div className="max-w-2xl space-y-4">
         <Skeleton className="h-20 w-full" />
         <Skeleton className="h-20 w-full" />
         <Skeleton className="h-20 w-full" />
@@ -67,16 +67,16 @@ export function ExampleQuery() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="max-w-2xl space-y-6">
       <div className="space-y-3">
         {users?.map((user) => (
           <div
             key={user.id}
-            className="p-4 border rounded-lg flex items-center justify-between"
+            className="flex items-center justify-between rounded-lg border p-4"
           >
             <div>
               <p className="font-medium">{user.name}</p>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+              <p className="text-muted-foreground text-sm">{user.email}</p>
             </div>
           </div>
         ))}

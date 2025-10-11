@@ -38,6 +38,18 @@ export default [
         fetch: 'readonly',
         React: 'readonly',
         URL: 'readonly',
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        Element: 'readonly',
+        HTMLElement: 'readonly',
+        Event: 'readonly',
+        KeyboardEvent: 'readonly',
+        MouseEvent: 'readonly',
+        CustomEvent: 'readonly',
       },
     },
     plugins: {
