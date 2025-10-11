@@ -16,7 +16,7 @@ Production-ready TypeScript monorepo using pnpm workspaces and Turborepo, featur
 ### Development
 
 ```bash
-pnpm dev              # Start all applications in dev mode (frontend on :3001, backend on configured PORT)
+pnpm dev              # Start all applications in dev mode (frontend on :3000, backend on :8080)
 pnpm build            # Build all packages and applications
 pnpm typecheck        # Type check all packages
 pnpm lint             # Lint all packages
@@ -26,7 +26,7 @@ pnpm lint:fix         # Lint and auto-fix all packages
 ### Individual Package Commands
 
 ```bash
-# Frontend (Next.js on port 3001)
+# Frontend (Next.js on port 3000)
 cd apps/frontend
 pnpm dev              # Start Next.js dev server
 pnpm build            # Build production bundle

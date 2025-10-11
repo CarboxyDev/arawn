@@ -44,14 +44,15 @@ cp apps/backend/.env.local.example apps/backend/.env.local
 pnpm dev
 ```
 
-Frontend runs on `http://localhost:3001`, backend on configured PORT.
+Frontend runs on `http://localhost:3000`, backend on `http://localhost:8080`
+API reference runs on `http://localhost:8080/docs`
 
 ## Monorepo Structure
 
 ```
 arawn/
 ├── apps/
-│   ├── frontend/          # Next.js 15 application (port 3001)
+│   ├── frontend/          # Next.js 15 application (port 3000)
 │   └── backend/           # NestJS application
 ├── shared/
 │   ├── types/            # Zod schemas and TypeScript types

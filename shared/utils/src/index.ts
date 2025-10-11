@@ -1,4 +1,3 @@
-// String utilities
 export function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -13,7 +12,6 @@ export function truncate(text: string, maxLength: number): string {
   return text.slice(0, maxLength - 3) + '...';
 }
 
-// Date utilities
 export function formatDate(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
   return d.toISOString().split('T')[0];
@@ -42,8 +40,7 @@ export function getRelativeTime(date: Date | string): string {
   return formatDate(d);
 }
 
-// Async utilities
-export function delay(ms: number): Promise<void> {
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -59,14 +56,13 @@ export async function retry<T>(
     } catch (error) {
       lastError = error;
       if (attempt < maxAttempts) {
-        await delay(delayMs * attempt);
+        await sleep(delayMs * attempt);
       }
     }
   }
   throw lastError;
 }
 
-// Number utilities
 export function formatBytes(bytes: number, decimals = 2): string {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
@@ -79,7 +75,6 @@ export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
-// Array utilities
 export function unique<T>(array: T[]): T[] {
   return [...new Set(array)];
 }

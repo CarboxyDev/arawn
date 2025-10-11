@@ -9,6 +9,12 @@ async function bootstrap() {
   const env = loadEnv();
   const app = await NestFactory.create(AppModule);
 
+  // CORS configuration
+  app.enableCors({
+    origin: env.FRONTEND_URL,
+    credentials: true,
+  });
+
   // OpenAPI configuration
   const config = new DocumentBuilder()
     .setTitle('API Documentation')

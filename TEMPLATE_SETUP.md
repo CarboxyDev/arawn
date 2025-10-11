@@ -118,14 +118,14 @@ Edit the `.env.local` files with your configuration:
 
 ```env
 NODE_ENV=development
-NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
 
 **Backend (.env.local):**
 
 ```env
 NODE_ENV=development
-PORT=3000
+PORT=8080
 API_URL=http://localhost:3000
 DATABASE_URL=postgresql://user:password@localhost:5432/mydb
 ```
@@ -142,7 +142,7 @@ pnpm install
 pnpm dev
 ```
 
-- Frontend: http://localhost:3001
+- Frontend: http://localhost:3000
 - Backend: http://localhost:3000 (or your configured PORT)
 
 ## Using as a GitHub Template
@@ -197,7 +197,7 @@ This template includes:
 ```
 arawn/
 ├── apps/
-│   ├── frontend/          # Next.js application (port 3001)
+│   ├── frontend/          # Next.js application (port 3000)
 │   └── backend/           # NestJS application (configurable PORT)
 ├── shared/
 │   ├── types/             # Shared Zod schemas and types
