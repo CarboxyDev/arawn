@@ -13,7 +13,7 @@ import {
 
 async function getHealth(): Promise<HealthCheck | null> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
     const res = await fetch(`${apiUrl}/health`, {
       cache: 'no-store',
     });
@@ -27,12 +27,17 @@ async function getHealth(): Promise<HealthCheck | null> {
 export default async function Home() {
   const health = await getHealth();
 
+  // Extract ports from configuration
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  const backendPort = apiUrl.match(/:(\d+)/)?.[1] || '8080';
+  const frontendPort = process.env.PORT || '3000';
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-white">
       <div className="max-w-5xl w-full space-y-12">
         {/* Header */}
         <div className="text-center space-y-3">
-          <h1 className="text-6xl font-semibold tracking-tight bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+          <h1 className="text-6xl font-semibold tracking-tight text-gray-900">
             Arawn
           </h1>
           <p className="text-gray-500 text-lg">
@@ -198,7 +203,7 @@ export default async function Home() {
             </div>
           </div>
           <p className="text-gray-500 text-xs mt-4">
-            Frontend runs on port 3001, backend on configured PORT
+            Frontend runs on port {frontendPort}, backend on port {backendPort}
           </p>
         </div>
 
