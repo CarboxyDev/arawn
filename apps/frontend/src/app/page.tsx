@@ -1,5 +1,15 @@
+import Link from 'next/link';
 import { type HealthCheck } from '@repo/shared-types';
 import { formatDateTime } from '@repo/shared-utils';
+import { Button } from '@/components/ui/button';
+import {
+  PackageOpen,
+  Zap,
+  Shield,
+  Activity,
+  Terminal,
+  ArrowRight,
+} from 'lucide-react';
 
 async function getHealth(): Promise<HealthCheck | null> {
   try {
@@ -18,57 +28,60 @@ export default async function Home() {
   const health = await getHealth();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-4xl w-full space-y-8">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-white">
+      <div className="max-w-5xl w-full space-y-12">
         {/* Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-            Arawn Monorepo
+        <div className="text-center space-y-3">
+          <h1 className="text-6xl font-semibold tracking-tight bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+            Arawn
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-500 text-lg">
             Production-ready TypeScript monorepo template
           </p>
         </div>
 
         {/* Health Status */}
         {health && (
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-gray-800">
-                API Health Status
-              </h2>
+          <div className="border border-gray-200 rounded-lg p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <Activity className="w-5 h-5 text-gray-700" />
+                <h2 className="text-xl font-medium text-gray-900">
+                  API Status
+                </h2>
+              </div>
               <span
-                className={`px-4 py-2 rounded-full text-sm font-medium ${
+                className={`px-3 py-1 rounded-md text-xs font-medium ${
                   health.status === 'ok'
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
                 }`}
               >
-                {health.status === 'ok' ? '✓ Healthy' : '✗ Error'}
+                {health.status === 'ok' ? 'Healthy' : 'Error'}
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-4 gap-8">
               <div>
-                <p className="text-sm text-gray-500 mb-1">Environment</p>
-                <p className="text-lg font-medium text-gray-900 capitalize">
+                <p className="text-xs text-gray-500 mb-2">Environment</p>
+                <p className="text-base font-medium text-gray-900 capitalize">
                   {health.environment}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500 mb-1">Version</p>
-                <p className="text-lg font-medium text-gray-900">
+                <p className="text-xs text-gray-500 mb-2">Version</p>
+                <p className="text-base font-medium text-gray-900">
                   {health.version}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500 mb-1">Uptime</p>
-                <p className="text-lg font-medium text-gray-900">
+                <p className="text-xs text-gray-500 mb-2">Uptime</p>
+                <p className="text-base font-medium text-gray-900">
                   {health.uptime}s
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500 mb-1">Last Checked</p>
-                <p className="text-lg font-medium text-gray-900">
+                <p className="text-xs text-gray-500 mb-2">Last Checked</p>
+                <p className="text-base font-medium text-gray-900">
                   {formatDateTime(health.timestamp)}
                 </p>
               </div>
@@ -77,9 +90,9 @@ export default async function Home() {
         )}
 
         {!health && (
-          <div className="bg-yellow-50 rounded-2xl shadow-lg p-8 border border-yellow-200">
-            <p className="text-yellow-800 text-center">
-              ⚠️ Unable to connect to backend API. Make sure the backend is
+          <div className="bg-amber-50 rounded-lg p-6 border border-amber-200">
+            <p className="text-amber-900 text-center text-sm">
+              Unable to connect to backend API. Make sure the backend is
               running.
             </p>
           </div>
@@ -87,97 +100,116 @@ export default async function Home() {
 
         {/* Features */}
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl shadow p-6 border border-gray-200">
-            <div className="text-3xl mb-3">📦</div>
-            <h3 className="text-lg font-semibold mb-2 text-gray-800">
+          <div className="border border-gray-200 rounded-lg p-6">
+            <PackageOpen className="w-5 h-5 text-gray-700 mb-3" />
+            <h3 className="text-base font-medium mb-2 text-gray-900">
               Shared Packages
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-500 text-sm leading-relaxed">
               Types, utilities, and config shared across frontend and backend
             </p>
           </div>
-          <div className="bg-white rounded-xl shadow p-6 border border-gray-200">
-            <div className="text-3xl mb-3">⚡</div>
-            <h3 className="text-lg font-semibold mb-2 text-gray-800">
+          <div className="border border-gray-200 rounded-lg p-6">
+            <Zap className="w-5 h-5 text-gray-700 mb-3" />
+            <h3 className="text-base font-medium mb-2 text-gray-900">
               Fast Development
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-500 text-sm leading-relaxed">
               Turborepo for optimized builds and pnpm for efficient package
               management
             </p>
           </div>
-          <div className="bg-white rounded-xl shadow p-6 border border-gray-200">
-            <div className="text-3xl mb-3">🔒</div>
-            <h3 className="text-lg font-semibold mb-2 text-gray-800">
+          <div className="border border-gray-200 rounded-lg p-6">
+            <Shield className="w-5 h-5 text-gray-700 mb-3" />
+            <h3 className="text-base font-medium mb-2 text-gray-900">
               Type Safe
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-500 text-sm leading-relaxed">
               Zod schemas with TypeScript for runtime and compile-time safety
             </p>
           </div>
         </div>
 
         {/* Tech Stack */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
-          <h2 className="text-2xl font-semibold mb-6 text-gray-800">
-            Tech Stack
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
+        <div className="border border-gray-200 rounded-lg p-8">
+          <h2 className="text-xl font-medium mb-8 text-gray-900">Tech Stack</h2>
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
             <div>
-              <h3 className="font-medium text-gray-700 mb-3">Frontend</h3>
-              <ul className="space-y-2 text-gray-600 text-sm">
-                <li>• Next.js 15 (App Router)</li>
-                <li>• React 19</li>
-                <li>• TypeScript</li>
-                <li>• Tailwind CSS</li>
+              <h3 className="font-medium text-gray-900 mb-4 text-sm">
+                Frontend
+              </h3>
+              <ul className="space-y-2.5 text-gray-600 text-sm">
+                <li>Next.js 15 (App Router)</li>
+                <li>React 19</li>
+                <li>TypeScript 5</li>
+                <li>Tailwind CSS 4</li>
+                <li>shadcn/ui</li>
+                <li>TanStack Query</li>
+                <li>Jotai</li>
+                <li>React Hook Form</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-medium text-gray-700 mb-3">Backend</h3>
-              <ul className="space-y-2 text-gray-600 text-sm">
-                <li>• NestJS</li>
-                <li>• Express</li>
-                <li>• TypeScript</li>
-                <li>• Zod Validation</li>
+              <h3 className="font-medium text-gray-900 mb-4 text-sm">
+                Backend
+              </h3>
+              <ul className="space-y-2.5 text-gray-600 text-sm">
+                <li>NestJS 11</li>
+                <li>Express</li>
+                <li>TypeScript 5</li>
+                <li>Zod 4 (Validation)</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-medium text-gray-700 mb-3">Shared</h3>
-              <ul className="space-y-2 text-gray-600 text-sm">
-                <li>• Zod Schemas</li>
-                <li>• Utility Functions</li>
-                <li>• Environment Config</li>
-                <li>• Type Definitions</li>
+              <h3 className="font-medium text-gray-900 mb-4 text-sm">
+                Shared Packages
+              </h3>
+              <ul className="space-y-2.5 text-gray-600 text-sm">
+                <li>Zod Schemas</li>
+                <li>Utility Functions</li>
+                <li>Environment Config (dotenv-flow)</li>
+                <li>Type Definitions</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-medium text-gray-700 mb-3">DevOps</h3>
-              <ul className="space-y-2 text-gray-600 text-sm">
-                <li>• Turborepo</li>
-                <li>• pnpm Workspaces</li>
-                <li>• ESLint + Prettier</li>
-                <li>• Husky Pre-commit</li>
+              <h3 className="font-medium text-gray-900 mb-4 text-sm">DevOps</h3>
+              <ul className="space-y-2.5 text-gray-600 text-sm">
+                <li>Turborepo</li>
+                <li>pnpm Workspaces</li>
+                <li>ESLint 9 + Prettier</li>
+                <li>Husky + lint-staged</li>
               </ul>
             </div>
           </div>
         </div>
 
         {/* Quick Start */}
-        <div className="bg-gray-900 rounded-2xl shadow-lg p-8 border border-gray-700">
-          <h2 className="text-2xl font-semibold mb-4 text-white">
-            Quick Start
-          </h2>
+        <div className="bg-gray-50 rounded-lg p-8 border border-gray-200">
+          <div className="flex items-center gap-3 mb-6">
+            <Terminal className="w-5 h-5 text-gray-700" />
+            <h2 className="text-xl font-medium text-gray-900">Quick Start</h2>
+          </div>
           <div className="space-y-3 text-sm font-mono">
-            <div className="bg-gray-800 rounded p-3 text-gray-300">
-              <span className="text-green-400">$</span> pnpm install
+            <div className="bg-white rounded-md px-4 py-3 text-gray-700 border border-gray-200">
+              <span className="text-gray-400">$</span> pnpm install
             </div>
-            <div className="bg-gray-800 rounded p-3 text-gray-300">
-              <span className="text-green-400">$</span> pnpm dev
+            <div className="bg-white rounded-md px-4 py-3 text-gray-700 border border-gray-200">
+              <span className="text-gray-400">$</span> pnpm dev
             </div>
           </div>
-          <p className="text-gray-400 text-sm mt-4">
+          <p className="text-gray-500 text-xs mt-4">
             Frontend runs on port 3001, backend on configured PORT
           </p>
+        </div>
+
+        {/* Examples Link */}
+        <div className="flex justify-center">
+          <Button asChild size="lg" variant="outline" className="group">
+            <Link href="/example" className="flex items-center gap-2">
+              View Examples
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </Button>
         </div>
       </div>
     </main>

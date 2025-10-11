@@ -4,6 +4,8 @@ An opinionated, production-ready TypeScript monorepo template using pnpm workspa
 
 ## Features
 
+### Core Stack
+
 - 🚀 **Next.js 15** with App Router for the frontend
 - 🎯 **NestJS** for the backend API
 - 📦 **Shared packages** for types, utilities, and configuration
@@ -11,6 +13,17 @@ An opinionated, production-ready TypeScript monorepo template using pnpm workspa
 - 🏗️ **Turborepo** for optimized build orchestration
 - 🧰 **Modern tooling**: TypeScript, ESLint, Prettier, Husky
 - 📝 **Runtime validation** with Zod schemas as single source of truth
+
+### Frontend Batteries 🔋
+
+- 🎨 **shadcn/ui** - Beautiful, accessible component system with Radix UI
+- 🎭 **Tailwind CSS v4** - Latest Tailwind with CSS-first configuration
+- 🌓 **Dark mode** - Built-in theme support with next-themes
+- 🔄 **TanStack Query v5** - Powerful data fetching and caching
+- 🧪 **Jotai** - Primitive and flexible state management
+- 📋 **React Hook Form** - Performant forms with Zod validation
+- 🔔 **Sonner** - Beautiful toast notifications
+- 🎯 **TypeScript** - Full type safety across the stack
 
 ## Prerequisites
 
@@ -157,6 +170,90 @@ import { loadEnv, config } from '@repo/shared-config';
 loadEnv(); // Call once at app startup
 console.log(config.API_URL); // Type-safe access
 ```
+
+## Frontend Features
+
+### UI Components (shadcn/ui)
+
+Pre-configured with essential components:
+
+- **Forms**: Button, Input, Textarea, Select, Checkbox, Radio Group, Switch, Slider
+- **Layout**: Separator
+- **Overlays**: Dialog, Dropdown Menu, Popover
+- **Feedback**: Sonner (toasts), Skeleton (loading states)
+
+All components use Tailwind v4 with CSS variables for theming and support dark mode out of the box.
+
+### Data Fetching (TanStack Query)
+
+Configured with sensible defaults:
+
+```typescript
+import { useQuery } from '@tanstack/react-query';
+
+const { data, isLoading } = useQuery({
+  queryKey: ['users'],
+  queryFn: fetchUsers,
+});
+```
+
+Provider wraps the entire app in [layout.tsx](apps/frontend/src/app/layout.tsx).
+
+### State Management (Jotai)
+
+Primitive and flexible atoms-based state:
+
+```typescript
+import { atom, useAtom } from 'jotai';
+
+const countAtom = atom(0);
+
+function Counter() {
+  const [count, setCount] = useAtom(countAtom);
+  return <button onClick={() => setCount(c => c + 1)}>{count}</button>;
+}
+```
+
+See [store/atoms.ts](apps/frontend/src/store/atoms.ts) for examples.
+
+### Forms (React Hook Form + Zod)
+
+Fully integrated with shadcn/ui form components:
+
+```typescript
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { createFormResolver } from '@/lib/form-utils';
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+const form = useForm({
+  resolver: createFormResolver(schema),
+});
+```
+
+### Theme Support
+
+Dark mode with next-themes, toggled via `ThemeProvider`:
+
+```typescript
+import { useTheme } from 'next-themes';
+
+const { theme, setTheme } = useTheme();
+```
+
+### Examples
+
+Visit `/example` to see all integrations in action:
+
+- Complete form with validation and error handling
+- Data fetching with loading states
+- Global state management
+- Toast notifications
+- Dark mode toggle
 
 ## Development Workflow
 
