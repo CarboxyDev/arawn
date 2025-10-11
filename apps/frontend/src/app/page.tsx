@@ -34,33 +34,33 @@ export default async function Home() {
   const frontendPort = process.env.PORT || '3000';
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-white">
-      <div className="max-w-5xl w-full space-y-12">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-white p-8">
+      <div className="w-full max-w-5xl space-y-12">
         {/* Header */}
-        <div className="text-center space-y-3">
+        <div className="space-y-3 text-center">
           <h1 className="text-6xl font-semibold tracking-tight text-gray-900">
             Arawn
           </h1>
-          <p className="text-gray-500 text-lg">
+          <p className="text-lg text-gray-500">
             Production-ready TypeScript monorepo template
           </p>
         </div>
 
         {/* Health Status */}
         {health && (
-          <div className="border border-gray-200 rounded-lg p-8">
-            <div className="flex items-center justify-between mb-8">
+          <div className="rounded-lg border border-gray-200 p-8">
+            <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Activity className="w-5 h-5 text-gray-700" />
+                <Activity className="h-5 w-5 text-gray-700" />
                 <h2 className="text-xl font-medium text-gray-900">
                   API Status
                 </h2>
               </div>
               <span
-                className={`px-3 py-1 rounded-md text-xs font-medium ${
+                className={`rounded-md px-3 py-1 text-xs font-medium ${
                   health.status === 'ok'
-                    ? 'bg-green-50 text-green-700 border border-green-200'
-                    : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'border border-green-200 bg-green-50 text-green-700'
+                    : 'border border-red-200 bg-red-50 text-red-700'
                 }`}
               >
                 {health.status === 'ok' ? 'Healthy' : 'Error'}
@@ -68,25 +68,25 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-4 gap-8">
               <div>
-                <p className="text-xs text-gray-500 mb-2">Environment</p>
-                <p className="text-base font-medium text-gray-900 capitalize">
+                <p className="mb-2 text-xs text-gray-500">Environment</p>
+                <p className="text-base font-medium capitalize text-gray-900">
                   {health.environment}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-2">Version</p>
+                <p className="mb-2 text-xs text-gray-500">Version</p>
                 <p className="text-base font-medium text-gray-900">
                   {health.version}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-2">Uptime</p>
+                <p className="mb-2 text-xs text-gray-500">Uptime</p>
                 <p className="text-base font-medium text-gray-900">
                   {health.uptime}s
                 </p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-2">Last Checked</p>
+                <p className="mb-2 text-xs text-gray-500">Last Checked</p>
                 <p className="text-base font-medium text-gray-900">
                   {formatDateTime(health.timestamp)}
                 </p>
@@ -96,8 +96,8 @@ export default async function Home() {
         )}
 
         {!health && (
-          <div className="bg-amber-50 rounded-lg p-6 border border-amber-200">
-            <p className="text-amber-900 text-center text-sm">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-6">
+            <p className="text-center text-sm text-amber-900">
               Unable to connect to backend API. Make sure the backend is
               running.
             </p>
@@ -105,46 +105,46 @@ export default async function Home() {
         )}
 
         {/* Features */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="border border-gray-200 rounded-lg p-6">
-            <PackageOpen className="w-5 h-5 text-gray-700 mb-3" />
-            <h3 className="text-base font-medium mb-2 text-gray-900">
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="rounded-lg border border-gray-200 p-6">
+            <PackageOpen className="mb-3 h-5 w-5 text-gray-700" />
+            <h3 className="mb-2 text-base font-medium text-gray-900">
               Shared Packages
             </h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed text-gray-500">
               Types, utilities, and config shared across frontend and backend
             </p>
           </div>
-          <div className="border border-gray-200 rounded-lg p-6">
-            <Zap className="w-5 h-5 text-gray-700 mb-3" />
-            <h3 className="text-base font-medium mb-2 text-gray-900">
+          <div className="rounded-lg border border-gray-200 p-6">
+            <Zap className="mb-3 h-5 w-5 text-gray-700" />
+            <h3 className="mb-2 text-base font-medium text-gray-900">
               Fast Development
             </h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed text-gray-500">
               Turborepo for optimized builds and pnpm for efficient package
               management
             </p>
           </div>
-          <div className="border border-gray-200 rounded-lg p-6">
-            <Shield className="w-5 h-5 text-gray-700 mb-3" />
-            <h3 className="text-base font-medium mb-2 text-gray-900">
+          <div className="rounded-lg border border-gray-200 p-6">
+            <Shield className="mb-3 h-5 w-5 text-gray-700" />
+            <h3 className="mb-2 text-base font-medium text-gray-900">
               Type Safe
             </h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed text-gray-500">
               Zod schemas with TypeScript for runtime and compile-time safety
             </p>
           </div>
         </div>
 
         {/* Tech Stack */}
-        <div className="border border-gray-200 rounded-lg p-8">
-          <h2 className="text-xl font-medium mb-8 text-gray-900">Tech Stack</h2>
-          <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
+        <div className="rounded-lg border border-gray-200 p-8">
+          <h2 className="mb-8 text-xl font-medium text-gray-900">Tech Stack</h2>
+          <div className="grid gap-x-12 gap-y-8 md:grid-cols-2">
             <div>
-              <h3 className="font-medium text-gray-900 mb-4 text-sm">
+              <h3 className="mb-4 text-sm font-medium text-gray-900">
                 Frontend
               </h3>
-              <ul className="space-y-2.5 text-gray-600 text-sm">
+              <ul className="space-y-2.5 text-sm text-gray-600">
                 <li>Next.js 15 (App Router)</li>
                 <li>React 19</li>
                 <li>TypeScript 5</li>
@@ -156,10 +156,10 @@ export default async function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-4 text-sm">
+              <h3 className="mb-4 text-sm font-medium text-gray-900">
                 Backend
               </h3>
-              <ul className="space-y-2.5 text-gray-600 text-sm">
+              <ul className="space-y-2.5 text-sm text-gray-600">
                 <li>NestJS 11</li>
                 <li>Express</li>
                 <li>TypeScript 5</li>
@@ -167,10 +167,10 @@ export default async function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-4 text-sm">
+              <h3 className="mb-4 text-sm font-medium text-gray-900">
                 Shared Packages
               </h3>
-              <ul className="space-y-2.5 text-gray-600 text-sm">
+              <ul className="space-y-2.5 text-sm text-gray-600">
                 <li>Zod Schemas</li>
                 <li>Utility Functions</li>
                 <li>Environment Config (dotenv-flow)</li>
@@ -178,8 +178,8 @@ export default async function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-4 text-sm">DevOps</h3>
-              <ul className="space-y-2.5 text-gray-600 text-sm">
+              <h3 className="mb-4 text-sm font-medium text-gray-900">DevOps</h3>
+              <ul className="space-y-2.5 text-sm text-gray-600">
                 <li>Turborepo</li>
                 <li>pnpm Workspaces</li>
                 <li>ESLint 9 + Prettier</li>
@@ -190,20 +190,20 @@ export default async function Home() {
         </div>
 
         {/* Quick Start */}
-        <div className="bg-gray-50 rounded-lg p-8 border border-gray-200">
-          <div className="flex items-center gap-3 mb-6">
-            <Terminal className="w-5 h-5 text-gray-700" />
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-8">
+          <div className="mb-6 flex items-center gap-3">
+            <Terminal className="h-5 w-5 text-gray-700" />
             <h2 className="text-xl font-medium text-gray-900">Quick Start</h2>
           </div>
-          <div className="space-y-3 text-sm font-mono">
-            <div className="bg-white rounded-md px-4 py-3 text-gray-700 border border-gray-200">
+          <div className="space-y-3 font-mono text-sm">
+            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
               <span className="text-gray-400">$</span> pnpm install
             </div>
-            <div className="bg-white rounded-md px-4 py-3 text-gray-700 border border-gray-200">
+            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
               <span className="text-gray-400">$</span> pnpm dev
             </div>
           </div>
-          <p className="text-gray-500 text-xs mt-4">
+          <p className="mt-4 text-xs text-gray-500">
             Frontend runs on port {frontendPort}, backend on port {backendPort}
           </p>
         </div>
@@ -213,7 +213,7 @@ export default async function Home() {
           <Button asChild size="lg" variant="outline" className="group">
             <Link href="/example" className="flex items-center gap-2">
               View Examples
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
