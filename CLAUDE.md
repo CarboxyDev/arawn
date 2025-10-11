@@ -32,11 +32,12 @@ pnpm dev              # Start Next.js dev server
 pnpm build            # Build production bundle
 pnpm typecheck        # Type check only
 
-# Backend (NestJS)
+# Backend (NestJS on port 8080)
 cd apps/backend
 pnpm dev              # Start NestJS with watch mode
 pnpm build            # Build production bundle
 pnpm start            # Run production build
+# API docs available at http://localhost:8080/docs (Swagger + Scalar)
 
 # Shared packages (types, utils, config)
 cd shared/{package}
@@ -72,24 +73,28 @@ All shared packages (`@repo/shared-types`, `@repo/shared-utils`, `@repo/shared-c
 - Include TypeScript declarations
 - Must be built before apps can run in dev mode
 - Frontend's `next.config.ts` transpiles these packages
+- All use Zod v4.1.12 for validation (types and config packages)
 
 ### Environment Configuration
 
-Environment variables are managed via `dotenv-flow` and validated with Zod:
+Environment variables are managed via `dotenv-flow` and validated with Zod v4:
 
 - Configuration defined in `shared/config/src/index.ts`
-- Required variables: `NODE_ENV`, `API_URL`, `DATABASE_URL`, `PORT`
+- Backend required: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`
+- Frontend required: `NODE_ENV`, `NEXT_PUBLIC_API_URL`
 - Each app has `.env.local.example` files showing expected variables
 - Backend uses `loadEnv()` from `@repo/shared-config` on startup
+- CORS is configured to allow requests from `FRONTEND_URL`
 
 ### Type Safety
 
 The codebase emphasizes runtime and compile-time type safety:
 
-- Zod schemas in `shared/types` serve as single source of truth
+- Zod v4 schemas in `shared/types` serve as single source of truth
 - Types are inferred from schemas using `z.infer<typeof Schema>`
-- Environment variables are validated at runtime
+- Environment variables are validated at runtime using Zod
 - All packages use strict TypeScript settings from `tsconfig.base.json`
+- All shared packages use Zod v4.1.12 for consistency
 
 ## Development Workflow
 

@@ -23,7 +23,15 @@ An opinionated, production-ready TypeScript monorepo template using pnpm workspa
 - 🧪 **Jotai** - Primitive and flexible state management
 - 📋 **React Hook Form** - Performant forms with Zod validation
 - 🔔 **Sonner** - Beautiful toast notifications
+- 🎨 **Framer Motion** - Animation library for smooth transitions
 - 🎯 **TypeScript** - Full type safety across the stack
+
+### Backend Batteries 🔋
+
+- 📚 **Swagger + Scalar** - Auto-generated API documentation at `/docs`
+- 🔒 **CORS** - Configured for secure cross-origin requests
+- 🌐 **NestJS** - Production-ready architecture with dependency injection
+- ✅ **Zod v4** - Runtime validation for requests and responses
 
 ## Prerequisites
 
@@ -77,13 +85,13 @@ pnpm lint:fix         # Lint and auto-fix issues
 ### Per-package commands
 
 ```bash
-# Frontend
+# Frontend (runs on port 3000)
 cd apps/frontend
 pnpm dev              # Next.js dev server
 pnpm build            # Production build
 pnpm typecheck        # Type checking only
 
-# Backend
+# Backend (runs on port 8080)
 cd apps/backend
 pnpm dev              # NestJS watch mode
 pnpm build            # Production build
@@ -129,9 +137,12 @@ The template enforces type safety at multiple levels:
 Environment variables are managed centrally:
 
 - `dotenv-flow` handles `.env`, `.env.local`, and environment-specific files
-- Zod schemas in `@repo/shared-config` validate configuration
+- Zod v4 schemas in `@repo/shared-config` validate configuration
 - Apps fail fast with clear errors for missing/invalid variables
 - Type-safe access to environment variables throughout the codebase
+
+Backend expects: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`
+Frontend expects: `NODE_ENV`, `NEXT_PUBLIC_API_URL`
 
 ### Code Quality
 
@@ -178,10 +189,11 @@ console.log(config.API_URL); // Type-safe access
 
 Pre-configured with essential components:
 
-- **Forms**: Button, Input, Textarea, Select, Checkbox, Radio Group, Switch, Slider
-- **Layout**: Separator
-- **Overlays**: Dialog, Dropdown Menu, Popover
+- **Forms**: Button, Input, Textarea, Select, Checkbox, Radio Group, Switch, Slider, Label
+- **Layout**: Separator, Scroll Area, Tabs
+- **Overlays**: Dialog, Dropdown Menu, Popover, Tooltip
 - **Feedback**: Sonner (toasts), Skeleton (loading states)
+- **Display**: Avatar
 
 All components use Tailwind v4 with CSS variables for theming and support dark mode out of the box.
 
