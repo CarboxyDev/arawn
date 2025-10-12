@@ -33,6 +33,12 @@ jobs:
 
       - name: Build
         run: pnpm run build
+        env:
+          NODE_ENV: production
+          API_URL: ${{ secrets.API_URL || 'http://localhost:8080' }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL || 'http://localhost:3000' }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://user:pass@localhost:5432/db' }}
+          PORT: ${{ secrets.PORT || '8080' }}
 
       - name: Lint
         run: pnpm run lint
