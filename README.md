@@ -1,6 +1,8 @@
-# Arawn
-
-An opinionated, production-ready TypeScript monorepo template using pnpm workspaces and Turborepo. Batteries included, ready to scale.
+<div align="center">
+  <img src="assets/logo.svg" alt="Arawn Logo" width="200">
+  <h1>Arawn</h1>
+  <p>An opinionated, production-ready TypeScript monorepo template using pnpm workspaces and Turborepo. Batteries included, ready to scale.</p>
+</div>
 
 ## Features
 
