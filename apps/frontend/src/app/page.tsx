@@ -114,7 +114,7 @@ export default async function Home() {
           </div>
         )}
 
-        {!health && (
+        {!health && isLocalDev && (
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-6">
             <p className="text-center text-sm text-amber-900">
               Unable to connect to backend API. Make sure the backend is
