@@ -3,10 +3,13 @@ import { formatDateTime } from '@repo/shared-utils';
 import {
   Activity,
   ArrowRight,
+  Bot,
   Github,
   PackageOpen,
+  Rocket,
   Shield,
   Terminal,
+  Workflow,
   Zap,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -144,6 +147,35 @@ export default async function Home() {
               Zod schemas with TypeScript for runtime and compile-time safety
             </p>
           </div>
+          <div className="rounded-lg border border-gray-200 p-6">
+            <Bot className="mb-3 h-5 w-5 text-gray-700" />
+            <h3 className="mb-2 text-base font-medium text-gray-900">
+              AI-Assisted Development
+            </h3>
+            <p className="text-sm leading-relaxed text-gray-500">
+              Comprehensive CLAUDE.md enables instant onboarding for AI coding
+              assistants
+            </p>
+          </div>
+          <div className="rounded-lg border border-gray-200 p-6">
+            <Rocket className="mb-3 h-5 w-5 text-gray-700" />
+            <h3 className="mb-2 text-base font-medium text-gray-900">
+              Production Ready
+            </h3>
+            <p className="text-sm leading-relaxed text-gray-500">
+              Helmet security, rate limiting, CORS, and validated environment
+              configs
+            </p>
+          </div>
+          <div className="rounded-lg border border-gray-200 p-6">
+            <Workflow className="mb-3 h-5 w-5 text-gray-700" />
+            <h3 className="mb-2 text-base font-medium text-gray-900">
+              Database Ready
+            </h3>
+            <p className="text-sm leading-relaxed text-gray-500">
+              Prisma ORM with PostgreSQL, migrations, and Docker setup included
+            </p>
+          </div>
         </div>
 
         <div className="rounded-lg border border-gray-200 p-8">
@@ -201,6 +233,7 @@ export default async function Home() {
                 <li>pnpm Workspaces</li>
                 <li>ESLint 9 + Prettier</li>
                 <li>Husky + lint-staged</li>
+                <li>CLAUDE.md (AI Context)</li>
               </ul>
             </div>
           </div>

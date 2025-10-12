@@ -15,6 +15,7 @@
 - 🏗️ **Turborepo** for optimized build orchestration
 - 🧰 **Modern tooling**: TypeScript, ESLint, Prettier, Husky
 - 📝 **Runtime validation** with Zod schemas as single source of truth
+- 🤖 **AI-ready**: Comprehensive CLAUDE.md for instant AI assistant onboarding
 
 ### Frontend Batteries 🔋
 
@@ -185,6 +186,15 @@ Pre-commit hooks (Husky + lint-staged) enforce:
 - Prettier formatting
 - ESLint rules
 - Only on staged files (fast commits)
+
+### AI-Assisted Development
+
+The codebase includes structured documentation for AI assistants:
+
+- **CLAUDE.md**: Comprehensive context file with architecture, commands, and coding standards
+- **Import aliases enforced**: Clear patterns for AI to follow (@/\* for local imports)
+- **Well-documented structure**: Helps AI understand the codebase instantly
+- **Consistent conventions**: Makes autonomous refactoring and feature additions safer
 
 ## Philosophy
 
