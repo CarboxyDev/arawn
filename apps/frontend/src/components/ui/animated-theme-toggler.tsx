@@ -19,7 +19,6 @@ export const AnimatedThemeToggler = ({
 }: AnimatedThemeTogglerProps) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  // eslint-disable-next-line no-undef
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -44,9 +43,13 @@ export const AnimatedThemeToggler = ({
 
     await transition.ready;
 
+    const clipPath = isDark
+      ? ['inset(0 0 100% 0)', 'inset(0 0 0 0)']
+      : ['inset(100% 0 0 0)', 'inset(0 0 0 0)'];
+
     document.documentElement.animate(
       {
-        clipPath: ['inset(0 0 100% 0)', 'inset(0 0 0 0)'],
+        clipPath,
       },
       {
         duration,
