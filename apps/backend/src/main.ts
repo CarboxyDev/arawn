@@ -4,13 +4,16 @@ import { loadEnv } from '@repo/shared-config';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import helmet from 'helmet';
 
-import { AppModule } from './app.module';
+import { AppModule } from '@/app.module';
+import { GlobalExceptionFilter } from '@/filters/http-exception.filter';
 
 async function bootstrap() {
   const env = loadEnv();
   const app = await NestFactory.create(AppModule);
 
-  // Security: Helmet for HTTP headers
+  // Global exception filter for error handling
+  app.useGlobalFilters(new GlobalExceptionFilter());
+
   app.use(
     helmet({
       contentSecurityPolicy: env.NODE_ENV === 'production' ? undefined : false,
@@ -19,7 +22,6 @@ async function bootstrap() {
     })
   );
 
-  // CORS configuration
   app.enableCors({
     origin: env.FRONTEND_URL,
     credentials: true,
