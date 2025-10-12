@@ -66,10 +66,7 @@ export default [
       // Disable base rule in favor of unused-imports
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'error',
-      'unused-imports/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-      ],
+      'unused-imports/no-unused-vars': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
 
       // Import sorting

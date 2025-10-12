@@ -30,6 +30,9 @@ jobs:
       - name: Type check
         run: pnpm run typecheck
 
+      - name: Run tests
+        run: pnpm run test
+
       - name: Build
         run: pnpm run build
 
