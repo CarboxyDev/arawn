@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
 
@@ -44,42 +45,45 @@ export default async function Home() {
   const frontendPort = process.env.PORT || '3000';
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center bg-white p-8">
-      <Button asChild variant="secondary" className="absolute right-8 top-8">
-        <a
-          href={siteConfig.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2"
-        >
-          <Github className="h-4 w-4" />
-          GitHub
-        </a>
-      </Button>
+    <main className="bg-background relative flex min-h-screen flex-col items-center justify-center p-8">
+      <div className="absolute right-8 top-8 flex items-center gap-2">
+        <Button asChild variant="default">
+          <a
+            href={siteConfig.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2"
+          >
+            <Github className="h-4 w-4" />
+            GitHub
+          </a>
+        </Button>
+        <AnimatedThemeToggler className="border-input bg-background hover:bg-accent hover:text-accent-foreground flex h-9 w-9 items-center justify-center rounded-md border text-sm transition-colors" />
+      </div>
       <div className="w-full max-w-5xl space-y-12">
         <div className="space-y-3 text-center">
-          <h1 className="text-6xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-foreground text-6xl font-semibold tracking-tight">
             Arawn
           </h1>
-          <p className="text-lg text-gray-500">
+          <p className="text-muted-foreground text-lg">
             Production-ready TypeScript monorepo template
           </p>
         </div>
 
         {health && isLocalDev && (
-          <div className="rounded-lg border border-gray-200 p-8">
+          <div className="border-border bg-card rounded-lg border p-8">
             <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Activity className="h-5 w-5 text-gray-700" />
-                <h2 className="text-xl font-medium text-gray-900">
+                <Activity className="text-foreground h-5 w-5" />
+                <h2 className="text-card-foreground text-xl font-medium">
                   API Status
                 </h2>
               </div>
               <span
                 className={`rounded-md px-3 py-1 text-xs font-medium ${
                   health.status === 'ok'
-                    ? 'border border-green-200 bg-green-50 text-green-700'
-                    : 'border border-red-200 bg-red-50 text-red-700'
+                    ? 'border border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400'
+                    : 'border border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400'
                 }`}
               >
                 {health.status === 'ok' ? 'Healthy' : 'Error'}
@@ -87,26 +91,30 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-4 gap-8">
               <div>
-                <p className="mb-2 text-xs text-gray-500">Environment</p>
-                <p className="text-base font-medium capitalize text-gray-900">
+                <p className="text-muted-foreground mb-2 text-xs">
+                  Environment
+                </p>
+                <p className="text-card-foreground text-base font-medium capitalize">
                   {health.environment}
                 </p>
               </div>
               <div>
-                <p className="mb-2 text-xs text-gray-500">Version</p>
-                <p className="text-base font-medium text-gray-900">
+                <p className="text-muted-foreground mb-2 text-xs">Version</p>
+                <p className="text-card-foreground text-base font-medium">
                   {health.version}
                 </p>
               </div>
               <div>
-                <p className="mb-2 text-xs text-gray-500">Uptime</p>
-                <p className="text-base font-medium text-gray-900">
+                <p className="text-muted-foreground mb-2 text-xs">Uptime</p>
+                <p className="text-card-foreground text-base font-medium">
                   {health.uptime}s
                 </p>
               </div>
               <div>
-                <p className="mb-2 text-xs text-gray-500">Last Checked</p>
-                <p className="text-base font-medium text-gray-900">
+                <p className="text-muted-foreground mb-2 text-xs">
+                  Last Checked
+                </p>
+                <p className="text-card-foreground text-base font-medium">
                   {formatDateTime(health.timestamp)}
                 </p>
               </div>
@@ -115,111 +123,113 @@ export default async function Home() {
         )}
 
         {!health && isLocalDev && (
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-6">
-            <p className="text-center text-sm text-amber-900">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-6 dark:border-amber-800 dark:bg-amber-950">
+            <p className="text-center text-sm text-amber-900 dark:text-amber-400">
               Unable to connect to backend API. Make sure the backend is
               running.
             </p>
           </div>
         )}
         <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-lg border border-gray-200 p-6">
-            <Rocket className="mb-3 h-5 w-5 text-gray-700" />
-            <h3 className="mb-2 text-base font-medium text-gray-900">
+          <div className="border-border bg-card rounded-lg border p-6">
+            <Rocket className="text-foreground mb-3 h-5 w-5" />
+            <h3 className="text-card-foreground mb-2 text-base font-medium">
               Production Ready
             </h3>
-            <p className="text-sm leading-relaxed text-gray-500">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               Helmet security, rate limiting, CORS, and validated environment
               configs
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 p-6">
-            <Zap className="mb-3 h-5 w-5 text-gray-700" />
-            <h3 className="mb-2 text-base font-medium text-gray-900">
+          <div className="border-border bg-card rounded-lg border p-6">
+            <Zap className="text-foreground mb-3 h-5 w-5" />
+            <h3 className="text-card-foreground mb-2 text-base font-medium">
               Fast Development
             </h3>
-            <p className="text-sm leading-relaxed text-gray-500">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               Turborepo for optimized builds and pnpm for efficient package
               management
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 p-6">
-            <Shield className="mb-3 h-5 w-5 text-gray-700" />
-            <h3 className="mb-2 text-base font-medium text-gray-900">
+          <div className="border-border bg-card rounded-lg border p-6">
+            <Shield className="text-foreground mb-3 h-5 w-5" />
+            <h3 className="text-card-foreground mb-2 text-base font-medium">
               Type Safe
             </h3>
-            <p className="text-sm leading-relaxed text-gray-500">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               Zod schemas with TypeScript for runtime and compile-time safety
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 p-6">
-            <Workflow className="mb-3 h-5 w-5 text-gray-700" />
-            <h3 className="mb-2 text-base font-medium text-gray-900">
+          <div className="border-border bg-card rounded-lg border p-6">
+            <Workflow className="text-foreground mb-3 h-5 w-5" />
+            <h3 className="text-card-foreground mb-2 text-base font-medium">
               Database Ready
             </h3>
-            <p className="text-sm leading-relaxed text-gray-500">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               Prisma ORM with PostgreSQL, migrations, and Docker setup included
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 p-6">
-            <Code2 className="mb-3 h-5 w-5 text-gray-700" />
-            <h3 className="mb-2 text-base font-medium text-gray-900">
+          <div className="border-border bg-card rounded-lg border p-6">
+            <Code2 className="text-foreground mb-3 h-5 w-5" />
+            <h3 className="text-card-foreground mb-2 text-base font-medium">
               Modern UI Components
             </h3>
-            <p className="text-sm leading-relaxed text-gray-500">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               shadcn/ui with Radix primitives, Tailwind v4, dark mode, and
               Framer Motion
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 p-6">
-            <TestTube className="mb-3 h-5 w-5 text-gray-700" />
-            <h3 className="mb-2 text-base font-medium text-gray-900">
+          <div className="border-border bg-card rounded-lg border p-6">
+            <TestTube className="text-foreground mb-3 h-5 w-5" />
+            <h3 className="text-card-foreground mb-2 text-base font-medium">
               Comprehensive Testing
             </h3>
-            <p className="text-sm leading-relaxed text-gray-500">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               Vitest for unit and integration tests with coverage reports across
               all packages
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 p-6">
-            <PackageOpen className="mb-3 h-5 w-5 text-gray-700" />
-            <h3 className="mb-2 text-base font-medium text-gray-900">
+          <div className="border-border bg-card rounded-lg border p-6">
+            <PackageOpen className="text-foreground mb-3 h-5 w-5" />
+            <h3 className="text-card-foreground mb-2 text-base font-medium">
               Shared Packages
             </h3>
-            <p className="text-sm leading-relaxed text-gray-500">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               Types, utilities, and config shared across frontend and backend
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 p-6">
-            <GitBranch className="mb-3 h-5 w-5 text-gray-700" />
-            <h3 className="mb-2 text-base font-medium text-gray-900">
+          <div className="border-border bg-card rounded-lg border p-6">
+            <GitBranch className="text-foreground mb-3 h-5 w-5" />
+            <h3 className="text-card-foreground mb-2 text-base font-medium">
               CI/CD Ready
             </h3>
-            <p className="text-sm leading-relaxed text-gray-500">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               GitHub Actions workflow with automated testing, type checking, and
               linting
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 p-6">
-            <Bot className="mb-3 h-5 w-5 text-gray-700" />
-            <h3 className="mb-2 text-base font-medium text-gray-900">
+          <div className="border-border bg-card rounded-lg border p-6">
+            <Bot className="text-foreground mb-3 h-5 w-5" />
+            <h3 className="text-card-foreground mb-2 text-base font-medium">
               AI-Assisted Development
             </h3>
-            <p className="text-sm leading-relaxed text-gray-500">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               Comprehensive CLAUDE.md enables instant onboarding for AI coding
               assistants
             </p>
           </div>
         </div>
 
-        <div className="rounded-lg border border-gray-200 p-8">
-          <h2 className="mb-8 text-xl font-medium text-gray-900">Tech Stack</h2>
+        <div className="border-border bg-card rounded-lg border p-8">
+          <h2 className="text-card-foreground mb-8 text-xl font-medium">
+            Tech Stack
+          </h2>
           <div className="grid gap-x-12 gap-y-8 md:grid-cols-2">
             <div>
-              <h3 className="mb-4 text-sm font-medium text-gray-900">
+              <h3 className="text-card-foreground mb-4 text-sm font-medium">
                 Frontend
               </h3>
-              <ul className="space-y-2.5 text-sm text-gray-600">
+              <ul className="text-muted-foreground space-y-2.5 text-sm">
                 <li>Next.js 15 (App Router)</li>
                 <li>React 19</li>
                 <li>TypeScript 5</li>
@@ -234,10 +244,10 @@ export default async function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="mb-4 text-sm font-medium text-gray-900">
+              <h3 className="text-card-foreground mb-4 text-sm font-medium">
                 Backend
               </h3>
-              <ul className="space-y-2.5 text-sm text-gray-600">
+              <ul className="text-muted-foreground space-y-2.5 text-sm">
                 <li>NestJS 11</li>
                 <li>TypeScript 5</li>
                 <li>Prisma 6 (ORM)</li>
@@ -250,10 +260,10 @@ export default async function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="mb-4 text-sm font-medium text-gray-900">
+              <h3 className="text-card-foreground mb-4 text-sm font-medium">
                 Shared Packages
               </h3>
-              <ul className="space-y-2.5 text-sm text-gray-600">
+              <ul className="text-muted-foreground space-y-2.5 text-sm">
                 <li>Zod Schemas</li>
                 <li>Utility Functions</li>
                 <li>Environment Config (dotenv-flow)</li>
@@ -261,8 +271,10 @@ export default async function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="mb-4 text-sm font-medium text-gray-900">DevOps</h3>
-              <ul className="space-y-2.5 text-sm text-gray-600">
+              <h3 className="text-card-foreground mb-4 text-sm font-medium">
+                DevOps
+              </h3>
+              <ul className="text-muted-foreground space-y-2.5 text-sm">
                 <li>Turborepo</li>
                 <li>pnpm Workspaces</li>
                 <li>Vitest (Testing)</li>
@@ -275,35 +287,36 @@ export default async function Home() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-8">
+        <div className="border-border bg-muted rounded-lg border p-8">
           <div className="mb-6 flex items-center gap-3">
-            <Terminal className="h-5 w-5 text-gray-700" />
-            <h2 className="text-xl font-medium text-gray-900">Quick Start</h2>
+            <Terminal className="text-foreground h-5 w-5" />
+            <h2 className="text-foreground text-xl font-medium">Quick Start</h2>
           </div>
           <div className="space-y-3 font-mono text-sm">
-            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
-              <span className="text-gray-400">$</span> pnpm install
+            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
+              <span className="text-muted-foreground">$</span> pnpm install
             </div>
-            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
-              <span className="text-gray-400">$</span> docker-compose up -d
+            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
+              <span className="text-muted-foreground">$</span> docker-compose up
+              -d
             </div>
-            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
-              <span className="text-gray-400">$</span> cp
+            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
+              <span className="text-muted-foreground">$</span> cp
               apps/frontend/.env.local.example apps/frontend/.env.local
             </div>
-            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
-              <span className="text-gray-400">$</span> cp
+            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
+              <span className="text-muted-foreground">$</span> cp
               apps/backend/.env.local.example apps/backend/.env.local
             </div>
-            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
-              <span className="text-gray-400">$</span> cd apps/backend && pnpm
-              db:migrate
+            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
+              <span className="text-muted-foreground">$</span> cd apps/backend
+              && pnpm db:migrate
             </div>
-            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
-              <span className="text-gray-400">$</span> pnpm dev
+            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
+              <span className="text-muted-foreground">$</span> pnpm dev
             </div>
           </div>
-          <p className="mt-4 text-xs text-gray-500">
+          <p className="text-muted-foreground mt-4 text-xs">
             Frontend: localhost:{frontendPort} • Backend: localhost:
             {backendPort} • API Docs: localhost:{backendPort}/docs
           </p>
