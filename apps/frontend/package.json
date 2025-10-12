@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "vercel-build": "next build",
+    "vercel-build": "cd ../.. && turbo build --filter=@repo/frontend",
     "vercel-ignore-build": "npx turbo-ignore --fallback=HEAD^1"
   },
   "dependencies": {
