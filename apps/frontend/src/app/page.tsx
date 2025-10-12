@@ -3,6 +3,7 @@ import { formatDateTime } from '@repo/shared-utils';
 import {
   Activity,
   ArrowRight,
+  Github,
   PackageOpen,
   Shield,
   Terminal,
@@ -11,6 +12,8 @@ import {
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
+import { siteConfig } from '@/config/site';
+import { isDevelopment } from '@/lib/env';
 
 async function getHealth(): Promise<HealthCheck | null> {
   try {
@@ -28,15 +31,24 @@ async function getHealth(): Promise<HealthCheck | null> {
 export default async function Home() {
   const health = await getHealth();
 
-  // Extract ports from configuration
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   const backendPort = new URL(apiUrl).port || '8080';
   const frontendPort = process.env.PORT || '3000';
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-white p-8">
+    <main className="relative flex min-h-screen flex-col items-center justify-center bg-white p-8">
+      <Button asChild variant="secondary" className="absolute right-8 top-8">
+        <a
+          href={siteConfig.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2"
+        >
+          <Github className="h-4 w-4" />
+          GitHub
+        </a>
+      </Button>
       <div className="w-full max-w-5xl space-y-12">
-        {/* Header */}
         <div className="space-y-3 text-center">
           <h1 className="text-6xl font-semibold tracking-tight text-gray-900">
             Arawn
@@ -46,8 +58,7 @@ export default async function Home() {
           </p>
         </div>
 
-        {/* Health Status */}
-        {health && (
+        {health && isDevelopment() && (
           <div className="rounded-lg border border-gray-200 p-8">
             <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -104,7 +115,6 @@ export default async function Home() {
           </div>
         )}
 
-        {/* Features */}
         <div className="grid gap-6 md:grid-cols-3">
           <div className="rounded-lg border border-gray-200 p-6">
             <PackageOpen className="mb-3 h-5 w-5 text-gray-700" />
@@ -136,7 +146,6 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Tech Stack */}
         <div className="rounded-lg border border-gray-200 p-8">
           <h2 className="mb-8 text-xl font-medium text-gray-900">Tech Stack</h2>
           <div className="grid gap-x-12 gap-y-8 md:grid-cols-2">
@@ -148,11 +157,14 @@ export default async function Home() {
                 <li>Next.js 15 (App Router)</li>
                 <li>React 19</li>
                 <li>TypeScript 5</li>
-                <li>Tailwind CSS 4</li>
-                <li>shadcn/ui</li>
-                <li>TanStack Query</li>
+                <li>Tailwind CSS v4</li>
+                <li>shadcn/ui + Radix UI</li>
+                <li>TanStack Query v5</li>
                 <li>Jotai</li>
-                <li>React Hook Form</li>
+                <li>React Hook Form + Zod</li>
+                <li>Framer Motion</li>
+                <li>Sonner (Toasts)</li>
+                <li>next-themes (Dark mode)</li>
               </ul>
             </div>
             <div>
@@ -161,9 +173,12 @@ export default async function Home() {
               </h3>
               <ul className="space-y-2.5 text-sm text-gray-600">
                 <li>NestJS 11</li>
-                <li>Express</li>
                 <li>TypeScript 5</li>
-                <li>Zod 4 (Validation)</li>
+                <li>Zod v4 (Validation)</li>
+                <li>Swagger + Scalar (API Docs)</li>
+                <li>Helmet (Security)</li>
+                <li>Rate Limiting (@nestjs/throttler)</li>
+                <li>CORS</li>
               </ul>
             </div>
             <div>
@@ -189,7 +204,6 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Quick Start */}
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-8">
           <div className="mb-6 flex items-center gap-3">
             <Terminal className="h-5 w-5 text-gray-700" />
@@ -200,15 +214,23 @@ export default async function Home() {
               <span className="text-gray-400">$</span> pnpm install
             </div>
             <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
+              <span className="text-gray-400">$</span> cp
+              apps/frontend/.env.local.example apps/frontend/.env.local
+            </div>
+            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
+              <span className="text-gray-400">$</span> cp
+              apps/backend/.env.local.example apps/backend/.env.local
+            </div>
+            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
               <span className="text-gray-400">$</span> pnpm dev
             </div>
           </div>
           <p className="mt-4 text-xs text-gray-500">
-            Frontend runs on port {frontendPort}, backend on port {backendPort}
+            Frontend: localhost:{frontendPort} • Backend: localhost:
+            {backendPort} • API Docs: localhost:{backendPort}/docs
           </p>
         </div>
 
-        {/* Examples Link */}
         <div className="flex justify-center">
           <Button asChild size="lg" variant="outline" className="group">
             <Link href="/example" className="flex items-center gap-2">
