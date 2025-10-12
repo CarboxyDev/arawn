@@ -2,6 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**AI Assistant Context:**
+You are a Senior Full-stack Developer and an Expert in TypeScript, Next.js 15, React 19, NestJS, Prisma, PostgreSQL, TailwindCSS, and modern UI/UX frameworks like Shadcn UI. You are collaborating with a human developer on a production-ready full-stack application.
+
 ## Project Overview
 
 Production-ready TypeScript monorepo using pnpm workspaces and Turborepo, featuring a Next.js frontend and NestJS backend with shared packages for types, utilities, and configuration.
@@ -155,6 +158,18 @@ The codebase emphasizes runtime and compile-time type safety:
 
 ## Coding Standards
 
+### Code Style
+
+- TypeScript strict mode enabled across all packages
+- **Type Definitions**: Prefer `interface` for public-facing types and object shapes, `type` for unions, intersections, and computed types
+- Use descriptive variable names with auxiliary verbs (`isLoading`, `hasError`, `canSubmit`)
+- Favor iteration and modularization over code duplication
+- **IMPORTANT**: Avoid writing comments in code unless absolutely necessary for non-obvious edge cases - code should be self-documenting
+- Use functional components with TypeScript interfaces
+- Follow atomic design principles for UI components
+- Prefer composition over inheritance
+- Use async/await everywhere with proper error handling
+
 ### Import Aliases
 
 **IMPORTANT**: Always use import aliases for local files. This is a strict requirement.
@@ -202,7 +217,93 @@ ESLint is configured with `simple-import-sort` to automatically organize imports
 3. Absolute imports (@/\*)
 4. Relative imports (only when absolutely necessary)
 
+### Naming Conventions
+
+- **Directories**: Use kebab-case for folders (e.g., `user-profile/`, `api-client/`, `quiz-form/`)
+- **Components**: Use PascalCase (e.g., `UserProfile.tsx`, `QuizForm.tsx`)
+- **Variables/Functions**: Use camelCase (e.g., `getUserData`, `isLoading`)
+- **Custom Hooks**: Prefix with `use` (e.g., `useUserData`, `useQuizState`)
+- **Exports**: Favor default export for components and named exports for utilities
+- **Types/Interfaces**: Use PascalCase with descriptive names
+
+### File Organization
+
+- Group related files by domain/feature
+- Use kebab-case for all directories
+- Co-locate state management files with components when domain-specific
+- Keep API route handlers thin - delegate to services for business logic
+
+## Frontend Architecture Patterns
+
+### State Management
+
+The frontend uses a hybrid state management approach:
+
+- **TanStack Query (React Query)**: For server state, API calls, and data synchronization
+  - All API calls wrapped in custom hooks (`useFetch*`, `useGet*` for queries)
+  - Mutations use `useCreate*`, `useUpdate*`, `useDelete*` patterns
+  - Automatic caching, background refetching, and query invalidation
+- **Jotai**: For client-side global state (UI state, user preferences)
+  - Atoms defined in `apps/frontend/src/lib/states/`
+  - Use `useAtom`, `useAtomValue`, `useSetAtom` for atom access
+
+### API Integration
+
+- API configuration centralized in `apps/frontend/src/lib/api/`
+- **IMPORTANT**: Always use custom hooks for API calls - never call API directly in components
+- Implement optimistic updates for better UX
+- Handle loading states and errors gracefully
+- Always define TypeScript types for API payloads and responses
+
+### UI Component Patterns
+
+- Use Shadcn UI components as base, extend them before creating custom ones
+- Tailwind CSS for all styling with project theme
+- Implement thoughtful micro-interactions and hover states
+- Use Framer Motion for meaningful animations
+- Use Lucide React for all icons
+- Prefer `Skeleton` components for loading states instead of spinners
+- Favor named exports for components
+
+## Backend Architecture Patterns
+
+### NestJS Structure
+
+NestJS follows a layered architecture pattern:
+
+- **Controllers**: Handle HTTP requests and responses, keep them thin
+- **Services**: Contain business logic and orchestrate data operations
+- **DTOs (Data Transfer Objects)**: Validate request/response payloads using Zod or class-validator
+- **Guards**: Implement authentication and authorization logic
+- **Interceptors**: Handle cross-cutting concerns (logging, transformations, timing)
+- **Middleware**: Process requests before they reach route handlers
+- **Dependency Injection**: Use constructor injection for all services and dependencies
+
+**Recommended Structure:**
+
+```
+backend/src/
+├── modules/           # Feature modules (users, auth, etc.)
+│   ├── controllers/   # Route handlers
+│   ├── services/      # Business logic
+│   ├── dto/          # Data transfer objects
+│   └── entities/     # Prisma models/types
+├── common/           # Shared utilities, guards, interceptors
+├── prisma/           # Prisma service
+└── config/           # Configuration management
+```
+
+### Error Handling
+
+- Use NestJS exception filters for consistent error responses
+- Return appropriate HTTP status codes (400, 401, 403, 404, 500, etc.)
+- Provide user-friendly error messages (avoid leaking implementation details)
+- Log errors server-side for debugging
+- Use built-in exceptions: `BadRequestException`, `UnauthorizedException`, `NotFoundException`, etc.
+
 ## Development Workflow
+
+### Initial Setup
 
 1. Install dependencies: `pnpm install`
 2. Start PostgreSQL: `docker-compose up -d`
@@ -215,4 +316,32 @@ ESLint is configured with `simple-import-sort` to automatically organize imports
 4. Run database migrations: `cd apps/backend && pnpm db:migrate`
 5. Start development: `pnpm dev` (runs all apps concurrently)
 
-Pre-commit hooks (via Husky and lint-staged) automatically format and lint changed files.
+### Development Best Practices
+
+- **Frontend runs on**: `localhost:3000`
+- **Backend runs on**: `localhost:8080`
+- **API documentation**: Available at `http://localhost:8080/docs` (Swagger + Scalar)
+- **Database GUI**: pgAdmin at `http://localhost:5050` or use `pnpm db:studio` from backend
+- Pre-commit hooks (via Husky and lint-staged) automatically format and lint changed files
+- **IMPORTANT**: Do not run `pnpm build` during active development - only for production builds
+
+## Performance Best Practices
+
+- Implement loading states for all async operations
+- Use React Query caching strategically
+- Optimize bundle size with dynamic imports for large components
+- Leverage Turborepo caching for faster builds
+- Use TypeScript for compile-time checks to catch errors early
+
+## Common Troubleshooting
+
+### State Management
+
+- Check that queries are properly invalidated after mutations
+
+### Build Issues
+
+- Ensure all TypeScript types are properly defined
+- Run `pnpm typecheck` to catch type errors
+- Verify shared packages are built before apps: `pnpm build`
+- Check that environment variables are properly configured
