@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 'use client';
 
 import { Moon, Sun } from 'lucide-react';
@@ -20,6 +19,7 @@ export const AnimatedThemeToggler = ({
 }: AnimatedThemeTogglerProps) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line no-undef
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -36,27 +36,17 @@ export const AnimatedThemeToggler = ({
       return;
     }
 
-    await document.startViewTransition(() => {
+    const transition = document.startViewTransition(() => {
       flushSync(() => {
         setTheme(isDark ? 'light' : 'dark');
       });
-    }).ready;
+    });
 
-    const { top, left, width, height } =
-      buttonRef.current.getBoundingClientRect();
-    const x = left + width / 2;
-    const y = top + height / 2;
-    const maxRadius = Math.hypot(
-      Math.max(left, window.innerWidth - left),
-      Math.max(top, window.innerHeight - top)
-    );
+    await transition.ready;
 
     document.documentElement.animate(
       {
-        clipPath: [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${maxRadius}px at ${x}px ${y}px)`,
-        ],
+        clipPath: ['inset(0 0 100% 0)', 'inset(0 0 0 0)'],
       },
       {
         duration,
