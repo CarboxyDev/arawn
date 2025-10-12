@@ -345,3 +345,8 @@ backend/src/
 - Run `pnpm typecheck` to catch type errors
 - Verify shared packages are built before apps: `pnpm build`
 - Check that environment variables are properly configured
+
+### Important Notes
+
+- If you are unsure about anything, ask the user for clarification. I cannot stress this enough.
+- Make sure you aggressively prefer planning and waiting for user confirmation before writing code for medium to major tasks.

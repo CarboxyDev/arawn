@@ -1,5 +1,6 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -7,23 +8,40 @@ import { flushSync } from 'react-dom';
 
 import { cn } from '@/lib/utils';
 
-interface AnimatedThemeTogglerProps
-  extends React.ComponentPropsWithoutRef<'button'> {
+interface AnimatedThemeTogglerProps {
+  className?: string;
   duration?: number;
 }
 
 export const AnimatedThemeToggler = ({
   className,
-  duration = 400,
-  ...props
+  duration = 600,
 }: AnimatedThemeTogglerProps) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (!buttonRef.current) return;
+
+      const rect = buttonRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const deltaX = (e.clientX - centerX) / 10;
+      const deltaY = (e.clientY - centerY) / 10;
+
+      setMousePosition({ x: deltaX, y: deltaY });
+    },
+    []
+  );
 
   const toggleTheme = useCallback(async () => {
     if (!buttonRef.current || !mounted) return;
@@ -59,17 +77,77 @@ export const AnimatedThemeToggler = ({
     );
   }, [theme, setTheme, mounted, duration]);
 
+  if (!mounted) {
+    return (
+      <button
+        className={cn(className, 'relative cursor-pointer overflow-visible')}
+        disabled
+      >
+        <div className="flex h-5 w-5 items-center justify-center" />
+        <span className="sr-only">Toggle theme</span>
+      </button>
+    );
+  }
+
   return (
-    <button
+    <motion.button
       ref={buttonRef}
       onClick={toggleTheme}
-      className={cn(className, 'relative cursor-pointer')}
-      disabled={!mounted}
-      {...props}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setMousePosition({ x: 0, y: 0 });
+      }}
+      className={cn(className, 'relative cursor-pointer overflow-visible')}
+      animate={{
+        x: isHovered ? mousePosition.x : 0,
+        y: isHovered ? mousePosition.y : 0,
+      }}
+      transition={{
+        type: 'spring',
+        stiffness: 150,
+        damping: 15,
+        mass: 0.1,
+      }}
     >
-      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <AnimatePresence mode="wait" initial={false}>
+        {theme === 'dark' ? (
+          <motion.div
+            key="moon"
+            initial={{ rotateY: -180, scale: 0 }}
+            animate={{ rotateY: 0, scale: 1 }}
+            exit={{ rotateY: 180, scale: 0 }}
+            transition={{
+              type: 'spring',
+              stiffness: 260,
+              damping: 20,
+            }}
+            className="flex items-center justify-center"
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            <Moon className="h-5 w-5" />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="sun"
+            initial={{ rotateY: -180, scale: 0 }}
+            animate={{ rotateY: 0, scale: 1 }}
+            exit={{ rotateY: 180, scale: 0 }}
+            transition={{
+              type: 'spring',
+              stiffness: 260,
+              damping: 20,
+            }}
+            className="flex items-center justify-center"
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            <Sun className="h-5 w-5" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <span className="sr-only">Toggle theme</span>
-    </button>
+    </motion.button>
   );
 };
