@@ -39,22 +39,26 @@ An opinionated, production-ready TypeScript monorepo template using pnpm workspa
 - Node.js >= 20.0.0
 - pnpm >= 9.0.0
 
-## Quick Start
+## Getting Started
 
 ```bash
-# Install dependencies
+# 1. Install dependencies
 pnpm install
 
-# Copy environment examples
+# 2. Set up environment variables
 cp apps/frontend/.env.local.example apps/frontend/.env.local
 cp apps/backend/.env.local.example apps/backend/.env.local
+# Edit .env.local files with your configuration
 
-# Start development (builds shared packages and runs all apps)
+# 3. Start development (builds shared packages and runs all apps)
 pnpm dev
 ```
 
-Frontend runs on `http://localhost:3000`, backend on `http://localhost:8080`
-API reference runs on `http://localhost:8080/docs`
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:8080`
+- API Docs: `http://localhost:8080/docs`
+
+Pre-commit hooks (Husky + lint-staged) automatically format and lint staged files.
 
 ## Monorepo Structure
 
@@ -135,17 +139,10 @@ The template enforces type safety at multiple levels:
 
 ### Environment Configuration
 
-Environment variables are managed per-app:
+Environment variables are validated on startup with Zod:
 
-- **Backend**: Uses `@repo/shared-config` with `dotenv-flow` and Zod v4 validation
-  - Required: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`
-  - Validated on startup with clear error messages
-- **Frontend**: Uses Next.js environment variables
-  - Required: `NEXT_PUBLIC_API_URL` (exposed to browser)
-  - Configured in `lib/env.ts` with intelligent fallbacks
-  - Only `NEXT_PUBLIC_*` variables are exposed to the client
-
-Both apps fail fast with clear errors for missing/invalid variables.
+- **Backend**: Uses `@repo/shared-config` with `dotenv-flow` (see `.env.local.example`)
+- **Frontend**: Next.js environment variables (only `NEXT_PUBLIC_*` exposed to client)
 
 ### Security
 
@@ -164,140 +161,12 @@ Pre-commit hooks (Husky + lint-staged) enforce:
 - ESLint rules
 - Only on staged files (fast commits)
 
-## Shared Packages
-
-### `@repo/shared-types`
-
-Zod schemas and TypeScript types shared across apps:
-
-```typescript
-import { UserSchema, type User } from '@repo/shared-types';
-
-const user: User = UserSchema.parse(data);
-```
-
-### `@repo/shared-utils`
-
-Common utility functions:
-
-```typescript
-import { formatDate, debounce } from '@repo/shared-utils';
-```
-
-### `@repo/shared-config`
-
-Environment configuration with validation:
-
-```typescript
-import { loadEnv, config } from '@repo/shared-config';
-
-loadEnv(); // Call once at app startup
-console.log(config.API_URL); // Type-safe access
-```
-
-## Frontend Features
-
-### UI Components (shadcn/ui)
-
-Pre-configured with essential components:
-
-- **Forms**: Button, Input, Textarea, Select, Checkbox, Radio Group, Switch, Slider, Label
-- **Layout**: Separator, Scroll Area, Tabs
-- **Overlays**: Dialog, Dropdown Menu, Popover, Tooltip
-- **Feedback**: Sonner (toasts), Skeleton (loading states)
-- **Display**: Avatar
-
-All components use Tailwind v4 with CSS variables for theming and support dark mode out of the box.
-
-### Data Fetching (TanStack Query)
-
-Configured with sensible defaults:
-
-```typescript
-import { useQuery } from '@tanstack/react-query';
-
-const { data, isLoading } = useQuery({
-  queryKey: ['users'],
-  queryFn: fetchUsers,
-});
-```
-
-Provider wraps the entire app in [layout.tsx](apps/frontend/src/app/layout.tsx).
-
-### State Management (Jotai)
-
-Primitive and flexible atoms-based state:
-
-```typescript
-import { atom, useAtom } from 'jotai';
-
-const countAtom = atom(0);
-
-function Counter() {
-  const [count, setCount] = useAtom(countAtom);
-  return <button onClick={() => setCount(c => c + 1)}>{count}</button>;
-}
-```
-
-See [store/atoms.ts](apps/frontend/src/store/atoms.ts) for examples.
-
-### Forms (React Hook Form + Zod)
-
-Fully integrated with shadcn/ui form components:
-
-```typescript
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { createFormResolver } from '@/lib/form-utils';
-
-const schema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
-
-const form = useForm({
-  resolver: createFormResolver(schema),
-});
-```
-
-### Theme Support
-
-Dark mode with next-themes, toggled via `ThemeProvider`:
-
-```typescript
-import { useTheme } from 'next-themes';
-
-const { theme, setTheme } = useTheme();
-```
-
-### Examples
-
-Visit `/example` to see all integrations in action:
-
-- Complete form with validation and error handling
-- Data fetching with loading states
-- Global state management
-- Toast notifications
-- Dark mode toggle
-
-## Development Workflow
-
-1. **Install**: `pnpm install`
-2. **Environment**: Copy and configure `.env.local.example` files
-3. **Build shared packages**: `pnpm build --filter="./shared/*"` (or let `pnpm dev` handle it)
-4. **Develop**: `pnpm dev`
-5. **Commit**: Pre-commit hooks automatically format and lint
-
 ## Philosophy
 
 This template is opinionated by design:
 
 - **Type safety first**: Runtime validation + compile-time checking
 - **Monorepo done right**: Workspace dependencies, not published packages
-- **Fast feedback**: Turborepo caching and parallel execution
-- **Production-ready**: Environment validation, proper build pipeline, code quality gates
-- **Developer experience**: Hot reload, instant updates across packages, clear error messages
-
-## License
-
-MIT
+- **Fast feedback**: Turborepo caching and parallel execution makes it blazingly fast
+- **Production-ready**: Environment validation, proper build pipeline, code quality guardrails
+- **Brilliant DX**: HMR, instant updates across packages, clear error messages
