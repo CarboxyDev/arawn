@@ -15,6 +15,7 @@
 - 🏗️ **Turborepo** for optimized build orchestration
 - 🧰 **Modern tooling**: TypeScript, ESLint, Prettier, Husky
 - 📝 **Runtime validation** with Zod schemas as single source of truth
+- 🧪 **Comprehensive testing**: Vitest setup with CI integration for frontend, backend, and shared packages
 - 🤖 **AI-ready**: Comprehensive CLAUDE.md for instant AI assistant onboarding
 
 ### Frontend Batteries 🔋
@@ -103,6 +104,8 @@ pnpm build            # Build all packages and applications
 pnpm typecheck        # Type check all packages
 pnpm lint             # Lint all packages
 pnpm lint:fix         # Lint and auto-fix issues
+pnpm test             # Run all tests
+pnpm test:coverage    # Run tests with coverage reports
 ```
 
 ### Per-package commands
@@ -113,12 +116,16 @@ cd apps/frontend
 pnpm dev              # Next.js dev server
 pnpm build            # Production build
 pnpm typecheck        # Type checking only
+pnpm test             # Run tests
+pnpm test:coverage    # Run tests with coverage
 
 # Backend (runs on port 8080)
 cd apps/backend
 pnpm dev              # NestJS watch mode
 pnpm build            # Production build
 pnpm start            # Run production build
+pnpm test             # Run tests
+pnpm test:coverage    # Run tests with coverage
 
 # Database (Prisma)
 cd apps/backend
@@ -132,6 +139,8 @@ pnpm db:seed          # Seed database
 cd shared/{types|utils|config}
 pnpm dev              # Watch mode with tsup
 pnpm build            # Build with tsup
+pnpm test             # Run tests
+pnpm test:coverage    # Run tests with coverage
 ```
 
 ## Architecture Decisions
@@ -179,6 +188,15 @@ Backend security features:
 - **CORS**: Strict origin policy (only `FRONTEND_URL` allowed)
 - **Credentials**: Cookie-based authentication support
 
+### Testing
+
+Comprehensive testing setup with Vitest:
+
+- **Unit & Integration Tests**: Vitest for all packages (frontend, backend, shared)
+- **Coverage Reports**: Automatic coverage generation with thresholds
+- **CI Integration**: GitHub Actions workflow runs tests on every push/PR
+- **Watch Mode**: Fast feedback during development
+
 ### Code Quality
 
 Pre-commit hooks (Husky + lint-staged) enforce:
@@ -186,6 +204,12 @@ Pre-commit hooks (Husky + lint-staged) enforce:
 - Prettier formatting
 - ESLint rules
 - Only on staged files (fast commits)
+
+CI/CD pipeline ensures:
+
+- All tests pass before merge
+- Type checking across packages
+- Linting compliance
 
 ### AI-Assisted Development
 
@@ -203,5 +227,5 @@ This template is opinionated by design:
 - **Type safety first**: Runtime validation + compile-time checking
 - **Monorepo done right**: Workspace dependencies, not published packages
 - **Fast feedback**: Turborepo caching and parallel execution makes it blazingly fast
-- **Production-ready**: Environment validation, proper build pipeline, code quality guardrails
-- **Brilliant DX**: HMR, instant updates across packages, clear error messages
+- **Production-ready**: Environment validation, proper build pipeline, code quality guardrails, comprehensive testing
+- **Brilliant DX**: HMR, instant updates across packages, clear error messages, fast tests with Vitest

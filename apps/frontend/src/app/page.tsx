@@ -4,11 +4,14 @@ import {
   Activity,
   ArrowRight,
   Bot,
+  Code2,
+  GitBranch,
   Github,
   PackageOpen,
   Rocket,
   Shield,
   Terminal,
+  TestTube,
   Workflow,
   Zap,
 } from 'lucide-react';
@@ -33,9 +36,10 @@ async function getHealth(): Promise<HealthCheck | null> {
 export default async function Home() {
   const health = await getHealth();
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
   const isLocalDev =
     apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
+
   const backendPort = new URL(apiUrl).port || '8080';
   const frontendPort = process.env.PORT || '3000';
 
@@ -158,12 +162,42 @@ export default async function Home() {
             </p>
           </div>
           <div className="rounded-lg border border-gray-200 p-6">
+            <Code2 className="mb-3 h-5 w-5 text-gray-700" />
+            <h3 className="mb-2 text-base font-medium text-gray-900">
+              Modern UI Components
+            </h3>
+            <p className="text-sm leading-relaxed text-gray-500">
+              shadcn/ui with Radix primitives, Tailwind v4, dark mode, and
+              Framer Motion
+            </p>
+          </div>
+          <div className="rounded-lg border border-gray-200 p-6">
+            <TestTube className="mb-3 h-5 w-5 text-gray-700" />
+            <h3 className="mb-2 text-base font-medium text-gray-900">
+              Comprehensive Testing
+            </h3>
+            <p className="text-sm leading-relaxed text-gray-500">
+              Vitest for unit and integration tests with coverage reports across
+              all packages
+            </p>
+          </div>
+          <div className="rounded-lg border border-gray-200 p-6">
             <PackageOpen className="mb-3 h-5 w-5 text-gray-700" />
             <h3 className="mb-2 text-base font-medium text-gray-900">
               Shared Packages
             </h3>
             <p className="text-sm leading-relaxed text-gray-500">
               Types, utilities, and config shared across frontend and backend
+            </p>
+          </div>
+          <div className="rounded-lg border border-gray-200 p-6">
+            <GitBranch className="mb-3 h-5 w-5 text-gray-700" />
+            <h3 className="mb-2 text-base font-medium text-gray-900">
+              CI/CD Ready
+            </h3>
+            <p className="text-sm leading-relaxed text-gray-500">
+              GitHub Actions workflow with automated testing, type checking, and
+              linting
             </p>
           </div>
           <div className="rounded-lg border border-gray-200 p-6">
@@ -231,6 +265,8 @@ export default async function Home() {
               <ul className="space-y-2.5 text-sm text-gray-600">
                 <li>Turborepo</li>
                 <li>pnpm Workspaces</li>
+                <li>Vitest (Testing)</li>
+                <li>GitHub Actions CI</li>
                 <li>ESLint 9 + Prettier</li>
                 <li>Husky + lint-staged</li>
                 <li>CLAUDE.md (AI Context)</li>
