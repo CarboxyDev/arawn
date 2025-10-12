@@ -8,7 +8,9 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
-    "lint:fix": "next lint --fix"
+    "lint:fix": "next lint --fix",
+    "vercel-build": "next build",
+    "vercel-ignore-build": "npx turbo-ignore --fallback=HEAD^1"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
