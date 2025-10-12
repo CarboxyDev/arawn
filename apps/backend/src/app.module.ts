@@ -6,6 +6,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { LoggerMiddleware } from '@/middleware/logger.middleware';
+import { PrismaModule } from '@/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { LoggerMiddleware } from '@/middleware/logger.middleware';
         limit: 10,
       },
     ]),
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [

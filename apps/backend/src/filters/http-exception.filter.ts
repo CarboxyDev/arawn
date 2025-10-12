@@ -35,7 +35,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    // Extract request context for logging
     const { method, url } = request;
 
     // Handle Zod validation errors (400 Bad Request)
@@ -63,7 +62,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
       return response
         .status(HttpStatus.TOO_MANY_REQUESTS)
-        .header('Retry-After', '60') // Retry after 60 seconds
+        .header('Retry-After', '60')
         .json({
           success: false,
           message: 'Too many requests, please try again later',

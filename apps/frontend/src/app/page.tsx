@@ -174,6 +174,8 @@ export default async function Home() {
               <ul className="space-y-2.5 text-sm text-gray-600">
                 <li>NestJS 11</li>
                 <li>TypeScript 5</li>
+                <li>Prisma 6 (ORM)</li>
+                <li>PostgreSQL 17</li>
                 <li>Zod v4 (Validation)</li>
                 <li>Swagger + Scalar (API Docs)</li>
                 <li>Helmet (Security)</li>
@@ -214,12 +216,19 @@ export default async function Home() {
               <span className="text-gray-400">$</span> pnpm install
             </div>
             <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
+              <span className="text-gray-400">$</span> docker-compose up -d
+            </div>
+            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
               <span className="text-gray-400">$</span> cp
               apps/frontend/.env.local.example apps/frontend/.env.local
             </div>
             <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
               <span className="text-gray-400">$</span> cp
               apps/backend/.env.local.example apps/backend/.env.local
+            </div>
+            <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
+              <span className="text-gray-400">$</span> cd apps/backend && pnpm
+              db:migrate
             </div>
             <div className="rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-700">
               <span className="text-gray-400">$</span> pnpm dev

@@ -75,6 +75,51 @@ All shared packages (`@repo/shared-types`, `@repo/shared-utils`, `@repo/shared-c
 - Frontend's `next.config.ts` transpiles these packages
 - All use Zod v4.1.12 for validation (types and config packages)
 
+### Database (Prisma + PostgreSQL)
+
+The backend uses Prisma 6.17.1 as the ORM with PostgreSQL:
+
+- **Schema**: Located in `apps/backend/prisma/schema.prisma`
+- **Client**: Generated to `apps/backend/node_modules/.prisma/client`
+- **Migrations**: Stored in `apps/backend/prisma/migrations/`
+- **PrismaService**: Global NestJS service in `apps/backend/src/prisma/`
+  - Extends PrismaClient with lifecycle hooks (onModuleInit)
+  - Exported globally via PrismaModule for DI
+
+**Database Commands (run from `apps/backend`):**
+
+```bash
+pnpm db:generate    # Generate Prisma Client
+pnpm db:migrate     # Create and apply migrations
+pnpm db:push        # Push schema changes (no migration files)
+pnpm db:studio      # Open Prisma Studio GUI
+pnpm db:seed        # Seed database
+```
+
+**Local Development with Docker:**
+
+PostgreSQL runs in Docker via `docker-compose.yml` at the root:
+
+```bash
+docker-compose up -d      # Start PostgreSQL + pgAdmin
+docker-compose down       # Stop services
+docker-compose down -v    # Stop and wipe data
+```
+
+- **PostgreSQL**: `localhost:5432` (credentials in `docker-compose.yml`)
+- **pgAdmin**: `http://localhost:5050` (admin@arawn.dev / admin)
+
+**Environment Variables:**
+
+- Backend uses `.env.local` for NestJS (via dotenv-flow)
+- Prisma uses `.env` file (create from `.env.local.example`)
+- `DATABASE_URL` must match Docker credentials: `postgresql://arawn:arawn_dev_password@localhost:5432/arawn_dev?sslmode=disable`
+
+**Turborepo Integration:**
+
+- `pnpm dev` automatically runs `db:generate` before starting the backend
+- Ensures Prisma Client is available before NestJS starts
+
 ### Environment Configuration
 
 Environment variables are managed per-app:
@@ -160,8 +205,14 @@ ESLint is configured with `simple-import-sort` to automatically organize imports
 ## Development Workflow
 
 1. Install dependencies: `pnpm install`
-2. Build shared packages first (or run `pnpm dev` to build automatically)
-3. Set up environment variables by copying `.env.local.example` files to `.env.local`
-4. Start development: `pnpm dev` (runs all apps concurrently)
+2. Start PostgreSQL: `docker-compose up -d`
+3. Set up environment variables:
+   ```bash
+   cp apps/frontend/.env.local.example apps/frontend/.env.local
+   cp apps/backend/.env.local.example apps/backend/.env.local
+   cp apps/backend/.env.local.example apps/backend/.env  # For Prisma
+   ```
+4. Run database migrations: `cd apps/backend && pnpm db:migrate`
+5. Start development: `pnpm dev` (runs all apps concurrently)
 
 Pre-commit hooks (via Husky and lint-staged) automatically format and lint changed files.

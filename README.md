@@ -31,6 +31,8 @@
 ### Backend Batteries 🔋
 
 - 📚 **Swagger + Scalar** - Auto-generated API documentation at `/docs`
+- 🗄️ **Prisma 6** - Type-safe ORM with PostgreSQL
+- 🐘 **PostgreSQL 17** - Local development via Docker Compose
 - 🔒 **Security** - Helmet for secure HTTP headers, rate limiting with @nestjs/throttler
 - 🌐 **CORS** - Configured for secure cross-origin requests
 - 🛡️ **NestJS** - Production-ready architecture with dependency injection
@@ -40,6 +42,7 @@
 
 - Node.js >= 20.0.0
 - pnpm >= 9.0.0
+- Docker (for local PostgreSQL)
 
 ## Getting Started
 
@@ -47,18 +50,30 @@
 # 1. Install dependencies
 pnpm install
 
-# 2. Set up environment variables
+# 2. Start PostgreSQL with Docker
+docker-compose up -d
+
+# 3. Set up environment variables
 cp apps/frontend/.env.local.example apps/frontend/.env.local
 cp apps/backend/.env.local.example apps/backend/.env.local
-# Edit .env.local files with your configuration
+cp apps/backend/.env.local.example apps/backend/.env  # For Prisma
+# Edit .env files with your configuration
 
-# 3. Start development (builds shared packages and runs all apps)
+# 4. Run database migrations
+cd apps/backend && pnpm db:migrate
+cd ../..
+
+# 5. Start development (builds shared packages and runs all apps)
 pnpm dev
 ```
+
+**Services:**
 
 - Frontend: `http://localhost:3000`
 - Backend: `http://localhost:8080`
 - API Docs: `http://localhost:8080/docs`
+- PostgreSQL: `localhost:5432`
+- pgAdmin: `http://localhost:5050` (admin@arawn.dev / admin)
 
 Pre-commit hooks (Husky + lint-staged) automatically format and lint staged files.
 
@@ -103,6 +118,14 @@ cd apps/backend
 pnpm dev              # NestJS watch mode
 pnpm build            # Production build
 pnpm start            # Run production build
+
+# Database (Prisma)
+cd apps/backend
+pnpm db:generate      # Generate Prisma Client
+pnpm db:migrate       # Create and apply migrations
+pnpm db:push          # Push schema changes (no migration)
+pnpm db:studio        # Open Prisma Studio GUI
+pnpm db:seed          # Seed database
 
 # Shared packages
 cd shared/{types|utils|config}

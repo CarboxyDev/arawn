@@ -8,7 +8,12 @@
     "start": "node dist/main",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
-    "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
+    "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
@@ -17,6 +22,7 @@
     "@nestjs/platform-express": "^11.1.6",
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/throttler": "^6.4.0",
+    "@prisma/client": "6.17.1",
     "@repo/shared-config": "workspace:*",
     "@repo/shared-types": "workspace:*",
     "@scalar/nestjs-api-reference": "^1.0.4",
@@ -36,11 +42,14 @@
     "@types/node": "^24.7.1",
     "@typescript-eslint/eslint-plugin": "^8.20.0",
     "@typescript-eslint/parser": "^8.20.0",
+    "dotenv-cli": "^10.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.1.8",
+    "prisma": "6.17.1",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.20.6",
     "typescript": "^5.7.2"
   }
 }

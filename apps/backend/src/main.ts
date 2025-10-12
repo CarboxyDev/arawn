@@ -11,10 +11,9 @@ import { GlobalExceptionFilter } from '@/filters/http-exception.filter';
 async function bootstrap() {
   const env = loadEnv();
 
-  // Use our custom Pino logger for NestJS framework logs
   const logger = new LoggerService();
   const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn'], // Only log errors and warnings, skip startup noise
+    logger: ['error', 'warn'],
   });
 
   // Global exception filter for error handling
