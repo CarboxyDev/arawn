@@ -5,11 +5,17 @@ import { apiReference } from '@scalar/nestjs-api-reference';
 import helmet from 'helmet';
 
 import { AppModule } from '@/app.module';
+import { LoggerService } from '@/common/logger.service';
 import { GlobalExceptionFilter } from '@/filters/http-exception.filter';
 
 async function bootstrap() {
   const env = loadEnv();
-  const app = await NestFactory.create(AppModule);
+
+  // Use our custom Pino logger for NestJS framework logs
+  const logger = new LoggerService();
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn'], // Only log errors and warnings, skip startup noise
+  });
 
   // Global exception filter for error handling
   app.useGlobalFilters(new GlobalExceptionFilter());
@@ -48,10 +54,8 @@ async function bootstrap() {
   );
 
   await app.listen(env.PORT);
-  console.log(`🚀 Application is running on: http://localhost:${env.PORT}`);
-  console.log(
-    `📚 API Documentation is running on: http://localhost:${env.PORT}/docs`
-  );
+  logger.log(`🚀 Server: http://localhost:${env.PORT}`, 'App');
+  logger.log(`📚 Docs: http://localhost:${env.PORT}/docs`, 'App');
 }
 
 bootstrap();

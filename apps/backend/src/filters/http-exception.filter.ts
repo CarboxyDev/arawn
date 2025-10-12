@@ -36,14 +36,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     // Extract request context for logging
-    const { method, url, headers } = request;
-    const userAgent = headers['user-agent'] || 'unknown';
-    const requestContext = `${method} ${url} [${userAgent}]`;
+    const { method, url } = request;
 
     // Handle Zod validation errors (400 Bad Request)
     if (exception instanceof ZodError) {
       this.logger.warn(
-        `Validation error: ${requestContext}`,
+        `Validation failed: ${method} ${url}`,
         'ExceptionFilter'
       );
 
@@ -61,10 +59,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     // Handle rate limiting (429 Too Many Requests)
     if (exception instanceof ThrottlerException) {
-      this.logger.warn(
-        `Rate limit exceeded: ${requestContext}`,
-        'ExceptionFilter'
-      );
+      this.logger.warn(`Rate limit: ${method} ${url}`, 'ExceptionFilter');
 
       return response
         .status(HttpStatus.TOO_MANY_REQUESTS)
@@ -84,15 +79,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       // Only log 5xx errors as errors, others as warnings
       if (status >= 500) {
         this.logger.error(
-          `HTTP ${status} error: ${requestContext}`,
+          `HTTP ${status}: ${method} ${url}`,
           exception.stack,
           'ExceptionFilter'
         );
       } else {
-        this.logger.warn(
-          `HTTP ${status}: ${requestContext}`,
-          'ExceptionFilter'
-        );
+        this.logger.warn(`HTTP ${status}: ${method} ${url}`, 'ExceptionFilter');
       }
 
       return response.status(status).json({
@@ -112,7 +104,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     // Handle unknown errors (500 Internal Server Error)
     this.logger.error(
-      `Unhandled exception: ${requestContext}`,
+      `Unhandled: ${method} ${url}`,
       exception instanceof Error ? exception.stack : String(exception),
       'ExceptionFilter'
     );
