@@ -16,7 +16,6 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
-import { isDevelopment } from '@/lib/env';
 
 async function getHealth(): Promise<HealthCheck | null> {
   try {
@@ -35,6 +34,8 @@ export default async function Home() {
   const health = await getHealth();
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  const isLocalDev =
+    apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
   const backendPort = new URL(apiUrl).port || '8080';
   const frontendPort = process.env.PORT || '3000';
 
@@ -61,7 +62,7 @@ export default async function Home() {
           </p>
         </div>
 
-        {health && isDevelopment() && (
+        {health && isLocalDev && (
           <div className="rounded-lg border border-gray-200 p-8">
             <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
