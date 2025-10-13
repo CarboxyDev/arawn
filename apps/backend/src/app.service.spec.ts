@@ -44,18 +44,50 @@ describe('AppService', () => {
   });
 
   describe('getUsers', () => {
-    it('should return empty array initially', () => {
-      const users = service.getUsers();
-      expect(users).toEqual([]);
-      expect(users).toHaveLength(0);
+    const defaultQuery = {
+      page: 1,
+      limit: 10,
+      sortBy: 'createdAt' as const,
+      sortOrder: 'desc' as const,
+    };
+
+    it('should return empty paginated response initially', () => {
+      const result = service.getUsers(defaultQuery);
+      expect(result.success).toBe(true);
+      expect(result.data).toEqual([]);
+      expect(result.data).toHaveLength(0);
+      expect(result.pagination.total).toBe(0);
+      expect(result.pagination.totalPages).toBe(0);
     });
 
-    it('should return all created users', () => {
+    it('should return paginated users', () => {
       service.createUser({ email: 'user1@test.com', name: 'User 1' });
       service.createUser({ email: 'user2@test.com', name: 'User 2' });
 
-      const users = service.getUsers();
-      expect(users).toHaveLength(2);
+      const result = service.getUsers(defaultQuery);
+      expect(result.data).toHaveLength(2);
+      expect(result.pagination.total).toBe(2);
+      expect(result.pagination.totalPages).toBe(1);
+    });
+
+    it('should filter users by search query', () => {
+      service.createUser({ email: 'john@test.com', name: 'John Doe' });
+      service.createUser({ email: 'jane@test.com', name: 'Jane Smith' });
+
+      const result = service.getUsers({ ...defaultQuery, search: 'john' });
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].name).toBe('John Doe');
+    });
+
+    it('should handle pagination correctly', () => {
+      service.createUser({ email: 'user1@test.com', name: 'User 1' });
+      service.createUser({ email: 'user2@test.com', name: 'User 2' });
+      service.createUser({ email: 'user3@test.com', name: 'User 3' });
+
+      const result = service.getUsers({ ...defaultQuery, page: 1, limit: 2 });
+      expect(result.data).toHaveLength(2);
+      expect(result.pagination.total).toBe(3);
+      expect(result.pagination.totalPages).toBe(2);
     });
   });
 
@@ -95,10 +127,15 @@ describe('AppService', () => {
       };
 
       service.createUser(createUser);
-      const users = service.getUsers();
+      const result = service.getUsers({
+        page: 1,
+        limit: 10,
+        sortBy: 'createdAt',
+        sortOrder: 'desc',
+      });
 
-      expect(users).toHaveLength(1);
-      expect(users[0].email).toBe(createUser.email);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].email).toBe(createUser.email);
     });
 
     it('should set timestamps as ISO strings', () => {

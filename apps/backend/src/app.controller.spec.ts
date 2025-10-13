@@ -49,29 +49,40 @@ describe('AppController', () => {
   });
 
   describe('getUsers', () => {
-    it('should return API response with empty users array', () => {
-      const result = controller.getUsers();
+    const defaultQuery = {
+      page: 1,
+      limit: 10,
+      sortBy: 'createdAt' as const,
+      sortOrder: 'desc' as const,
+    };
+
+    it('should return paginated API response with empty users array', () => {
+      const result = controller.getUsers(defaultQuery);
 
       expect(result).toHaveProperty('success', true);
       expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('pagination');
       expect(result.data).toEqual([]);
+      expect(result.pagination.total).toBe(0);
     });
 
-    it('should return all users from service', () => {
+    it('should return paginated users from service', () => {
       service.createUser({ email: 'test@example.com', name: 'Test User' });
 
-      const result = controller.getUsers();
+      const result = controller.getUsers(defaultQuery);
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(1);
       expect(result.data?.[0]).toHaveProperty('email', 'test@example.com');
+      expect(result.pagination.total).toBe(1);
     });
 
-    it('should call service getUsers method', () => {
+    it('should call service getUsers method with query params', () => {
       const spy = vi.spyOn(service, 'getUsers');
-      controller.getUsers();
+      controller.getUsers(defaultQuery);
 
       expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledWith(defaultQuery);
     });
   });
 
@@ -99,24 +110,6 @@ describe('AppController', () => {
       };
 
       expect(() => controller.createUser(createUserDto)).not.toThrow();
-    });
-
-    it('should throw error for invalid email', () => {
-      const invalidDto = {
-        email: 'not-an-email',
-        name: 'Test User',
-      };
-
-      expect(() => controller.createUser(invalidDto)).toThrow();
-    });
-
-    it('should throw error for empty name', () => {
-      const invalidDto = {
-        email: 'test@example.com',
-        name: '',
-      };
-
-      expect(() => controller.createUser(invalidDto)).toThrow();
     });
 
     it('should call service createUser method', () => {

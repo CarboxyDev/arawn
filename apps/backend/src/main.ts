@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { loadEnv } from '@repo/shared-config';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import helmet from 'helmet';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppModule } from '@/app.module';
 import { LoggerService } from '@/common/logger.service';
@@ -18,6 +19,9 @@ async function bootstrap() {
 
   // Global exception filter for error handling
   app.useGlobalFilters(new GlobalExceptionFilter());
+
+  // Global Zod validation pipe
+  app.useGlobalPipes(new ZodValidationPipe());
 
   app.use(
     helmet({

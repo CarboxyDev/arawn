@@ -146,15 +146,132 @@ Backend security middleware configured in `main.ts`:
 - **CORS**: Strict origin policy allowing only `FRONTEND_URL`
 - ThrottlerGuard is applied globally to all routes
 
-### Type Safety
+### Type Safety & Validation
 
-The codebase emphasizes runtime and compile-time type safety:
+The codebase emphasizes runtime and compile-time type safety with Zod v4 as the single validation library across the entire stack:
 
-- Zod v4 schemas in `shared/types` serve as single source of truth
-- Types are inferred from schemas using `z.infer<typeof Schema>`
-- Environment variables are validated at runtime using Zod
-- All packages use strict TypeScript settings from `tsconfig.base.json`
-- All shared packages use Zod v4.1.12 for consistency
+- **Schema-First Approach**: Zod v4 schemas in `shared/types` serve as single source of truth
+- **Type Inference**: Types are inferred from schemas using `z.infer<typeof Schema>`
+- **Runtime Validation**: All user input (API requests, env vars) validated at runtime
+- **Automatic API Documentation**: OpenAPI schemas generated from Zod schemas
+- **Consistency**: All packages use Zod v4.1.12 for validation
+- **No Dual Systems**: We DO NOT use class-validator - only Zod everywhere
+
+#### API Request Validation with Zod (Backend)
+
+The backend uses `nestjs-zod` for automatic request validation via NestJS pipes:
+
+**Step 1: Define Schemas in `shared/types`**
+
+```typescript
+// shared/types/src/index.ts
+import { z } from 'zod';
+
+export const CreateUserSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1),
+});
+
+export type CreateUser = z.infer<typeof CreateUserSchema>;
+
+export const QueryUsersSchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(10),
+  search: z.string().optional(),
+  sortBy: z.enum(['name', 'email', 'createdAt']).default('createdAt'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+});
+
+export type QueryUsers = z.infer<typeof QueryUsersSchema>;
+```
+
+**Step 2: Create DTO Classes in Controller**
+
+```typescript
+// apps/backend/src/users/users.controller.ts
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  CreateUserSchema,
+  QueryUsersSchema,
+  type User,
+} from '@repo/shared-types';
+import { createZodDto } from 'nestjs-zod';
+
+import { UsersService } from '@/users/users.service';
+
+// Create DTO classes from Zod schemas
+class CreateUserDto extends createZodDto(CreateUserSchema) {}
+class QueryUsersDto extends createZodDto(QueryUsersSchema) {}
+
+@ApiTags('Users')
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'Get paginated users with filtering' })
+  @ApiResponse({ status: 200, description: 'Returns paginated users' })
+  getUsers(@Query() query: QueryUsersDto): PaginatedResponse<User> {
+    // query is automatically validated and transformed
+    return this.usersService.getUsers(query);
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({ status: 201, description: 'User created' })
+  @ApiResponse({ status: 400, description: 'Validation failed' })
+  createUser(@Body() dto: CreateUserDto): ApiResponse<User> {
+    // dto is automatically validated
+    return this.usersService.createUser(dto);
+  }
+}
+```
+
+**Step 3: Global Validation Pipe (Already Configured)**
+
+```typescript
+// apps/backend/src/main.ts
+import { ZodValidationPipe } from 'nestjs-zod';
+
+app.useGlobalPipes(new ZodValidationPipe());
+```
+
+**Validation Features:**
+
+- ✅ **Automatic Validation**: All `@Body()`, `@Query()`, `@Param()` automatically validated
+- ✅ **Type Coercion**: Query params like `?page=1` automatically coerced to numbers
+- ✅ **Default Values**: Missing optional fields filled with defaults
+- ✅ **Detailed Errors**: Validation failures return structured error responses
+- ✅ **OpenAPI Integration**: Swagger docs automatically show validation rules
+- ✅ **Shared Validation**: Frontend can use same schemas for client-side validation
+
+**Error Response Format:**
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "statusCode": 400,
+  "errors": [
+    {
+      "code": "invalid_format",
+      "format": "email",
+      "path": ["email"],
+      "message": "Invalid email address"
+    }
+  ],
+  "timestamp": "2025-10-13T08:29:44.635Z",
+  "path": "/users"
+}
+```
+
+**When to Use Shared Schemas vs Backend-Only:**
+
+- **Shared (`shared/types`)**: User-facing operations, forms frontend validates, public API payloads
+- **Backend-Only**: Internal operations, admin endpoints, complex backend-specific logic
+
+**IMPORTANT**: Always define Zod schemas first, then infer types - never the opposite
 
 ## Coding Standards
 
@@ -273,7 +390,7 @@ NestJS follows a layered architecture pattern:
 
 - **Controllers**: Handle HTTP requests and responses, keep them thin
 - **Services**: Contain business logic and orchestrate data operations
-- **DTOs (Data Transfer Objects)**: Validate request/response payloads using Zod or class-validator
+- **DTOs (Data Transfer Objects)**: Created from Zod schemas using `createZodDto()` from `nestjs-zod`
 - **Guards**: Implement authentication and authorization logic
 - **Interceptors**: Handle cross-cutting concerns (logging, transformations, timing)
 - **Middleware**: Process requests before they reach route handlers
@@ -284,14 +401,15 @@ NestJS follows a layered architecture pattern:
 ```
 backend/src/
 ├── modules/           # Feature modules (users, auth, etc.)
-│   ├── controllers/   # Route handlers
+│   ├── controllers/   # Route handlers (define DTO classes here)
 │   ├── services/      # Business logic
-│   ├── dto/          # Data transfer objects
-│   └── entities/     # Prisma models/types
-├── common/           # Shared utilities, guards, interceptors
-├── prisma/           # Prisma service
-└── config/           # Configuration management
+│   └── entities/      # Prisma models/types
+├── common/            # Shared utilities, guards, interceptors
+├── prisma/            # Prisma service
+└── config/            # Configuration management
 ```
+
+**Note**: Zod schemas are defined in `shared/types`, not in backend `dto/` folders. DTO classes are created inline in controllers using `createZodDto()`.
 
 ### Error Handling
 
@@ -349,4 +467,5 @@ backend/src/
 ### Important Notes
 
 - If you are unsure about anything, ask the user for clarification. I cannot stress this enough.
+- Prefer using commands or exec scripts (like pnpm dlx) for setup related tasks instead of making all the files manually. In case the command requires interactive input, ask the user to do it themselves and provide them with suitable guidance.
 - Make sure you aggressively prefer planning and waiting for user confirmation before writing code for medium to major tasks.

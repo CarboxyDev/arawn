@@ -32,6 +32,7 @@
     "@scalar/nestjs-api-reference": "^1.0.4",
     "dotenv-flow": "^4.1.0",
     "helmet": "^8.1.0",
+    "nestjs-zod": "^5.0.1",
     "pino": "^10.0.0",
     "pino-http": "^11.0.0",
     "pino-pretty": "^13.1.2",

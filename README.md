@@ -32,13 +32,13 @@
 
 ### Backend Batteries 🔋
 
-- 📚 **Swagger + Scalar** - Auto-generated API documentation at `/docs`
+- 📚 **Swagger + Scalar** - Auto-generated API documentation at `/docs` with Zod schema integration
 - 🗄️ **Prisma 6** - Type-safe ORM with PostgreSQL
 - 🐘 **PostgreSQL 17** - Local development via Docker Compose
 - 🔒 **Security** - Helmet for secure HTTP headers, rate limiting with @nestjs/throttler
 - 🌐 **CORS** - Configured for secure cross-origin requests
 - 🛡️ **NestJS** - Production-ready architecture with dependency injection
-- ✅ **Zod v4** - Runtime validation for requests and responses
+- ✅ **Zod v4 Validation** - Automatic request/response validation with `nestjs-zod`, shared schemas with frontend
 
 ## Prerequisites
 
