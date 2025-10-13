@@ -41,6 +41,13 @@
 - 🛡️ **NestJS** - Production-ready architecture with dependency injection
 - ✅ **Zod v4 Validation** - Automatic request/response validation with `nestjs-zod`, shared schemas with frontend
 
+### Development Tools 🛠️
+
+- 🎭 **Faker.js Integration** - Type-safe mock data generators via `@repo/shared-utils`
+- 🌱 **Enhanced Seeding** - Configurable database seeding with realistic test data
+- 🔄 **Database Reset Scripts** - Quick database reset commands for development
+- 🧪 **Test Utilities** - Reusable factories for tests and seeds across the monorepo
+
 ## Prerequisites
 
 - Node.js >= 20.0.0
@@ -89,7 +96,7 @@ arawn/
 │   └── backend/           # NestJS application
 ├── shared/
 │   ├── types/            # Zod schemas and TypeScript types
-│   ├── utils/            # Shared utility functions
+│   ├── utils/            # Shared utility functions + mock data factories
 │   └── config/           # Environment configuration
 ├── turbo.json            # Turborepo task configuration
 └── pnpm-workspace.yaml   # Workspace definition
@@ -134,7 +141,12 @@ pnpm db:generate      # Generate Prisma Client
 pnpm db:migrate       # Create and apply migrations
 pnpm db:push          # Push schema changes (no migration)
 pnpm db:studio        # Open Prisma Studio GUI
-pnpm db:seed          # Seed database
+pnpm db:seed          # Seed database with mock data
+pnpm db:reset         # Reset database (drop + migrate, no seed)
+pnpm db:reset:seed    # Reset database and seed with fresh data
+
+# Customize seeding
+SEED_USER_COUNT=50 pnpm db:seed  # Seed with 50 users instead of default 10
 
 # Shared packages
 cd shared/{types|utils|config}
@@ -211,6 +223,65 @@ CI/CD pipeline ensures:
 - All tests pass before merge
 - Type checking across packages
 - Linting compliance
+
+### Development Utilities (`@repo/shared-utils`)
+
+The `shared/utils` package includes type-safe mock data generators (via Faker.js) alongside production utilities:
+
+**Mock Data Factories:**
+
+```typescript
+import {
+  createMockUser,
+  createMockUsers,
+  createMockUserData,
+} from '@repo/shared-utils';
+
+// Generate data for Prisma create (no id/timestamps)
+const userData = createMockUserData();
+await prisma.user.create({ data: userData });
+
+// Generate multiple users
+const usersData = createMockUsersData(50);
+await prisma.user.createMany({ data: usersData });
+
+// Generate complete mock users for testing
+const mockUser = createMockUser({ email: 'test@example.com' });
+expect(mockUser).toHaveProperty('id');
+```
+
+**Deterministic Data Generation:**
+
+```typescript
+import { configureFaker } from '@repo/shared-utils';
+
+// Use a seed for reproducible data (useful for demos/screenshots)
+configureFaker(12345);
+const user1 = createMockUser(); // Always generates same data
+
+// Or use random seed
+configureFaker(); // Uses Date.now()
+```
+
+**Usage in Seeds:**
+
+The `apps/backend/prisma/seed.ts` file demonstrates best practices:
+
+- Environment-based configuration (`SEED_USER_COUNT`)
+- Bulk data generation with `createManyAndReturn`
+- Type-safe mock data from shared package
+
+**Usage in Tests:**
+
+```typescript
+import { createMockUser } from '@repo/shared-utils';
+
+it('should process user data', () => {
+  const user = createMockUser({ name: 'Test User' });
+  const result = processUser(user);
+  expect(result).toBeDefined();
+});
+```
 
 ### AI-Assisted Development
 
