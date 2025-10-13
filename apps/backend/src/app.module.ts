@@ -5,7 +5,9 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
+import { LoggerModule } from '@/common/logger.module';
 import { LoggerMiddleware } from '@/middleware/logger.middleware';
+import { RequestIdMiddleware } from '@/middleware/request-id.middleware';
 import { PrismaModule } from '@/prisma/prisma.module';
 
 @Module({
@@ -20,6 +22,7 @@ import { PrismaModule } from '@/prisma/prisma.module';
         limit: 10,
       },
     ]),
+    LoggerModule,
     PrismaModule,
   ],
   controllers: [AppController],
@@ -33,6 +36,6 @@ import { PrismaModule } from '@/prisma/prisma.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(RequestIdMiddleware, LoggerMiddleware).forRoutes('*');
   }
 }

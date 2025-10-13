@@ -146,6 +146,271 @@ Backend security middleware configured in `main.ts`:
 - **CORS**: Strict origin policy allowing only `FRONTEND_URL`
 - ThrottlerGuard is applied globally to all routes
 
+### Production Logging & Error Tracking
+
+The backend uses Pino for structured, production-ready logging with request tracing and configurable verbosity.
+
+**Philosophy**: Single unified logging pattern throughout the codebase. No alternatives - this is the way.
+
+#### Environment Configuration
+
+Control logging verbosity via `LOG_LEVEL` in `.env.local`:
+
+```bash
+# Logging verbosity level
+LOG_LEVEL=normal  # minimal | normal | detailed | verbose
+```
+
+**Verbosity Levels:**
+
+| Level      | When to Use         | What Gets Logged                                         |
+| ---------- | ------------------- | -------------------------------------------------------- |
+| `minimal`  | Production default  | Only errors (4xx/5xx) and critical warnings              |
+| `normal`   | Development default | All HTTP requests, business events, errors               |
+| `detailed` | Debugging/staging   | + Debug info, SQL queries, cache operations, user agents |
+| `verbose`  | Deep debugging      | + Request/response bodies (sanitized), timing breakdowns |
+
+#### Logger API
+
+**Basic Usage (95% of logs):**
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { LoggerService } from '@/common/logger.service';
+
+@Injectable()
+export class UsersService {
+  constructor(private readonly logger: LoggerService) {
+    this.logger.setContext('UsersService');
+  }
+
+  async createUser(data: CreateUserDto) {
+    this.logger.info('Creating user', { email: data.email });
+
+    try {
+      const user = await this.prisma.user.create({ data });
+      this.logger.info('User created successfully', { userId: user.id });
+      return user;
+    } catch (error) {
+      this.logger.error('Failed to create user', error, { email: data.email });
+      throw error;
+    }
+  }
+}
+```
+
+**Explicit Verbosity Control (5% of logs):**
+
+Use verbosity modifiers when you need fine-grained control:
+
+```typescript
+// Force log even in minimal mode (critical operations)
+this.logger.verbose().info('Payment processed', { orderId, amount });
+
+// Suppress noisy logs in normal development
+this.logger.minimal().http('Health check passed');
+
+// Show detailed debug info when investigating
+this.logger.detailed().debug('Cache lookup', { key, hit: true });
+```
+
+**Log Methods:**
+
+- `logger.info(message, context?)` - Standard information (shown in normal+)
+- `logger.error(message, error?, context?)` - Errors with automatic Error serialization (always shown)
+- `logger.warn(message, context?)` - Warnings (always shown)
+- `logger.debug(message, context?)` - Debug information (shown in detailed+)
+- `logger.http(message, context?)` - HTTP requests (shown in normal+)
+
+**Verbosity Modifiers (chainable):**
+
+- `logger.minimal()` - Only critical logs
+- `logger.normal()` - Standard logs
+- `logger.detailed()` - Include debug info
+- `logger.verbose()` - Everything
+
+#### Request ID Tracking
+
+Every request automatically gets a unique ID tracked across the entire request lifecycle:
+
+```typescript
+// Request ID is automatically injected into logs
+this.logger.info('Processing order', { orderId: 123 });
+// Output: { reqId: "req-abc-123", context: "OrderService", orderId: 123, msg: "Processing order" }
+
+// Request ID is also returned in response headers
+// X-Request-ID: req-abc-123
+
+// Client can provide request ID for distributed tracing
+// curl -H "X-Request-ID: trace-xyz" http://localhost:8080/orders
+```
+
+Request IDs enable:
+
+- Tracing a single request through logs
+- Correlating frontend errors with backend logs
+- Debugging distributed systems
+- Production issue investigation
+
+#### Structured Logging Best Practices
+
+**DO:**
+
+```typescript
+// ✅ Structured context
+this.logger.info('User login successful', {
+  userId,
+  email,
+  loginMethod: 'oauth',
+});
+
+// ✅ Proper error serialization
+this.logger.error('Database query failed', error, { query: 'SELECT users' });
+
+// ✅ Child loggers for context
+const childLogger = this.logger.child('PaymentProcessor');
+childLogger.info('Processing payment');
+
+// ✅ Explicit verbosity for noisy operations
+this.logger.minimal().http('GET /health');
+```
+
+**DON'T:**
+
+```typescript
+// ❌ String concatenation
+this.logger.info(`User ${userId} logged in with ${email}`);
+
+// ❌ Logging sensitive data
+this.logger.info('User credentials', { password: user.password }); // Use sanitization!
+
+// ❌ Using console.log
+console.log('Something happened'); // Always use LoggerService
+
+// ❌ Excessive logging in hot paths
+for (const item of items) {
+  this.logger.debug('Processing item', { item }); // Use minimal() or remove
+}
+```
+
+#### Log Output Examples
+
+**Development (LOG_LEVEL=normal):**
+
+```
+12:34:56 INFO  [UsersService] User created successfully
+  userId: 123
+  email: "user@example.com"
+  reqId: "req-abc-123"
+```
+
+**Production (LOG_LEVEL=minimal):**
+
+```json
+{
+  "level": "info",
+  "time": 1678901234567,
+  "reqId": "req-abc-123",
+  "context": "UsersService",
+  "userId": 123,
+  "email": "user@example.com",
+  "msg": "User created successfully"
+}
+```
+
+#### When to Use Each Verbosity Level
+
+**In Controllers:**
+
+```typescript
+@Controller('users')
+export class UsersController {
+  constructor(private readonly logger: LoggerService) {
+    this.logger.setContext('UsersController');
+  }
+
+  @Get(':id')
+  getUser(@Param('id') id: string) {
+    // HTTP logging is automatic via middleware
+    // Only log business-critical events
+    this.logger.info('User data retrieved', { userId: id });
+  }
+}
+```
+
+**In Services:**
+
+```typescript
+@Injectable()
+export class UsersService {
+  // Normal: Business operations
+  this.logger.info('User created', { userId });
+
+  // Detailed: Debugging flows
+  this.logger.detailed().debug('Checking user permissions', { userId, role });
+
+  // Minimal: Critical errors only
+  this.logger.minimal().error('Payment gateway down', error);
+
+  // Verbose: Deep debugging
+  this.logger.verbose().debug('API response', { body, headers });
+}
+```
+
+**In Middleware/Guards:**
+
+```typescript
+@Injectable()
+export class AuthGuard {
+  // Use minimal() to avoid polluting logs
+  this.logger.minimal().http('Auth check passed');
+
+  // Only log auth failures (security-relevant)
+  this.logger.warn('Authentication failed', { ip, reason });
+}
+```
+
+#### Database Query Logging
+
+Prisma queries are automatically logged based on `LOG_LEVEL`:
+
+- **minimal/normal**: Only errors and warnings
+- **detailed/verbose**: All queries with duration
+
+```typescript
+// Prisma automatically logs slow queries (>1s) even in production
+// No manual logging needed for DB operations
+```
+
+#### Sensitive Data Sanitization
+
+HTTP middleware automatically redacts sensitive fields:
+
+- `password`, `token`, `secret`, `authorization`, `cookie`, `api_key`, `accessToken`, `refreshToken`
+
+**Custom sanitization:**
+
+```typescript
+const sanitize = (data: unknown) => {
+  // Your sanitization logic
+  return sanitizedData;
+};
+
+this.logger.verbose().info('Request body', { body: sanitize(req.body) });
+```
+
+#### Production Debugging Workflow
+
+When investigating production issues:
+
+1. **Find the request ID** from error reports or user complaints
+2. **Search logs** for that request ID: `grep "req-abc-123" logs.json`
+3. **Temporarily increase verbosity** (if needed): Set `LOG_LEVEL=detailed` and restart
+4. **Reproduce the issue** and collect detailed logs
+5. **Reduce verbosity** back to `minimal` after debugging
+
+**IMPORTANT**: Never leave `LOG_LEVEL=verbose` in production - it logs request/response bodies and impacts performance.
+
 ### Type Safety & Validation
 
 The codebase emphasizes runtime and compile-time type safety with Zod v4 as the single validation library across the entire stack:
@@ -469,3 +734,7 @@ backend/src/
 - If you are unsure about anything, ask the user for clarification. I cannot stress this enough.
 - Prefer using commands or exec scripts (like pnpm dlx) for setup related tasks instead of making all the files manually. In case the command requires interactive input, ask the user to do it themselves and provide them with suitable guidance.
 - Make sure you aggressively prefer planning and waiting for user confirmation before writing code for medium to major tasks.
+- Always be unbiased towards the code, the user's preference and opinion. If you do not strongly agree with the user, make it clear with them.
+- Always mention alternative approaches to the user if you think it's necessary.
+- Always be honest with the user. Do not lie to them.
+- Do not be afraid of hurting the user's feelings or making them feel bad about their skills.

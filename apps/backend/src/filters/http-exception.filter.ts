@@ -9,6 +9,7 @@ import { ThrottlerException } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { ZodError } from 'zod';
 
+import { AsyncContextService } from '@/common/async-context';
 import { LoggerService } from '@/common/logger.service';
 
 /**
@@ -22,13 +23,19 @@ import { LoggerService } from '@/common/logger.service';
  *
  * Features:
  * - Environment-aware responses (dev shows stack traces, prod hides them)
- * - Request context logging (method, path, user-agent)
+ * - Request ID tracking for traceability
+ * - Structured error logging with proper Error serialization
  * - Structured error responses matching ApiResponse type
  */
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  private readonly logger = new LoggerService();
+  private readonly logger: LoggerService;
   private readonly isDevelopment = process.env.NODE_ENV === 'development';
+
+  constructor() {
+    this.logger = new LoggerService();
+    this.logger.setContext('ExceptionFilter');
+  }
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -36,13 +43,22 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     const { method, url } = request;
+    const requestId = AsyncContextService.getRequestId();
+    const userAgent = request.get('user-agent') || 'unknown';
+
+    const baseLogContext = {
+      method,
+      path: url,
+      requestId,
+      userAgent,
+    };
 
     // Handle Zod validation errors (400 Bad Request)
     if (exception instanceof ZodError) {
-      this.logger.warn(
-        `Validation failed: ${method} ${url}`,
-        'ExceptionFilter'
-      );
+      this.logger.minimal().warn('Validation failed', {
+        ...baseLogContext,
+        errors: exception.issues,
+      });
 
       return response.status(HttpStatus.BAD_REQUEST).json({
         success: false,
@@ -53,12 +69,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           code: err.code,
         })),
         ...(this.isDevelopment && { timestamp: new Date().toISOString() }),
+        ...(requestId && { requestId }),
       });
     }
 
     // Handle rate limiting (429 Too Many Requests)
     if (exception instanceof ThrottlerException) {
-      this.logger.warn(`Rate limit: ${method} ${url}`, 'ExceptionFilter');
+      this.logger.minimal().warn('Rate limit exceeded', baseLogContext);
 
       return response
         .status(HttpStatus.TOO_MANY_REQUESTS)
@@ -67,6 +84,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           success: false,
           message: 'Too many requests, please try again later',
           ...(this.isDevelopment && { timestamp: new Date().toISOString() }),
+          ...(requestId && { requestId }),
         });
     }
 
@@ -75,15 +93,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       const status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
-      // Only log 5xx errors as errors, others as warnings
       if (status >= 500) {
-        this.logger.error(
-          `HTTP ${status}: ${method} ${url}`,
-          exception.stack,
-          'ExceptionFilter'
-        );
+        this.logger
+          .minimal()
+          .error(`HTTP ${status} error`, exception, baseLogContext);
       } else {
-        this.logger.warn(`HTTP ${status}: ${method} ${url}`, 'ExceptionFilter');
+        this.logger.minimal().warn(`HTTP ${status}`, {
+          ...baseLogContext,
+          status,
+        });
       }
 
       return response.status(status).json({
@@ -98,30 +116,26 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           timestamp: new Date().toISOString(),
           path: url,
         }),
+        ...(requestId && { requestId }),
       });
     }
 
     // Handle unknown errors (500 Internal Server Error)
-    this.logger.error(
-      `Unhandled: ${method} ${url}`,
-      exception instanceof Error ? exception.stack : String(exception),
-      'ExceptionFilter'
-    );
+    const error =
+      exception instanceof Error ? exception : new Error(String(exception));
+
+    this.logger.minimal().error('Unhandled exception', error, baseLogContext);
 
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: this.isDevelopment
-        ? exception instanceof Error
-          ? exception.message
-          : 'Internal server error'
-        : 'Internal server error',
+      message: this.isDevelopment ? error.message : 'Internal server error',
       ...(this.isDevelopment && {
-        error:
-          exception instanceof Error ? exception.message : String(exception),
-        stack: exception instanceof Error ? exception.stack : undefined,
+        error: error.message,
+        stack: error.stack,
         timestamp: new Date().toISOString(),
         path: url,
       }),
+      ...(requestId && { requestId }),
     });
   }
 }

@@ -13,14 +13,14 @@ async function bootstrap() {
   const env = loadEnv();
 
   const logger = new LoggerService();
+  logger.setContext('Bootstrap');
+
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
   });
 
-  // Global exception filter for error handling
   app.useGlobalFilters(new GlobalExceptionFilter());
 
-  // Global Zod validation pipe
   app.useGlobalPipes(new ZodValidationPipe());
 
   app.use(
@@ -36,7 +36,6 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // OpenAPI configuration
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
     .setDescription('API documentation for the backend')
@@ -57,8 +56,11 @@ async function bootstrap() {
   );
 
   await app.listen(env.PORT);
-  logger.log(`🚀 Server: http://localhost:${env.PORT}`, 'App');
-  logger.log(`📚 Docs: http://localhost:${env.PORT}/docs`, 'App');
+  logger.info(`Server running on http://localhost:${env.PORT}`);
+  logger.info(
+    `API documentation available at http://localhost:${env.PORT}/docs`
+  );
+  logger.info(`Log level: ${env.LOG_LEVEL}`);
 }
 
 bootstrap();

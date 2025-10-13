@@ -32,6 +32,7 @@
 
 ### Backend Batteries 🔋
 
+- 📊 **Pino Structured Logging** - Production-ready logging with request tracing, configurable verbosity (`logger.verbose().debug()`), and error serialization
 - 📚 **Swagger + Scalar** - Auto-generated API documentation at `/docs` with Zod schema integration
 - 🗄️ **Prisma 6** - Type-safe ORM with PostgreSQL
 - 🐘 **PostgreSQL 17** - Local development via Docker Compose
