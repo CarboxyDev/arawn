@@ -34,6 +34,7 @@ describe('loadEnv', () => {
       FRONTEND_URL: 'http://localhost:3000',
       DATABASE_URL: 'postgresql://user:pass@localhost:5432/db',
       PORT: 8080,
+      LOG_LEVEL: 'normal',
     });
   });
 

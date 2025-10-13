@@ -42,6 +42,7 @@ jobs:
           FRONTEND_URL: ${{ secrets.FRONTEND_URL || 'http://localhost:3000' }}
           DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://user:pass@localhost:5432/db' }}
           PORT: ${{ secrets.PORT || '8080' }}
+          LOG_LEVEL: ${{ secrets.LOG_LEVEL || 'minimal' }}
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:8080' }}
 
       - name: Lint
