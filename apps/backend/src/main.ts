@@ -6,8 +6,8 @@ import helmet from 'helmet';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppModule } from '@/app.module';
+import { GlobalExceptionFilter } from '@/common/filters/http-exception.filter';
 import { LoggerService } from '@/common/logger.service';
-import { GlobalExceptionFilter } from '@/filters/http-exception.filter';
 
 async function bootstrap() {
   const env = loadEnv();

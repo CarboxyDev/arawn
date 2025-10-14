@@ -85,7 +85,7 @@ The backend uses Prisma 6.17.1 as the ORM with PostgreSQL:
 - **Schema**: Located in `apps/backend/prisma/schema.prisma`
 - **Client**: Generated to `apps/backend/node_modules/.prisma/client`
 - **Migrations**: Stored in `apps/backend/prisma/migrations/`
-- **PrismaService**: Global NestJS service in `apps/backend/src/prisma/`
+- **PrismaService**: Global NestJS service in `apps/backend/src/database/prisma/`
   - Extends PrismaClient with lifecycle hooks (onModuleInit)
   - Exported globally via PrismaModule for DI
 
@@ -453,7 +453,7 @@ export type QueryUsers = z.infer<typeof QueryUsersSchema>;
 **Step 2: Create DTO Classes in Controller**
 
 ```typescript
-// apps/backend/src/users/users.controller.ts
+// apps/backend/src/modules/users/users.controller.ts
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
@@ -463,7 +463,7 @@ import {
 } from '@repo/shared-types';
 import { createZodDto } from 'nestjs-zod';
 
-import { UsersService } from '@/users/users.service';
+import { UsersService } from '@/modules/users/users.service';
 
 // Create DTO classes from Zod schemas
 class CreateUserDto extends createZodDto(CreateUserSchema) {}
@@ -574,11 +574,13 @@ import { api } from '../lib/api';
 ```typescript
 // ✅ CORRECT - Use @/* alias
 import { AppService } from '@/app.service';
-import { UserDto } from '@/users/dto/user.dto';
+import { UsersService } from '@/modules/users/users.service';
+import { PrismaService } from '@/database/prisma/prisma.service';
+import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
 
 // ❌ WRONG - Never use relative paths
 import { AppService } from './app.service';
-import { UserDto } from '../users/dto/user.dto';
+import { UsersService } from '../modules/users/users.service';
 ```
 
 **Shared Packages:**
@@ -661,18 +663,43 @@ NestJS follows a layered architecture pattern:
 - **Middleware**: Process requests before they reach route handlers
 - **Dependency Injection**: Use constructor injection for all services and dependencies
 
-**Recommended Structure:**
+**Production Structure:**
 
 ```
 backend/src/
-├── modules/           # Feature modules (users, auth, etc.)
-│   ├── controllers/   # Route handlers (define DTO classes here)
-│   ├── services/      # Business logic
-│   └── entities/      # Prisma models/types
-├── common/            # Shared utilities, guards, interceptors
-├── prisma/            # Prisma service
-└── config/            # Configuration management
+├── app.module.ts           # Root application module
+├── app.controller.ts       # Root endpoints (/, /health)
+├── app.service.ts          # Application-level services
+├── main.ts                 # Application bootstrap
+│
+├── modules/                # Feature modules
+│   └── users/             # Example: User management module
+│       ├── users.module.ts        # Module definition
+│       ├── users.controller.ts    # HTTP route handlers
+│       ├── users.service.ts       # Business logic
+│       └── *.spec.ts              # Unit tests
+│
+├── database/               # Database layer
+│   └── prisma/            # Prisma ORM
+│       ├── prisma.module.ts
+│       ├── prisma.service.ts
+│       └── schema.prisma
+│
+└── common/                 # Shared utilities
+    ├── filters/           # Exception filters
+    ├── guards/            # Authentication guards
+    ├── interceptors/      # HTTP interceptors
+    ├── middleware/        # Request middleware
+    ├── decorators/        # Custom decorators
+    └── *.service.ts       # Shared services (logger, etc.)
 ```
+
+**Key Principles:**
+
+- Feature modules go in `modules/` (e.g., `modules/users/`, `modules/auth/`)
+- Each module is self-contained with controller, service, and tests
+- Infrastructure (database, logging) stays separate from business logic
+- Common utilities are grouped by type (filters, guards, middleware)
 
 **Note**: Zod schemas are defined in `shared/types`, not in backend `dto/` folders. DTO classes are created inline in controllers using `createZodDto()`.
 
