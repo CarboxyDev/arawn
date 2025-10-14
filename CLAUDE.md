@@ -616,6 +616,10 @@ ESLint is configured with `simple-import-sort` to automatically organize imports
 - Use kebab-case for all directories
 - Co-locate state management files with components when domain-specific
 - Keep API route handlers thin - delegate to services for business logic
+- **NEVER create `index.ts` barrel files** - Always use direct imports with explicit paths
+  - ❌ WRONG: `import { UsersListExample } from '@/components/examples'` (requires index.ts)
+  - ✅ CORRECT: `import { UsersListExample } from '@/components/examples/users-list-example'`
+  - Reason: Index files add unnecessary abstraction, can cause circular dependencies, and make imports less explicit
 
 ## Frontend Architecture Patterns
 
