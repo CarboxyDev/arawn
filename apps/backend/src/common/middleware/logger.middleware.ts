@@ -117,7 +117,11 @@ export class LoggerMiddleware implements NestMiddleware {
       'refreshToken',
     ];
 
-    const sanitized = Array.isArray(obj) ? [...obj] : { ...obj };
+    if (Array.isArray(obj)) {
+      return obj.map((item) => this.sanitize(item));
+    }
+
+    const sanitized: Record<string, unknown> = { ...obj };
 
     for (const key in sanitized) {
       if (
