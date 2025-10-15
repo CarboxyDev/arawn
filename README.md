@@ -199,7 +199,6 @@ Backend security features:
 - **Helmet**: Secure HTTP headers (CSP, HSTS, X-Frame-Options, etc.)
 - **Rate Limiting**: 10 requests per 60 seconds per IP via @nestjs/throttler
 - **CORS**: Strict origin policy (only `FRONTEND_URL` allowed)
-- **Credentials**: Cookie-based authentication support
 
 ### Testing
 

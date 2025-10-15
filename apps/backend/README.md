@@ -21,18 +21,20 @@ src/
 ├── database/               # Database layer
 │   └── prisma/            # Prisma ORM
 │       ├── prisma.module.ts
-│       ├── prisma.service.ts
-│       └── schema.prisma
+│       └── prisma.service.ts
 │
 └── common/                 # Shared utilities
     ├── filters/           # Exception filters
-    ├── guards/            # Auth guards
+    ├── guards/            # Authentication/authorization guards
     ├── interceptors/      # HTTP interceptors
     ├── middleware/        # Request middleware
     ├── decorators/        # Custom decorators
     ├── logger.service.ts  # Pino logger
     ├── logger.module.ts
     └── async-context.ts   # Request context
+
+prisma/                     # Prisma schema (at backend root)
+└── schema.prisma          # Database schema definition
 ```
 
 ## Development

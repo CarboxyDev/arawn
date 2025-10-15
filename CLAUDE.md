@@ -142,7 +142,7 @@ Environment variables are managed per-app:
 Backend security middleware configured in `main.ts`:
 
 - **Helmet**: Secure HTTP headers with dev-friendly CSP settings
-- **Rate Limiting**: 10 requests per 60 seconds per IP via @nestjs/throttler
+- **Rate Limiting**: 30 requests per 60 seconds per IP via @nestjs/throttler
 - **CORS**: Strict origin policy allowing only `FRONTEND_URL`
 - ThrottlerGuard is applied globally to all routes
 
