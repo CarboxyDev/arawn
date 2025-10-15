@@ -50,24 +50,6 @@ pnpm build            # Build with tsup
 
 ## Architecture
 
-### Monorepo Structure
-
-The repository follows a standard pnpm workspace pattern with Turborepo for task orchestration:
-
-- `apps/frontend` - Next.js 15 application (App Router)
-- `apps/backend` - NestJS application
-- `shared/types` - Shared Zod schemas and TypeScript types
-- `shared/utils` - Shared utility functions
-- `shared/config` - Environment configuration with dotenv-flow and Zod validation
-
-### Build Dependencies
-
-Turborepo manages task dependencies automatically:
-
-- All `build` tasks depend on `^build` (dependencies built first) and `typecheck`
-- Dev mode tasks depend on `^build` (shared packages must be built before apps can import them)
-- Shared packages use `tsup` to build both CJS and ESM outputs
-
 ### Shared Packages
 
 All shared packages (`@repo/shared-types`, `@repo/shared-utils`, `@repo/shared-config`) are consumed as workspace dependencies:
@@ -293,31 +275,6 @@ for (const item of items) {
 }
 ```
 
-#### Log Output Examples
-
-**Development (LOG_LEVEL=normal):**
-
-```
-12:34:56 INFO  [UsersService] User created successfully
-  userId: 123
-  email: "user@example.com"
-  reqId: "req-abc-123"
-```
-
-**Production (LOG_LEVEL=minimal):**
-
-```json
-{
-  "level": "info",
-  "time": 1678901234567,
-  "reqId": "req-abc-123",
-  "context": "UsersService",
-  "userId": 123,
-  "email": "user@example.com",
-  "msg": "User created successfully"
-}
-```
-
 #### When to Use Each Verbosity Level
 
 **In Controllers:**
@@ -511,31 +468,6 @@ app.useGlobalPipes(new ZodValidationPipe());
 - ✅ **OpenAPI Integration**: Swagger docs automatically show validation rules
 - ✅ **Shared Validation**: Frontend can use same schemas for client-side validation
 
-**Error Response Format:**
-
-```json
-{
-  "success": false,
-  "message": "Validation failed",
-  "statusCode": 400,
-  "errors": [
-    {
-      "code": "invalid_format",
-      "format": "email",
-      "path": ["email"],
-      "message": "Invalid email address"
-    }
-  ],
-  "timestamp": "2025-10-13T08:29:44.635Z",
-  "path": "/users"
-}
-```
-
-**When to Use Shared Schemas vs Backend-Only:**
-
-- **Shared (`shared/types`)**: User-facing operations, forms frontend validates, public API payloads
-- **Backend-Only**: Internal operations, admin endpoints, complex backend-specific logic
-
 **IMPORTANT**: Always define Zod schemas first, then infer types - never the opposite
 
 ## Coding Standards
@@ -591,15 +523,6 @@ import { UserSchema } from '@repo/shared-types';
 import { formatDate } from '@repo/shared-utils';
 import { loadEnv } from '@repo/shared-config';
 ```
-
-### Import Order
-
-ESLint is configured with `simple-import-sort` to automatically organize imports:
-
-1. External packages (React, Next.js, etc.)
-2. Workspace packages (@repo/\*)
-3. Absolute imports (@/\*)
-4. Relative imports (only when absolutely necessary)
 
 ### Naming Conventions
 
@@ -667,45 +590,13 @@ NestJS follows a layered architecture pattern:
 - **Middleware**: Process requests before they reach route handlers
 - **Dependency Injection**: Use constructor injection for all services and dependencies
 
-**Production Structure:**
-
-```
-backend/src/
-├── app.module.ts           # Root application module
-├── app.controller.ts       # Root endpoints (/, /health)
-├── app.service.ts          # Application-level services
-├── main.ts                 # Application bootstrap
-│
-├── modules/                # Feature modules
-│   └── users/             # Example: User management module
-│       ├── users.module.ts        # Module definition
-│       ├── users.controller.ts    # HTTP route handlers
-│       ├── users.service.ts       # Business logic
-│       └── *.spec.ts              # Unit tests
-│
-├── database/               # Database layer
-│   └── prisma/            # Prisma ORM
-│       ├── prisma.module.ts
-│       ├── prisma.service.ts
-│       └── schema.prisma
-│
-└── common/                 # Shared utilities
-    ├── filters/           # Exception filters
-    ├── guards/            # Authentication guards
-    ├── interceptors/      # HTTP interceptors
-    ├── middleware/        # Request middleware
-    ├── decorators/        # Custom decorators
-    └── *.service.ts       # Shared services (logger, etc.)
-```
-
 **Key Principles:**
 
 - Feature modules go in `modules/` (e.g., `modules/users/`, `modules/auth/`)
 - Each module is self-contained with controller, service, and tests
 - Infrastructure (database, logging) stays separate from business logic
-- Common utilities are grouped by type (filters, guards, middleware)
-
-**Note**: Zod schemas are defined in `shared/types`, not in backend `dto/` folders. DTO classes are created inline in controllers using `createZodDto()`.
+- Common utilities grouped by type in `common/` (filters, guards, middleware, interceptors, decorators)
+- Zod schemas defined in `shared/types`, DTO classes created inline in controllers using `createZodDto()`
 
 ### Error Handling
 
@@ -715,52 +606,7 @@ backend/src/
 - Log errors server-side for debugging
 - Use built-in exceptions: `BadRequestException`, `UnauthorizedException`, `NotFoundException`, etc.
 
-## Development Workflow
-
-### Initial Setup
-
-1. Install dependencies: `pnpm install`
-2. Start PostgreSQL: `docker-compose up -d`
-3. Set up environment variables:
-   ```bash
-   cp apps/frontend/.env.local.example apps/frontend/.env.local
-   cp apps/backend/.env.local.example apps/backend/.env.local
-   cp apps/backend/.env.local.example apps/backend/.env  # For Prisma
-   ```
-4. Run database migrations: `cd apps/backend && pnpm db:migrate`
-5. Start development: `pnpm dev` (runs all apps concurrently)
-
-### Development Best Practices
-
-- **Frontend runs on**: `localhost:3000`
-- **Backend runs on**: `localhost:8080`
-- **API documentation**: Available at `http://localhost:8080/docs` (Swagger + Scalar)
-- **Database GUI**: pgAdmin at `http://localhost:5050` or use `pnpm db:studio` from backend
-- Pre-commit hooks (via Husky and lint-staged) automatically format and lint changed files
-- **IMPORTANT**: Do not run `pnpm build` during active development - only for production builds
-
-## Performance Best Practices
-
-- Implement loading states for all async operations
-- Use React Query caching strategically
-- Optimize bundle size with dynamic imports for large components
-- Leverage Turborepo caching for faster builds
-- Use TypeScript for compile-time checks to catch errors early
-
-## Common Troubleshooting
-
-### State Management
-
-- Check that queries are properly invalidated after mutations
-
-### Build Issues
-
-- Ensure all TypeScript types are properly defined
-- Run `pnpm typecheck` to catch type errors
-- Verify shared packages are built before apps: `pnpm build`
-- Check that environment variables are properly configured
-
-### Important Notes
+## Important Notes
 
 - If you are unsure about anything, ask the user for clarification. I cannot stress this enough.
 - Prefer using commands or exec scripts (like pnpm dlx) for setup related tasks instead of making all the files manually. In case the command requires interactive input, ask the user to do it themselves and provide them with suitable guidance.
