@@ -152,18 +152,23 @@ export function ExampleForm() {
           control={form.control}
           name="terms"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>Accept terms and conditions</FormLabel>
-                <FormDescription>
-                  You agree to our Terms of Service and Privacy Policy.
-                </FormDescription>
+            <FormItem>
+              <div className="flex flex-row items-start space-x-3">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    className="mt-0.5"
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel className="cursor-pointer">
+                    Accept terms and conditions
+                  </FormLabel>
+                  <FormDescription>
+                    You agree to our Terms of Service and Privacy Policy.
+                  </FormDescription>
+                </div>
               </div>
               <FormMessage />
             </FormItem>

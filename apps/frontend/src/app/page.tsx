@@ -61,13 +61,25 @@ export default async function Home() {
         <AnimatedThemeToggler />
       </div>
       <div className="w-full max-w-5xl space-y-12">
-        <div className="space-y-3 text-center">
+        <div className="space-y-6 text-center">
           <h1 className="text-foreground text-6xl font-semibold tracking-tight">
             Arawn
           </h1>
           <p className="text-muted-foreground text-lg">
             Production-ready TypeScript monorepo template
           </p>
+          <div className="flex justify-center pt-2">
+            <Button
+              asChild
+              size="lg"
+              className="group shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+            >
+              <Link href="/examples" className="flex items-center gap-2">
+                View Live Examples
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {health && isLocalDev && (
@@ -320,15 +332,6 @@ export default async function Home() {
             Frontend: localhost:{frontendPort} • Backend: localhost:
             {backendPort} • API Docs: localhost:{backendPort}/docs
           </p>
-        </div>
-
-        <div className="flex justify-center">
-          <Button asChild size="lg" variant="outline" className="group">
-            <Link href="/example" className="flex items-center gap-2">
-              View Examples
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </Button>
         </div>
       </div>
     </main>
