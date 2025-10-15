@@ -58,7 +58,7 @@ export default async function Home() {
             GitHub
           </a>
         </Button>
-        <AnimatedThemeToggler className="border-input bg-background hover:bg-accent hover:text-accent-foreground flex h-9 w-9 items-center justify-center rounded-md border text-sm transition-colors" />
+        <AnimatedThemeToggler />
       </div>
       <div className="w-full max-w-5xl space-y-12">
         <div className="space-y-3 text-center">

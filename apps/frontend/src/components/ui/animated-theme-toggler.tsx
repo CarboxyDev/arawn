@@ -80,7 +80,14 @@ export const AnimatedThemeToggler = ({
   if (!mounted) {
     return (
       <button
-        className={cn(className, 'relative cursor-pointer overflow-visible')}
+        className={cn(
+          'relative cursor-pointer overflow-visible',
+          'bg-secondary hover:bg-secondary/80',
+          'border-border border',
+          'rounded-md p-2',
+          'transition-colors duration-200',
+          className
+        )}
         disabled
       >
         <div className="flex h-5 w-5 items-center justify-center" />
@@ -99,7 +106,14 @@ export const AnimatedThemeToggler = ({
         setIsHovered(false);
         setMousePosition({ x: 0, y: 0 });
       }}
-      className={cn(className, 'relative cursor-pointer overflow-visible')}
+      className={cn(
+        'relative cursor-pointer overflow-visible',
+        'bg-secondary hover:bg-secondary/80',
+        'border-border border',
+        'rounded-md p-2',
+        'transition-colors duration-200',
+        className
+      )}
       animate={{
         x: isHovered ? mousePosition.x : 0,
         y: isHovered ? mousePosition.y : 0,
