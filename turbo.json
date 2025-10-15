@@ -1,17 +1,28 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalDependencies": ["tsconfig.json", "turbo.json"],
   "tasks": {
     "build": {
       "dependsOn": ["^build", "typecheck"],
-      "outputs": ["dist/**", ".next/**", "build/**"]
+      "outputs": ["dist/**", ".next/**", "build/**"],
+      "inputs": [
+        "src/**",
+        "prisma/**",
+        "package.json",
+        "tsconfig.json",
+        "tsup.config.ts",
+        "next.config.ts",
+        "nest-cli.json"
+      ]
     },
     "typecheck": {
       "dependsOn": ["^build"],
-      "cache": false
+      "cache": true,
+      "inputs": ["src/**", "tsconfig.json", "package.json"]
     },
     "dev": {
-      "dependsOn": ["db:generate"],
+      "dependsOn": ["^build", "db:generate"],
       "cache": false,
       "persistent": true
     },
@@ -19,17 +30,36 @@
       "cache": false
     },
     "lint": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "eslint.config.*", "package.json"],
+      "outputs": []
     },
     "lint:fix": {
       "dependsOn": ["^build"],
-      "cache": false
+      "cache": false,
+      "inputs": ["src/**", "eslint.config.*", "package.json"]
     },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "vitest.config.ts",
+        "package.json"
+      ],
+      "outputs": ["coverage/**"]
     },
     "test:unit": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "vitest.config.ts",
+        "package.json"
+      ],
+      "outputs": ["coverage/**"]
     },
     "test:watch": {
       "dependsOn": ["^build"],
@@ -38,7 +68,14 @@
     },
     "test:coverage": {
       "dependsOn": ["^build"],
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/**"],
+      "inputs": [
+        "src/**",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "vitest.config.ts",
+        "package.json"
+      ]
     }
   }
 }

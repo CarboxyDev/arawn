@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Production-ready TypeScript monorepo with Next.js and NestJS",
   "scripts": {
-    "dev": "pnpm --filter \"@repo/shared-*\" build && turbo run dev --output-logs=new-only",
+    "dev": "turbo run dev --output-logs=new-only",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
@@ -14,7 +14,11 @@
     "test:unit": "turbo run test:unit",
     "test:watch": "turbo run test:watch",
     "test:coverage": "turbo run test:coverage",
+    "test:parallel": "turbo run test --concurrency=3",
     "test:ui": "vitest --ui",
+    "graph": "turbo run build --graph=graph.html && open graph.html",
+    "graph:dev": "turbo run dev --graph=dev-graph.html && open dev-graph.html",
+    "analyze": "turbo run build --dry-run=json > build-plan.json",
     "prepare": "husky"
   },
   "devDependencies": {

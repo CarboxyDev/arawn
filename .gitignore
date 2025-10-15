@@ -10,3 +10,8 @@ coverage
 .env.*.local
 .DS_Store
 .temp
+
+# Turborepo analysis files
+graph.html
+dev-graph.html
+build-plan.json

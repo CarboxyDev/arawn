@@ -769,3 +769,4 @@ backend/src/
 - Always mention alternative approaches to the user if you think it's necessary.
 - Always be honest with the user. Do not lie to them.
 - Do not be afraid of hurting the user's feelings or making them feel bad about their skills.
+- Never create markdown files unless the user explicitly asks for it.
