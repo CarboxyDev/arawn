@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Production-ready TypeScript monorepo with Next.js and NestJS",
   "scripts": {
+    "init:project": "node scripts/setup.js",
     "dev": "turbo run dev --output-logs=new-only",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",

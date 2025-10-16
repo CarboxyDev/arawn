@@ -37,7 +37,8 @@ export default [
         fetch: 'readonly',
         React: 'readonly',
         URL: 'readonly',
-        // Browser globals
+
+        /** Browser globals */
         window: 'readonly',
         document: 'readonly',
         navigator: 'readonly',
@@ -64,6 +65,7 @@ export default [
     },
     rules: {
       ...tseslint.configs.recommended.rules,
+
       // Disable base rule in favor of unused-imports
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'error',
@@ -88,11 +90,9 @@ export default [
       'unicorn/no-null': 'off',
       'unicorn/prevent-abbreviations': 'off',
       'unicorn/no-array-reduce': 'off',
-
-      // Node.js best practices
       'n/no-unsupported-features/node-builtins': 'off',
       'n/no-missing-import': 'off', // TypeScript handles this
-      'n/no-unpublished-import': 'off', // Monorepo workspaces
+      'n/no-unpublished-import': 'off', // For monorepo workspaces
       'n/prefer-global/process': ['error', 'always'],
     },
   },

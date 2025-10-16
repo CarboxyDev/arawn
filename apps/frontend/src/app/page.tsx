@@ -309,21 +309,15 @@ export default async function Home() {
               <span className="text-muted-foreground">$</span> pnpm install
             </div>
             <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
-              <span className="text-muted-foreground">$</span> docker-compose up
-              -d
-            </div>
-            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
-              <span className="text-muted-foreground">$</span> cp
-              apps/*/.env.local.example apps/*/.env.local
-            </div>
-            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
-              <span className="text-muted-foreground">$</span> cd apps/backend
-              && pnpm db:migrate
+              <span className="text-muted-foreground">$</span> pnpm init:project
             </div>
             <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
               <span className="text-muted-foreground">$</span> pnpm dev
             </div>
           </div>
+          <p className="text-muted-foreground mt-3 text-xs">
+            Automated setup: environment files, Docker, and database migrations
+          </p>
           <p className="text-muted-foreground mt-4 text-xs">
             Frontend: localhost:{frontendPort} • Backend: localhost:
             {backendPort} • API Docs: localhost:{backendPort}/docs

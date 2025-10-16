@@ -5,15 +5,21 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  const users = await prisma.user.createManyAndReturn({
-    data: [
-      { email: 'alice@example.com', name: 'Alice Johnson' },
-      { email: 'bob@example.com', name: 'Bob Smith' },
-      { email: 'charlie@example.com', name: 'Charlie Davis' },
-    ],
-  });
+  const usersData = [
+    { email: 'alice@example.com', name: 'Alice Johnson' },
+    { email: 'bob@example.com', name: 'Bob Smith' },
+    { email: 'charlie@example.com', name: 'Charlie Davis' },
+  ];
 
-  console.log(`✅ Created ${users.length} users`);
+  for (const user of usersData) {
+    await prisma.user.upsert({
+      where: { email: user.email },
+      update: {},
+      create: user,
+    });
+  }
+
+  console.log(`✅ Seeded ${usersData.length} users`);
 }
 
 main()

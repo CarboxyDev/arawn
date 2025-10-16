@@ -13,12 +13,33 @@ Production-ready TypeScript monorepo using pnpm workspaces and Turborepo, featur
 
 - Node.js >= 20.0.0
 - pnpm >= 9.0.0
+- Docker (for local PostgreSQL)
+
+## Quick Start
+
+```bash
+pnpm install          # Install dependencies
+pnpm init:project     # Automated setup (env files, Docker, migrations)
+pnpm dev              # Start all applications
+```
+
+The `pnpm init:project` command automates the entire setup process:
+
+- Checks prerequisites (Node.js, pnpm, Docker)
+- Copies `.env.local` files (if they don't exist)
+- Starts Docker Compose (PostgreSQL + pgAdmin)
+- Waits for PostgreSQL to be healthy
+- Runs database migrations
+- Optionally seeds the database
+
+**Safe to run multiple times** - skips completed steps automatically.
 
 ## Common Commands
 
 ### Development
 
 ```bash
+pnpm init:project     # Run automated setup (first time or to fix issues)
 pnpm dev              # Start all applications in dev mode (frontend on :3000, backend on :8080)
 pnpm build            # Build all packages and applications
 pnpm typecheck        # Type check all packages

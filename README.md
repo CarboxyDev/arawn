@@ -55,6 +55,34 @@
 
 ## Getting Started
 
+### Quick Setup (Recommended)
+
+```bash
+# 1. Install dependencies
+pnpm install
+
+# 2. Initialize project (automated setup)
+pnpm init:project
+
+# 3. Start development
+pnpm dev
+```
+
+The `pnpm init:project` script will:
+
+- ✓ Check prerequisites (Node.js, pnpm, Docker)
+- ✓ Copy environment files (if they don't exist)
+- ✓ Start Docker Compose (PostgreSQL + pgAdmin)
+- ✓ Wait for PostgreSQL to be healthy
+- ✓ Run database migrations
+- ✓ Optionally seed the database
+
+**Safe to run multiple times** - it will skip steps that are already complete.
+
+### Manual Setup (Alternative)
+
+If you prefer to set up manually:
+
 ```bash
 # 1. Install dependencies
 pnpm install
