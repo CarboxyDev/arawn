@@ -4,9 +4,11 @@ import {
   Activity,
   ArrowRight,
   Bot,
+  Boxes,
   Code2,
   GitBranch,
   Github,
+  Info,
   PackageOpen,
   Rocket,
   Shield,
@@ -19,6 +21,11 @@ import Link from 'next/link';
 
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { siteConfig } from '@/config/site';
 
 async function getHealth(): Promise<HealthCheck | null> {
@@ -42,7 +49,6 @@ export default async function Home() {
     apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
 
   const backendPort = new URL(apiUrl).port || '8080';
-  const frontendPort = process.env.PORT || '3000';
 
   return (
     <main className="bg-background relative flex min-h-screen flex-col items-center justify-center p-8">
@@ -233,8 +239,9 @@ export default async function Home() {
         </div>
 
         <div className="border-border bg-card rounded-lg border p-8">
-          <h2 className="text-card-foreground mb-8 text-xl font-medium">
-            Tech Stack
+          <h2 className="text-card-foreground mb-8 flex items-center gap-2 text-xl font-medium">
+            <Boxes className="text-foreground h-5 w-5" />
+            <span>Tech Stack</span>
           </h2>
           <div className="grid gap-x-12 gap-y-8 md:grid-cols-2">
             <div>
@@ -308,20 +315,69 @@ export default async function Home() {
             <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
               <span className="text-muted-foreground">$</span> pnpm install
             </div>
-            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
-              <span className="text-muted-foreground">$</span> pnpm init:project
+            <div className="border-border bg-card text-card-foreground flex items-center justify-between gap-3 rounded-md border px-4 py-3">
+              <span>
+                <span className="text-muted-foreground">$</span> pnpm
+                init:project
+              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="What does init:project do?"
+                  >
+                    <Info className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-xs"
+                  sideOffset={8}
+                >
+                  Automated setup: checks prerequisites, creates environment
+                  files, starts Docker containers, runs database migrations, and
+                  optionally seeds data
+                </TooltipContent>
+              </Tooltip>
             </div>
             <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
               <span className="text-muted-foreground">$</span> pnpm dev
             </div>
           </div>
-          <p className="text-muted-foreground mt-3 text-xs">
-            Automated setup: environment files, Docker, and database migrations
-          </p>
-          <p className="text-muted-foreground mt-4 text-xs">
-            Frontend: localhost:{frontendPort} • Backend: localhost:
-            {backendPort} • API Docs: localhost:{backendPort}/docs
-          </p>
+          {isLocalDev && (
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+              <span className="text-muted-foreground text-xs">Services:</span>
+              <a
+                href={`http://localhost:${backendPort}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+              >
+                Backend{' '}
+                <span className="text-muted-foreground">:{backendPort}</span>
+              </a>
+              <a
+                href={`http://localhost:${backendPort}/docs`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+              >
+                API Docs
+                <span className="text-muted-foreground">
+                  :{backendPort}/docs
+                </span>
+              </a>
+              <a
+                href="http://localhost:5050"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+              >
+                pgAdmin <span className="text-muted-foreground">:5050</span>
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </main>
