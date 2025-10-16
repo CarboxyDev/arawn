@@ -1,31 +1,14 @@
 import { type HealthCheck } from '@repo/shared-types';
 import { formatDateTime } from '@repo/shared-utils';
-import {
-  Activity,
-  ArrowRight,
-  Bot,
-  Boxes,
-  Code2,
-  GitBranch,
-  Github,
-  Info,
-  PackageOpen,
-  Rocket,
-  Shield,
-  Terminal,
-  TestTube,
-  Workflow,
-  Zap,
-} from 'lucide-react';
+import { Activity, ArrowRight, Boxes, Github, Terminal } from 'lucide-react';
 import Link from 'next/link';
 
+import { CommandBlock } from '@/components/landing/command-block';
+import { FeatureCard } from '@/components/landing/feature-card';
+import { Logo } from '@/components/landing/logo';
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { features, quickStartCommands, techStack } from '@/config/landing-data';
 import { siteConfig } from '@/config/site';
 
 async function getHealth(): Promise<HealthCheck | null> {
@@ -51,7 +34,7 @@ export default async function Home() {
   const backendPort = new URL(apiUrl).port || '8080';
 
   return (
-    <main className="bg-background relative flex min-h-screen flex-col items-center justify-center p-8">
+    <main className="bg-background relative flex flex-1 flex-col items-center justify-center p-8 pb-0">
       <div className="absolute right-8 top-8 flex items-center gap-2">
         <Button asChild variant="default">
           <a
@@ -68,21 +51,37 @@ export default async function Home() {
       </div>
       <div className="w-full max-w-5xl space-y-12">
         <div className="space-y-6 text-center">
-          <h1 className="text-foreground text-6xl font-semibold tracking-tight">
-            Arawn
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Production-ready TypeScript monorepo template
-          </p>
-          <div className="flex justify-center pt-2">
+          <div className="flex justify-center">
+            <Logo className="h-20 w-auto" />
+          </div>
+          <div className="space-y-3">
+            <h1 className="text-foreground text-5xl font-semibold tracking-tight">
+              Ship production apps faster
+            </h1>
+            <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
+              Production-ready full-stack TypeScript monorepo with Next.js,
+              NestJS, Turborepo and other modern technologies.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Button
               asChild
               size="lg"
               className="group shadow-lg transition-all hover:scale-105 hover:shadow-xl"
             >
+              <Link href="#quick-start" className="flex items-center gap-2">
+                Quick Start
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="group transition-all hover:scale-105"
+            >
               <Link href="/examples" className="flex items-center gap-2">
                 View Live Examples
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
           </div>
@@ -149,93 +148,14 @@ export default async function Home() {
           </div>
         )}
         <div className="grid gap-6 md:grid-cols-3">
-          <div className="border-border bg-card rounded-lg border p-6">
-            <Rocket className="text-foreground mb-3 h-5 w-5" />
-            <h3 className="text-card-foreground mb-2 text-base font-medium">
-              Production Ready
-            </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Helmet security, rate limiting, CORS, and validated environment
-              configs
-            </p>
-          </div>
-          <div className="border-border bg-card rounded-lg border p-6">
-            <Zap className="text-foreground mb-3 h-5 w-5" />
-            <h3 className="text-card-foreground mb-2 text-base font-medium">
-              Fast Development
-            </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Turborepo for optimized builds and pnpm for efficient package
-              management
-            </p>
-          </div>
-          <div className="border-border bg-card rounded-lg border p-6">
-            <Shield className="text-foreground mb-3 h-5 w-5" />
-            <h3 className="text-card-foreground mb-2 text-base font-medium">
-              Type Safe
-            </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Zod schemas with TypeScript for runtime and compile-time safety
-            </p>
-          </div>
-          <div className="border-border bg-card rounded-lg border p-6">
-            <Workflow className="text-foreground mb-3 h-5 w-5" />
-            <h3 className="text-card-foreground mb-2 text-base font-medium">
-              Database Ready
-            </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Prisma ORM with PostgreSQL, migrations, and Docker setup included
-            </p>
-          </div>
-          <div className="border-border bg-card rounded-lg border p-6">
-            <Code2 className="text-foreground mb-3 h-5 w-5" />
-            <h3 className="text-card-foreground mb-2 text-base font-medium">
-              Modern UI Components
-            </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              shadcn/ui with Radix primitives, Tailwind v4, dark mode, and
-              Framer Motion
-            </p>
-          </div>
-          <div className="border-border bg-card rounded-lg border p-6">
-            <TestTube className="text-foreground mb-3 h-5 w-5" />
-            <h3 className="text-card-foreground mb-2 text-base font-medium">
-              Comprehensive Testing
-            </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Vitest for unit and integration tests with coverage reports across
-              all packages
-            </p>
-          </div>
-          <div className="border-border bg-card rounded-lg border p-6">
-            <PackageOpen className="text-foreground mb-3 h-5 w-5" />
-            <h3 className="text-card-foreground mb-2 text-base font-medium">
-              Shared Packages
-            </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Types, utilities, and config shared across frontend and backend
-            </p>
-          </div>
-          <div className="border-border bg-card rounded-lg border p-6">
-            <GitBranch className="text-foreground mb-3 h-5 w-5" />
-            <h3 className="text-card-foreground mb-2 text-base font-medium">
-              CI/CD Ready
-            </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              GitHub Actions workflow with automated testing, type checking, and
-              linting
-            </p>
-          </div>
-          <div className="border-border bg-card rounded-lg border p-6">
-            <Bot className="text-foreground mb-3 h-5 w-5" />
-            <h3 className="text-card-foreground mb-2 text-base font-medium">
-              AI-Assisted Development
-            </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Comprehensive CLAUDE.md enables instant onboarding for AI coding
-              assistants
-            </p>
-          </div>
+          {features.map((feature) => (
+            <FeatureCard
+              key={feature.title}
+              iconName={feature.iconName}
+              title={feature.title}
+              description={feature.description}
+            />
+          ))}
         </div>
 
         <div className="border-border bg-card rounded-lg border p-8">
@@ -244,106 +164,37 @@ export default async function Home() {
             <span>Tech Stack</span>
           </h2>
           <div className="grid gap-x-12 gap-y-8 md:grid-cols-2">
-            <div>
-              <h3 className="text-card-foreground mb-4 text-sm font-medium">
-                Frontend
-              </h3>
-              <ul className="text-muted-foreground space-y-2.5 text-sm">
-                <li>Next.js 15 (App Router)</li>
-                <li>React 19</li>
-                <li>TypeScript 5</li>
-                <li>Tailwind CSS v4</li>
-                <li>shadcn/ui + Radix UI</li>
-                <li>TanStack Query v5</li>
-                <li>Jotai</li>
-                <li>React Hook Form + Zod</li>
-                <li>Framer Motion</li>
-                <li>Sonner (Toasts)</li>
-                <li>next-themes (Dark mode)</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-card-foreground mb-4 text-sm font-medium">
-                Backend
-              </h3>
-              <ul className="text-muted-foreground space-y-2.5 text-sm">
-                <li>NestJS 11</li>
-                <li>TypeScript 5</li>
-                <li>Prisma 6 (ORM)</li>
-                <li>PostgreSQL 17</li>
-                <li>Zod v4 (Validation)</li>
-                <li>Swagger + Scalar (API Docs)</li>
-                <li>Helmet (Security)</li>
-                <li>Rate Limiting (@nestjs/throttler)</li>
-                <li>CORS</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-card-foreground mb-4 text-sm font-medium">
-                Shared Packages
-              </h3>
-              <ul className="text-muted-foreground space-y-2.5 text-sm">
-                <li>Zod Schemas</li>
-                <li>Utility Functions</li>
-                <li>Environment Config (dotenv-flow)</li>
-                <li>Type Definitions</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-card-foreground mb-4 text-sm font-medium">
-                DevOps
-              </h3>
-              <ul className="text-muted-foreground space-y-2.5 text-sm">
-                <li>Turborepo</li>
-                <li>pnpm Workspaces</li>
-                <li>Vitest (Testing)</li>
-                <li>GitHub Actions CI</li>
-                <li>ESLint 9 + Prettier</li>
-                <li>Husky + lint-staged</li>
-                <li>CLAUDE.md (AI Context)</li>
-              </ul>
-            </div>
+            {Object.values(techStack).map((stack) => (
+              <div key={stack.title}>
+                <h3 className="text-card-foreground mb-4 text-sm font-medium">
+                  {stack.title}
+                </h3>
+                <ul className="text-muted-foreground space-y-2.5 text-sm">
+                  {stack.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="border-border bg-muted rounded-lg border p-8">
+        <div
+          id="quick-start"
+          className="border-border bg-muted rounded-lg border p-8"
+        >
           <div className="mb-6 flex items-center gap-3">
             <Terminal className="text-foreground h-5 w-5" />
             <h2 className="text-foreground text-xl font-medium">Quick Start</h2>
           </div>
-          <div className="space-y-3 font-mono text-sm">
-            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
-              <span className="text-muted-foreground">$</span> pnpm install
-            </div>
-            <div className="border-border bg-card text-card-foreground flex items-center justify-between gap-3 rounded-md border px-4 py-3">
-              <span>
-                <span className="text-muted-foreground">$</span> pnpm
-                init:project
-              </span>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label="What does init:project do?"
-                  >
-                    <Info className="h-4 w-4" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  className="max-w-xs"
-                  sideOffset={8}
-                >
-                  Automated setup: checks prerequisites, creates environment
-                  files, starts Docker containers, runs database migrations, and
-                  optionally seeds data
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
-              <span className="text-muted-foreground">$</span> pnpm dev
-            </div>
+          <div className="space-y-3">
+            {quickStartCommands.map((cmd) => (
+              <CommandBlock
+                key={cmd.command}
+                command={cmd.command}
+                tooltipContent={cmd.tooltip}
+              />
+            ))}
           </div>
           {isLocalDev && (
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2">

@@ -2,6 +2,7 @@ import './globals.css';
 
 import type { Metadata } from 'next';
 
+import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/sonner';
 import { isDevelopment } from '@/lib/env';
 import { Providers } from '@/providers';
@@ -18,9 +19,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={isDevelopment() ? 'debug-screens' : ''}>
+      <body
+        className={`flex min-h-screen flex-col ${isDevelopment() ? 'debug-screens' : ''}`}
+      >
         <Providers>
           {children}
+          <Footer />
           <Toaster />
         </Providers>
       </body>
