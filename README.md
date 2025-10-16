@@ -43,10 +43,9 @@
 
 ### Development Tools 🛠️
 
-- 🎭 **Faker.js Integration** - Type-safe mock data generators via `@repo/shared-utils`
-- 🌱 **Enhanced Seeding** - Configurable database seeding with realistic test data
+- 🌱 **Database Seeding** - Simple seed scripts for local development
 - 🔄 **Database Reset Scripts** - Quick database reset commands for development
-- 🧪 **Test Utilities** - Reusable factories for tests and seeds across the monorepo
+- 🧪 **Shared Utilities** - Date formatting, string manipulation, retry logic, and more
 
 ## Prerequisites
 
@@ -96,7 +95,7 @@ arawn/
 │   └── backend/           # NestJS application
 ├── shared/
 │   ├── types/            # Zod schemas and TypeScript types
-│   ├── utils/            # Shared utility functions + mock data factories
+│   ├── utils/            # Shared utility functions
 │   └── config/           # Environment configuration
 ├── turbo.json            # Turborepo task configuration
 └── pnpm-workspace.yaml   # Workspace definition
@@ -141,12 +140,9 @@ pnpm db:generate      # Generate Prisma Client
 pnpm db:migrate       # Create and apply migrations
 pnpm db:push          # Push schema changes (no migration)
 pnpm db:studio        # Open Prisma Studio GUI
-pnpm db:seed          # Seed database with mock data
+pnpm db:seed          # Seed database with example data
 pnpm db:reset         # Reset database (drop + migrate, no seed)
 pnpm db:reset:seed    # Reset database and seed with fresh data
-
-# Customize seeding
-SEED_USER_COUNT=50 pnpm db:seed  # Seed with 50 users instead of default 10
 
 # Shared packages
 cd shared/{types|utils|config}
@@ -223,63 +219,54 @@ CI/CD pipeline ensures:
 - Type checking across packages
 - Linting compliance
 
-### Development Utilities (`@repo/shared-utils`)
+### Shared Utilities (`@repo/shared-utils`)
 
-The `shared/utils` package includes type-safe mock data generators (via Faker.js) alongside production utilities:
+The `shared/utils` package provides common utilities used across the monorepo:
 
-**Mock Data Factories:**
+**String Utilities:**
+
+```typescript
+import { slugify, truncate } from '@repo/shared-utils';
+
+slugify('Hello World!'); // "hello-world"
+truncate('Long text...', 10); // "Long te..."
+```
+
+**Date Utilities:**
 
 ```typescript
 import {
-  createMockUser,
-  createMockUsers,
-  createMockUserData,
+  formatDate,
+  formatDateTime,
+  getRelativeTime,
 } from '@repo/shared-utils';
 
-// Generate data for Prisma create (no id/timestamps)
-const userData = createMockUserData();
-await prisma.user.create({ data: userData });
-
-// Generate multiple users
-const usersData = createMockUsersData(50);
-await prisma.user.createMany({ data: usersData });
-
-// Generate complete mock users for testing
-const mockUser = createMockUser({ email: 'test@example.com' });
-expect(mockUser).toHaveProperty('id');
+formatDate(new Date()); // "2024-01-15"
+formatDateTime(new Date()); // "Jan 15, 2024, 02:30 PM"
+getRelativeTime(new Date(Date.now() - 3600000)); // "1 hour ago"
 ```
 
-**Deterministic Data Generation:**
+**Async Utilities:**
 
 ```typescript
-import { configureFaker } from '@repo/shared-utils';
+import { sleep, retry } from '@repo/shared-utils';
 
-// Use a seed for reproducible data (useful for demos/screenshots)
-configureFaker(12345);
-const user1 = createMockUser(); // Always generates same data
+await sleep(1000); // Wait 1 second
 
-// Or use random seed
-configureFaker(); // Uses Date.now()
+await retry(
+  async () => fetchData(),
+  3, // max attempts
+  1000 // delay between retries
+);
 ```
 
-**Usage in Seeds:**
-
-The `apps/backend/prisma/seed.ts` file demonstrates best practices:
-
-- Environment-based configuration (`SEED_USER_COUNT`)
-- Bulk data generation with `createManyAndReturn`
-- Type-safe mock data from shared package
-
-**Usage in Tests:**
+**Array Utilities:**
 
 ```typescript
-import { createMockUser } from '@repo/shared-utils';
+import { unique, groupBy } from '@repo/shared-utils';
 
-it('should process user data', () => {
-  const user = createMockUser({ name: 'Test User' });
-  const result = processUser(user);
-  expect(result).toBeDefined();
-});
+unique([1, 2, 2, 3]); // [1, 2, 3]
+groupBy(users, (u) => u.role); // { admin: [...], user: [...] }
 ```
 
 ### AI-Assisted Development

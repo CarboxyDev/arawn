@@ -93,15 +93,3 @@ export function groupBy<T, K extends string | number | symbol>(
     {} as Record<K, T[]>
   );
 }
-
-// Mock data generators (dev-only)
-export { configureFaker, faker, resetFaker } from './mock/faker-config';
-export {
-  createMockUser,
-  createMockUserData,
-  createMockUsers,
-  createMockUsersData,
-  type MockUser,
-  type MockUserData,
-  type MockUserOptions,
-} from './mock/user.factory';
