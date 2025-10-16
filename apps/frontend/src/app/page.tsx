@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { CommandBlock } from '@/components/landing/command-block';
 import { FeatureCard } from '@/components/landing/feature-card';
 import { Logo } from '@/components/landing/logo';
+import { TechBadge } from '@/components/landing/tech-badge';
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import { Button } from '@/components/ui/button';
 import { features, quickStartCommands, techStack } from '@/config/landing-data';
@@ -163,17 +164,17 @@ export default async function Home() {
             <Boxes className="text-foreground h-5 w-5" />
             <span>Tech Stack</span>
           </h2>
-          <div className="grid gap-x-12 gap-y-8 md:grid-cols-2">
+          <div className="space-y-8">
             {Object.values(techStack).map((stack) => (
               <div key={stack.title}>
                 <h3 className="text-card-foreground mb-4 text-sm font-medium">
                   {stack.title}
                 </h3>
-                <ul className="text-muted-foreground space-y-2.5 text-sm">
+                <div className="flex flex-wrap gap-2">
                   {stack.items.map((item) => (
-                    <li key={item}>{item}</li>
+                    <TechBadge key={item}>{item}</TechBadge>
                   ))}
-                </ul>
+                </div>
               </div>
             ))}
           </div>
