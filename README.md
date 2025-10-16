@@ -1,327 +1,148 @@
 <div align="center">
   <img src="assets/logo.svg" alt="Arawn Logo" width="200">
   <h1>Arawn</h1>
-  <p>An opinionated, production-ready TypeScript monorepo template using pnpm workspaces and Turborepo. Batteries included, ready to scale.</p>
+  <p>Production-ready TypeScript monorepo with Next.js 15, NestJS, and Prisma. Everything you need to ship fast.</p>
 </div>
 
-## Features
+---
 
-### Core Stack
+## Why Arawn?
 
-- 🚀 **Next.js 15** with App Router for the frontend
-- 🎯 **NestJS** for the backend API
-- 📦 **Shared packages** for types, utilities, and configuration
-- 🔒 **Type-safe environment variables** with Zod validation
-- 🏗️ **Turborepo** for optimized build orchestration
-- 🧰 **Modern tooling**: TypeScript, ESLint, Prettier, Husky
-- 📝 **Runtime validation** with Zod schemas as single source of truth
-- 🧪 **Comprehensive testing**: Vitest setup with CI integration for frontend, backend, and shared packages
-- 🤖 **AI-ready**: Comprehensive CLAUDE.md for instant AI assistant onboarding
+Stop wasting days bootstrapping your next project. Most templates hand you a skeleton and leave you to figure out database migrations, API documentation, logging infrastructure, and much more. Arawn ships with all of it configured and working. You just need to run a single script to get started with a production-ready full-stack application.
 
-### Frontend Batteries 🔋
+**This is not your average starter template. It's a production foundation.**
 
-- 🎨 **shadcn/ui** - Beautiful, accessible component system with Radix UI
-- 🎭 **Tailwind CSS v4** - Latest Tailwind with CSS-first configuration
-- 🌓 **Dark mode** - Built-in theme support with next-themes
-- 🔄 **TanStack Query v5** - Powerful data fetching and caching
-- 🧪 **Jotai** - Primitive and flexible state management
-- 📋 **React Hook Form** - Performant forms with Zod validation
-- 🔔 **Sonner** - Beautiful toast notifications
-- 🎨 **Framer Motion** - Animation library for smooth transitions
-- 🎯 **TypeScript** - Full type safety across the stack
+- **Full-stack type safety**: Zod schemas define your API contracts. Types flow from database to UI automatically without any hassle.
+- **Zero-config setup**: One command creates env files, spins up docker, runs migrations, and gets you ready to ship in a fraction of the time.
+- **Production-grade**: Global exception filter with request ID tracing, automatic Zod validation on all endpoints, rate limiting, environment-aware error responses
+- **Shared validation logic**: Write your schemas once in `shared/types`, use them everywhere (frontend forms, API validation, DB queries)
+- **Real testing infrastructure**: Vitest configured for frontend, backend, and shared packages with coverage reports
+- **Auto-generated API docs**: Swagger + Scalar documentation generated directly from your Zod schemas
+- **AI pair programming ready**: This template ships with a comprehensive CLAUDE.md file that means AI assistants understand your architecture instantly and can help accelerate your development process.
 
-### Backend Batteries 🔋
+**Arawn is built for teams shipping real products, not toy demos.**
 
-- 📊 **Pino Structured Logging** - Production-ready logging with request tracing, configurable verbosity (`logger.verbose().debug()`), and error serialization
-- 📚 **Swagger + Scalar** - Auto-generated API documentation at `/docs` with Zod schema integration
-- 🗄️ **Prisma 6** - Type-safe ORM with PostgreSQL
-- 🐘 **PostgreSQL 17** - Local development via Docker Compose
-- 🔒 **Security** - Helmet for secure HTTP headers, rate limiting with @nestjs/throttler
-- 🌐 **CORS** - Configured for secure cross-origin requests
-- 🛡️ **NestJS** - Production-ready architecture with dependency injection
-- ✅ **Zod v4 Validation** - Automatic request/response validation with `nestjs-zod`, shared schemas with frontend
+## Tech Stack
 
-### Development Tools 🛠️
+**Frontend**
 
-- 🌱 **Database Seeding** - Simple seed scripts for local development
-- 🔄 **Database Reset Scripts** - Quick database reset commands for development
-- 🧪 **Shared Utilities** - Date formatting, string manipulation, retry logic, and more
+- Next.js 15 + React 19
+- TanStack Query v5 for server state
+- shadcn/ui + Tailwind CSS v4
+- React Hook Form + Zod validation
+- Jotai for client state
 
-## Prerequisites
+**Backend**
 
-- Node.js >= 20.0.0
-- pnpm >= 9.0.0
-- Docker (for local PostgreSQL)
+- NestJS 11
+- Prisma 6 + PostgreSQL 17
+- Pino for logging infrastructure
+- Swagger + Scalar API docs
+- Helmet + rate limiting
 
-## Getting Started
+**Monorepo**
 
-### Quick Setup (Recommended)
+- pnpm workspaces + Turborepo
+- Shared packages for types, utils, config
+- Vitest for testing
+- Husky + lint-staged for pre-commit hooks
+
+## Quick Start
 
 ```bash
-# 1. Install dependencies
+# Install dependencies
 pnpm install
 
-# 2. Initialize project (automated setup)
+# Automated setup (creates .env files, starts docker, runs migrations)
 pnpm init:project
 
-# Optional: Enable database seeding during setup
-pnpm init:project --seed
-
-# 3. Start development
+# Start development
 pnpm dev
 ```
 
-The `pnpm init:project` script will:
+The setup script handles everything: environment files, docker containers, database migrations, and optional seeding. Safe to run multiple times.
 
-- ✓ Check prerequisites (Node.js, pnpm, Docker)
-- ✓ Copy environment files (if they don't exist)
-- ✓ Start Docker Compose (PostgreSQL + pgAdmin)
-- ✓ Wait for PostgreSQL to be healthy
-- ✓ Run database migrations
-- ✓ Optionally seed the database
+**What's running:**
 
-**Safe to run multiple times** - it will skip steps that are already complete.
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend: [http://localhost:8080](http://localhost:8080)
+- API Docs: [http://localhost:8080/docs](http://localhost:8080/docs)
+- pgAdmin: [http://localhost:5050](http://localhost:5050) (admin@localhost / admin123)
 
-### Setup Options
+**Requirements:** Node.js ≥20, pnpm ≥9, docker
 
-```bash
-pnpm init:project           # Standard setup (with seeding)
-pnpm init:project --no-seed # Setup without database seeding
-pnpm init:project --dry-run # Preview what would be executed
-```
-
-### Manual Setup (Alternative)
-
-If you prefer to set up manually:
-
-```bash
-# 1. Install dependencies
-pnpm install
-
-# 2. Start PostgreSQL with Docker
-docker-compose up -d
-
-# 3. Set up environment variables
-cp apps/frontend/.env.local.example apps/frontend/.env.local
-cp apps/backend/.env.local.example apps/backend/.env.local
-# Edit .env.local files with your configuration
-
-# 4. Run database migrations
-cd apps/backend && pnpm db:migrate
-cd ../..
-
-# 5. Start development (builds shared packages and runs all apps)
-pnpm dev
-```
-
-**Services:**
-
-- Frontend: `http://localhost:3000`
-- Backend: `http://localhost:8080`
-- API Docs: `http://localhost:8080/docs`
-- PostgreSQL: `localhost:5432`
-- pgAdmin: `http://localhost:5050` (admin@arawn.dev / admin)
-
-Pre-commit hooks (Husky + lint-staged) automatically format and lint staged files.
-
-## Monorepo Structure
+## Project Structure
 
 ```
 arawn/
 ├── apps/
-│   ├── frontend/          # Next.js 15 application (port 3000)
-│   └── backend/           # NestJS application
-├── shared/
-│   ├── types/            # Zod schemas and TypeScript types
-│   ├── utils/            # Shared utility functions
-│   └── config/           # Environment configuration
-├── turbo.json            # Turborepo task configuration
-└── pnpm-workspace.yaml   # Workspace definition
+│   ├── frontend/     # Next.js 15 app
+│   └── backend/      # NestJS API
+└── shared/
+    ├── types/        # Zod schemas + inferred types
+    ├── utils/        # Shared utilities
+    └── config/       # Environment config
 ```
 
-## Commands
+## Essential Commands
 
-### Root-level commands
+**Development**
 
 ```bash
-pnpm dev              # Start all apps in development mode
-pnpm build            # Build all packages and applications
-pnpm typecheck        # Type check all packages
-pnpm lint             # Lint all packages
-pnpm lint:fix         # Lint and auto-fix issues
-pnpm test             # Run all tests
-pnpm test:coverage    # Run tests with coverage reports
+pnpm dev              # Start all apps
+pnpm build            # Build everything
+pnpm typecheck        # Type check
+pnpm test             # Run tests
 ```
 
-### Per-package commands
+**Database** (from `apps/backend`)
 
 ```bash
-# Frontend (runs on port 3000)
-cd apps/frontend
-pnpm dev              # Next.js dev server
-pnpm build            # Production build
-pnpm typecheck        # Type checking only
-pnpm test             # Run tests
-pnpm test:coverage    # Run tests with coverage
-
-# Backend (runs on port 8080)
-cd apps/backend
-pnpm dev              # NestJS watch mode
-pnpm build            # Production build
-pnpm start            # Run production build
-pnpm test             # Run tests
-pnpm test:coverage    # Run tests with coverage
-
-# Database (Prisma)
-cd apps/backend
-pnpm db:generate      # Generate Prisma Client
-pnpm db:migrate       # Create and apply migrations
-pnpm db:push          # Push schema changes (no migration)
-pnpm db:studio        # Open Prisma Studio GUI
-pnpm db:seed          # Seed database with example data
-pnpm db:reset         # Reset database (drop + migrate, no seed)
-pnpm db:reset:seed    # Reset database and seed with fresh data
-
-# Shared packages
-cd shared/{types|utils|config}
-pnpm dev              # Watch mode with tsup
-pnpm build            # Build with tsup
-pnpm test             # Run tests
-pnpm test:coverage    # Run tests with coverage
+pnpm db:migrate       # Run migrations
+pnpm db:studio        # Open Prisma Studio
+pnpm db:seed          # Seed database
+pnpm db:reset         # Fresh database
 ```
 
-## Architecture Decisions
+## Key Features
 
-### Workspace Dependencies
+**Type Safety Everywhere**
 
-All shared packages are consumed as workspace dependencies (`workspace:*`), providing:
+- Zod schemas in `shared/types` serve as single source of truth
+- Types inferred from schemas (`z.infer<typeof Schema>`)
+- Runtime validation on API requests and environment variables
+- TypeScript strict mode across all packages
 
-- True monorepo development experience
-- Instant updates when shared code changes
-- Type safety across package boundaries
-- Both CJS and ESM output formats
+**Smart Build Pipeline**
 
-### Build Pipeline
-
-Turborepo manages build dependencies automatically:
-
-- Shared packages must build before apps can import them
-- All builds depend on type checking
-- Dev mode depends on shared package builds
+- Turborepo orchestrates dependencies automatically
+- Shared packages rebuild before apps consume them
+- Intelligent caching speeds up subsequent builds
 - Parallel execution where possible
 
-### Type Safety
+**Production Hardening**
 
-The template enforces type safety at multiple levels:
+- Helmet for secure HTTP headers
+- Rate limiting (default 30 req/min per IP)
+- CORS configured for frontend origin only
+- Structured logging with Pino (request IDs, configurable verbosity)
+- Environment validation on startup
 
-- **Runtime**: Zod schemas validate data at runtime
-- **Compile-time**: TypeScript strict mode across all packages
-- **Environment**: Configuration validated on startup
-- **Single source of truth**: Types inferred from Zod schemas via `z.infer<>`
+**Developer Experience**
 
-### Environment Configuration
+- One command setup with `pnpm init:project`
+- Pre-commit hooks format and lint automatically
+- Vitest for fast, modern testing
+- API docs auto-generated from Zod schemas
+- CLAUDE.md for AI pair programming context
 
-Environment variables are validated on startup with Zod:
+---
 
-- **Backend**: Uses `@repo/shared-config` with `dotenv-flow` (see `.env.local.example`)
-- **Frontend**: Next.js environment variables (only `NEXT_PUBLIC_*` exposed to client)
+## Design Principles
 
-### Security
+This template makes specific choices to optimize for production use:
 
-Backend security features:
-
-- **Helmet**: Secure HTTP headers (CSP, HSTS, X-Frame-Options, etc.)
-- **Rate Limiting**: 10 requests per 60 seconds per IP via @nestjs/throttler
-- **CORS**: Strict origin policy (only `FRONTEND_URL` allowed)
-
-### Testing
-
-Comprehensive testing setup with Vitest:
-
-- **Unit & Integration Tests**: Vitest for all packages (frontend, backend, shared)
-- **Coverage Reports**: Automatic coverage generation with thresholds
-- **CI Integration**: GitHub Actions workflow runs tests on every push/PR
-- **Watch Mode**: Fast feedback during development
-
-### Code Quality
-
-Pre-commit hooks (Husky + lint-staged) enforce:
-
-- Prettier formatting
-- ESLint rules
-- Only on staged files (fast commits)
-
-CI/CD pipeline ensures:
-
-- All tests pass before merge
-- Type checking across packages
-- Linting compliance
-
-### Shared Utilities (`@repo/shared-utils`)
-
-The `shared/utils` package provides common utilities used across the monorepo:
-
-**String Utilities:**
-
-```typescript
-import { slugify, truncate } from '@repo/shared-utils';
-
-slugify('Hello World!'); // "hello-world"
-truncate('Long text...', 10); // "Long te..."
-```
-
-**Date Utilities:**
-
-```typescript
-import {
-  formatDate,
-  formatDateTime,
-  getRelativeTime,
-} from '@repo/shared-utils';
-
-formatDate(new Date()); // "2024-01-15"
-formatDateTime(new Date()); // "Jan 15, 2024, 02:30 PM"
-getRelativeTime(new Date(Date.now() - 3600000)); // "1 hour ago"
-```
-
-**Async Utilities:**
-
-```typescript
-import { sleep, retry } from '@repo/shared-utils';
-
-await sleep(1000); // Wait 1 second
-
-await retry(
-  async () => fetchData(),
-  3, // max attempts
-  1000 // delay between retries
-);
-```
-
-**Array Utilities:**
-
-```typescript
-import { unique, groupBy } from '@repo/shared-utils';
-
-unique([1, 2, 2, 3]); // [1, 2, 3]
-groupBy(users, (u) => u.role); // { admin: [...], user: [...] }
-```
-
-### AI-Assisted Development
-
-The codebase includes structured documentation for AI assistants:
-
-- **CLAUDE.md**: Comprehensive context file with architecture, commands, and coding standards
-- **Import aliases enforced**: Clear patterns for AI to follow (@/\* for local imports)
-- **Well-documented structure**: Helps AI understand the codebase instantly
-- **Consistent conventions**: Makes autonomous refactoring and feature additions safer
-
-## Philosophy
-
-This template is opinionated by design:
-
-- **Type safety first**: Runtime validation + compile-time checking
-- **Monorepo done right**: Workspace dependencies, not published packages
-- **Fast feedback**: Turborepo caching and parallel execution makes it blazingly fast
-- **Production-ready**: Environment validation, proper build pipeline, code quality guardrails, comprehensive testing
-- **Brilliant DX**: HMR, instant updates across packages, clear error messages, fast tests with Vitest
+1. **Workspace dependencies over npm packages** - Real monorepo benefits, not just code co-location
+2. **Zod as validation layer** - One schema definition for runtime + compile-time safety
+3. **Opinionated tooling** - Prettier, ESLint, Husky pre-configured so you can focus on features
+4. **Documentation for AI** - Structured context files help AI assistants understand your codebase

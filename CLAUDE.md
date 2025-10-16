@@ -113,15 +113,14 @@ docker-compose down -v    # Stop and wipe data
 ```
 
 - **PostgreSQL**: `localhost:5432` (credentials in `docker-compose.yml`)
-- **pgAdmin**: `http://localhost:5050` (admin@arawn.dev / admin)
+- **pgAdmin**: `http://localhost:5050` (admin@localhost / admin123)
 
 **Environment Variables:**
 
 - Backend uses `.env.local` for all environment variables (via dotenv-flow)
 - Prisma CLI commands are wrapped with `dotenv-cli` to read from `.env.local`
 - All database commands automatically load `.env.local` (see `apps/backend/package.json`)
-- `DATABASE_URL` must match Docker credentials: `postgresql://arawn:arawn_dev_password@localhost:5432/arawn_dev?sslmode=disable`
-- **IMPORTANT**: Only `.env.local` is needed - no separate `.env` file required
+- `DATABASE_URL` must match Docker credentials: `postgresql://arawn:arawn_local_dev@localhost:5432/arawn_dev?sslmode=disable`
 
 **Turborepo Integration:**
 
