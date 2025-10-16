@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/logo.svg" alt="Arawn Logo" width="200">
   <h1>Arawn</h1>
-  <p>Production-ready TypeScript monorepo with Next.js 15, NestJS, and Prisma. Everything you need to ship fast.</p>
+  <p>Production-ready TypeScript monorepo with Next.js 15, NestJS 11, Turborepo and other modern technologies. Everything you need to ship fast.</p>
 </div>
 
 ---
