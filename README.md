@@ -64,6 +64,9 @@ pnpm install
 # 2. Initialize project (automated setup)
 pnpm init:project
 
+# Optional: Enable database seeding during setup
+pnpm init:project --seed
+
 # 3. Start development
 pnpm dev
 ```
@@ -78,6 +81,14 @@ The `pnpm init:project` script will:
 - ✓ Optionally seed the database
 
 **Safe to run multiple times** - it will skip steps that are already complete.
+
+### Setup Options
+
+```bash
+pnpm init:project           # Standard setup (with seeding)
+pnpm init:project --no-seed # Setup without database seeding
+pnpm init:project --dry-run # Preview what would be executed
+```
 
 ### Manual Setup (Alternative)
 
