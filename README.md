@@ -65,8 +65,7 @@ docker-compose up -d
 # 3. Set up environment variables
 cp apps/frontend/.env.local.example apps/frontend/.env.local
 cp apps/backend/.env.local.example apps/backend/.env.local
-cp apps/backend/.env.local.example apps/backend/.env  # For Prisma
-# Edit .env files with your configuration
+# Edit .env.local files with your configuration
 
 # 4. Run database migrations
 cd apps/backend && pnpm db:migrate

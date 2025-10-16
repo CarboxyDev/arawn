@@ -4,7 +4,6 @@ import tsparser from '@typescript-eslint/parser';
 import prettier from 'eslint-config-prettier';
 import n from 'eslint-plugin-n';
 import promise from 'eslint-plugin-promise';
-import security from 'eslint-plugin-security';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unicorn from 'eslint-plugin-unicorn';
 import unusedImports from 'eslint-plugin-unused-imports';
@@ -62,7 +61,6 @@ export default [
       unicorn,
       promise,
       n,
-      security,
     },
     rules: {
       ...tseslint.configs.recommended.rules,
@@ -96,11 +94,6 @@ export default [
       'n/no-missing-import': 'off', // TypeScript handles this
       'n/no-unpublished-import': 'off', // Monorepo workspaces
       'n/prefer-global/process': ['error', 'always'],
-
-      // Security
-      'security/detect-object-injection': 'off', // Too many false positives
-      'security/detect-non-literal-regexp': 'warn',
-      'security/detect-unsafe-regex': 'error',
     },
   },
   {

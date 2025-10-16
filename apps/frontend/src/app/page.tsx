@@ -314,11 +314,7 @@ export default async function Home() {
             </div>
             <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
               <span className="text-muted-foreground">$</span> cp
-              apps/frontend/.env.local.example apps/frontend/.env.local
-            </div>
-            <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
-              <span className="text-muted-foreground">$</span> cp
-              apps/backend/.env.local.example apps/backend/.env.local
+              apps/*/.env.local.example apps/*/.env.local
             </div>
             <div className="border-border bg-card text-card-foreground rounded-md border px-4 py-3">
               <span className="text-muted-foreground">$</span> cd apps/backend

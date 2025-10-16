@@ -96,9 +96,11 @@ docker-compose down -v    # Stop and wipe data
 
 **Environment Variables:**
 
-- Backend uses `.env.local` for NestJS (via dotenv-flow)
-- Prisma uses `.env` file (create from `.env.local.example`)
+- Backend uses `.env.local` for all environment variables (via dotenv-flow)
+- Prisma CLI commands are wrapped with `dotenv-cli` to read from `.env.local`
+- All database commands automatically load `.env.local` (see `apps/backend/package.json`)
 - `DATABASE_URL` must match Docker credentials: `postgresql://arawn:arawn_dev_password@localhost:5432/arawn_dev?sslmode=disable`
+- **IMPORTANT**: Only `.env.local` is needed - no separate `.env` file required
 
 **Turborepo Integration:**
 
