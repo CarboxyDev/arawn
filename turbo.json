@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "ui": "tui",
+  "ui": "stream",
   "globalDependencies": ["tsconfig.json", "turbo.json"],
   "tasks": {
     "build": {
