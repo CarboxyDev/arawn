@@ -1,25 +1,25 @@
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: arawn-postgres
+    container_name: app-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: arawn
-      POSTGRES_PASSWORD: arawn_local_dev
-      POSTGRES_DB: arawn_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_dev_password
+      POSTGRES_DB: app_dev
     ports:
       - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U arawn -d arawn_dev']
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d app_dev']
       interval: 10s
       timeout: 5s
       retries: 5
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: arawn-pgadmin
+    container_name: app-pgadmin
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@localhost
