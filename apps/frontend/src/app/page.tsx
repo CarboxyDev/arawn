@@ -198,37 +198,54 @@ export default async function Home() {
             ))}
           </div>
           {isLocalDev && (
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-              <span className="text-muted-foreground text-xs">Services:</span>
-              <a
-                href={`http://localhost:${backendPort}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
-              >
-                Backend{' '}
-                <span className="text-muted-foreground">:{backendPort}</span>
-              </a>
-              <a
-                href={`http://localhost:${backendPort}/docs`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
-              >
-                API Docs
-                <span className="text-muted-foreground">
-                  :{backendPort}/docs
-                </span>
-              </a>
-              <a
-                href="http://localhost:5050"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
-              >
-                pgAdmin <span className="text-muted-foreground">:5050</span>
-              </a>
-            </div>
+            <>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+                <span className="text-muted-foreground text-xs">Services:</span>
+                <a
+                  href="http://localhost:3000"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+                >
+                  Frontend <span className="text-muted-foreground">:3000</span>
+                </a>
+                <a
+                  href={`http://localhost:${backendPort}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+                >
+                  Backend{' '}
+                  <span className="text-muted-foreground">:{backendPort}</span>
+                </a>
+                <a
+                  href={`http://localhost:${backendPort}/docs`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+                >
+                  API Docs
+                  <span className="text-muted-foreground">
+                    :{backendPort}/docs
+                  </span>
+                </a>
+                <a
+                  href="http://localhost:5050"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+                >
+                  pgAdmin <span className="text-muted-foreground">:5050</span>
+                </a>
+              </div>
+              <p className="text-muted-foreground mt-4 text-center text-xs">
+                See{' '}
+                <code className="bg-muted rounded px-1.5 py-0.5 font-mono">
+                  GETTING_STARTED.md
+                </code>
+                for further optional customization.
+              </p>
+            </>
           )}
         </div>
       </div>
