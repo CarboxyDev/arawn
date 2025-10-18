@@ -5,6 +5,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
+import { AuthModule } from '@/auth/auth.module';
 import { LoggerModule } from '@/common/logger.module';
 import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
 import { RequestIdMiddleware } from '@/common/middleware/request-id.middleware';
@@ -25,6 +26,7 @@ import { UsersModule } from '@/modules/users/users.module';
     ]),
     LoggerModule,
     PrismaModule,
+    AuthModule,
     UsersModule,
   ],
   controllers: [AppController],
