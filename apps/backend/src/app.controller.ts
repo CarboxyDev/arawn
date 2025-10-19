@@ -4,7 +4,7 @@ import {
   ApiResponse as SwaggerResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ApiResponse, HealthCheck, User } from '@repo/packages-types';
+import { HealthCheck, User } from '@repo/packages-types';
 
 import { AppService } from '@/app.service';
 import { CurrentUser } from '@/auth/decorators/current-user.decorator';
@@ -27,23 +27,15 @@ export class AppController {
   @Get()
   @ApiOperation({ summary: 'Welcome message' })
   @SwaggerResponse({ status: 200, description: 'Returns welcome message' })
-  getHello(): ApiResponse<string> {
-    return {
-      success: true,
-      message: 'Welcome to Arawn Monorepo API',
-      data: this.appService.getHello(),
-    };
+  getHello(): string {
+    return this.appService.getHello();
   }
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user (protected route example)' })
   @SwaggerResponse({ status: 200, description: 'Returns current user' })
   @SwaggerResponse({ status: 401, description: 'Unauthorized' })
-  getMe(@CurrentUser() user: User): ApiResponse<User> {
-    return {
-      success: true,
-      message: 'Current user retrieved successfully',
-      data: user,
-    };
+  getMe(@CurrentUser() user: User): User {
+    return user;
   }
 }

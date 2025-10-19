@@ -1,14 +1,53 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { LoggerService } from '@/common/logger.service';
+import { PrismaService } from '@/database/prisma/prisma.service';
+
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
   let service: UsersService;
+  let prismaService: PrismaService;
+  let loggerService: LoggerService;
+
+  const mockUser = {
+    id: '550e8400-e29b-41d4-a716-446655440000',
+    email: 'test@example.com',
+    name: 'Test User',
+    emailVerified: false,
+    image: null,
+    role: 'user' as const,
+    banned: false,
+    banReason: null,
+    banExpires: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
 
   beforeEach(() => {
-    service = new UsersService();
+    loggerService = {
+      setContext: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn(),
+      child: vi.fn(() => loggerService),
+    } as unknown as LoggerService;
+
+    prismaService = {
+      user: {
+        findMany: vi.fn(),
+        findUnique: vi.fn(),
+        count: vi.fn(),
+        create: vi.fn(),
+        update: vi.fn(),
+        delete: vi.fn(),
+      },
+    } as unknown as PrismaService;
+
+    service = new UsersService(prismaService, loggerService);
     controller = new UsersController(service);
   });
 
@@ -20,8 +59,11 @@ describe('UsersController', () => {
       sortOrder: 'desc' as const,
     };
 
-    it('should return paginated API response with empty users array', () => {
-      const result = controller.getUsers(defaultQuery);
+    it('should return paginated API response with empty users array', async () => {
+      vi.mocked(prismaService.user.findMany).mockResolvedValue([]);
+      vi.mocked(prismaService.user.count).mockResolvedValue(0);
+
+      const result = await controller.getUsers(defaultQuery);
 
       expect(result).toHaveProperty('success', true);
       expect(result).toHaveProperty('data');
@@ -30,14 +72,11 @@ describe('UsersController', () => {
       expect(result.pagination.total).toBe(0);
     });
 
-    it('should return paginated users from service', () => {
-      service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
-      });
+    it('should return paginated users from service', async () => {
+      vi.mocked(prismaService.user.findMany).mockResolvedValue([mockUser]);
+      vi.mocked(prismaService.user.count).mockResolvedValue(1);
 
-      const result = controller.getUsers(defaultQuery);
+      const result = await controller.getUsers(defaultQuery);
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(1);
@@ -45,9 +84,11 @@ describe('UsersController', () => {
       expect(result.pagination.total).toBe(1);
     });
 
-    it('should call service getUsers method with query params', () => {
+    it('should call service getUsers method with query params', async () => {
+      vi.mocked(prismaService.user.findMany).mockResolvedValue([]);
+      vi.mocked(prismaService.user.count).mockResolvedValue(0);
       const spy = vi.spyOn(service, 'getUsers');
-      controller.getUsers(defaultQuery);
+      await controller.getUsers(defaultQuery);
 
       expect(spy).toHaveBeenCalledOnce();
       expect(spy).toHaveBeenCalledWith(defaultQuery);
@@ -55,72 +96,55 @@ describe('UsersController', () => {
   });
 
   describe('getUserById', () => {
-    it('should return user by ID', () => {
-      const created = service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
+    it('should return user by ID', async () => {
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(mockUser);
+
+      const result = await controller.getUserById({
+        id: '550e8400-e29b-41d4-a716-446655440000',
       });
 
-      const result = controller.getUserById({ id: created.id });
-
-      expect(result).toHaveProperty('success', true);
-      expect(result).toHaveProperty('data');
-      expect(result.data).toEqual(created);
+      expect(result).toEqual(mockUser);
     });
 
-    it('should call service getUserById method', () => {
-      const created = service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
-      });
+    it('should call service getUserById method', async () => {
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(mockUser);
       const spy = vi.spyOn(service, 'getUserById');
 
-      controller.getUserById({ id: created.id });
+      await controller.getUserById({
+        id: '550e8400-e29b-41d4-a716-446655440000',
+      });
 
       expect(spy).toHaveBeenCalledOnce();
-      expect(spy).toHaveBeenCalledWith(created.id);
+      expect(spy).toHaveBeenCalledWith('550e8400-e29b-41d4-a716-446655440000');
     });
   });
 
   describe('createUser', () => {
-    it('should create a new user and return API response', () => {
+    it('should create a new user', async () => {
       const createUserDto = {
         email: 'newuser@example.com',
         name: 'New User',
         role: 'user' as const,
       };
 
-      const result = controller.createUser(createUserDto);
+      vi.mocked(prismaService.user.create).mockResolvedValue(mockUser);
 
-      expect(result).toHaveProperty('success', true);
-      expect(result).toHaveProperty('message', 'User created successfully');
-      expect(result).toHaveProperty('data');
-      expect(result.data).toHaveProperty('id');
-      expect(result.data).toHaveProperty('email', createUserDto.email);
-      expect(result.data).toHaveProperty('name', createUserDto.name);
+      const result = await controller.createUser(createUserDto);
+
+      expect(result).toEqual(mockUser);
     });
 
-    it('should validate user data with Zod schema', () => {
-      const createUserDto = {
-        email: 'valid@example.com',
-        name: 'Valid User',
-        role: 'user' as const,
-      };
-
-      expect(() => controller.createUser(createUserDto)).not.toThrow();
-    });
-
-    it('should call service createUser method', () => {
-      const spy = vi.spyOn(service, 'createUser');
+    it('should call service createUser method', async () => {
       const createUserDto = {
         email: 'test@example.com',
         name: 'Test User',
         role: 'user' as const,
       };
 
-      controller.createUser(createUserDto);
+      vi.mocked(prismaService.user.create).mockResolvedValue(mockUser);
+      const spy = vi.spyOn(service, 'createUser');
+
+      await controller.createUser(createUserDto);
 
       expect(spy).toHaveBeenCalledOnce();
       expect(spy).toHaveBeenCalledWith(createUserDto);
@@ -128,67 +152,67 @@ describe('UsersController', () => {
   });
 
   describe('updateUser', () => {
-    it('should update user and return API response', () => {
-      const created = service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
-      });
-
+    it('should update user', async () => {
       const updateUserDto = {
         name: 'Updated Name',
       };
 
-      const result = controller.updateUser({ id: created.id }, updateUserDto);
+      const updatedUser = { ...mockUser, name: 'Updated Name' };
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(mockUser);
+      vi.mocked(prismaService.user.update).mockResolvedValue(updatedUser);
 
-      expect(result).toHaveProperty('success', true);
-      expect(result).toHaveProperty('message', 'User updated successfully');
-      expect(result).toHaveProperty('data');
-      expect(result.data).toHaveProperty('name', 'Updated Name');
+      const result = await controller.updateUser(
+        { id: '550e8400-e29b-41d4-a716-446655440000' },
+        updateUserDto
+      );
+
+      expect(result.name).toBe('Updated Name');
     });
 
-    it('should call service updateUser method', () => {
-      const created = service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
-      });
-      const spy = vi.spyOn(service, 'updateUser');
+    it('should call service updateUser method', async () => {
       const updateUserDto = { name: 'Updated Name' };
+      const updatedUser = { ...mockUser, name: 'Updated Name' };
 
-      controller.updateUser({ id: created.id }, updateUserDto);
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(mockUser);
+      vi.mocked(prismaService.user.update).mockResolvedValue(updatedUser);
+      const spy = vi.spyOn(service, 'updateUser');
+
+      await controller.updateUser(
+        { id: '550e8400-e29b-41d4-a716-446655440000' },
+        updateUserDto
+      );
 
       expect(spy).toHaveBeenCalledOnce();
-      expect(spy).toHaveBeenCalledWith(created.id, updateUserDto);
+      expect(spy).toHaveBeenCalledWith(
+        '550e8400-e29b-41d4-a716-446655440000',
+        updateUserDto
+      );
     });
   });
 
   describe('deleteUser', () => {
-    it('should delete user and return API response', () => {
-      const created = service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
+    it('should delete user', async () => {
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(mockUser);
+      vi.mocked(prismaService.user.delete).mockResolvedValue(mockUser);
+
+      await controller.deleteUser({
+        id: '550e8400-e29b-41d4-a716-446655440000',
       });
 
-      const result = controller.deleteUser({ id: created.id });
-
-      expect(result).toHaveProperty('success', true);
-      expect(result).toHaveProperty('message', 'User deleted successfully');
+      expect(prismaService.user.delete).toHaveBeenCalled();
     });
 
-    it('should call service deleteUser method', () => {
-      const created = service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
-      });
+    it('should call service deleteUser method', async () => {
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(mockUser);
+      vi.mocked(prismaService.user.delete).mockResolvedValue(mockUser);
       const spy = vi.spyOn(service, 'deleteUser');
 
-      controller.deleteUser({ id: created.id });
+      await controller.deleteUser({
+        id: '550e8400-e29b-41d4-a716-446655440000',
+      });
 
       expect(spy).toHaveBeenCalledOnce();
-      expect(spy).toHaveBeenCalledWith(created.id);
+      expect(spy).toHaveBeenCalledWith('550e8400-e29b-41d4-a716-446655440000');
     });
   });
 });

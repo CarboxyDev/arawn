@@ -6,6 +6,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppModule } from '@/app.module';
 import { GlobalExceptionFilter } from '@/common/filters/http-exception.filter';
+import { TransformInterceptor } from '@/common/interceptors/transform.interceptor';
 import { LoggerService } from '@/common/logger.service';
 import { loadEnv } from '@/config/env';
 
@@ -20,6 +21,8 @@ async function bootstrap() {
   });
 
   app.useGlobalFilters(new GlobalExceptionFilter());
+
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   app.useGlobalPipes(new ZodValidationPipe());
 

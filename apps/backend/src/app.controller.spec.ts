@@ -35,9 +35,7 @@ describe('AppController', () => {
     it('should return API response with greeting', () => {
       const result = controller.getHello();
 
-      expect(result).toHaveProperty('success', true);
-      expect(result).toHaveProperty('message', 'Welcome to Arawn Monorepo API');
-      expect(result).toHaveProperty('data', 'Hello from Arawn Backend!');
+      expect(result).toBe('Hello from Arawn Backend!');
     });
 
     it('should call service getHello method', () => {

@@ -21,9 +21,7 @@ import {
   QueryUsersSchema,
   UpdateUserSchema,
 } from '@repo/packages-types';
-import { PaginatedResponse } from '@repo/packages-types';
-import { User } from '@repo/packages-types';
-import { ApiResponse } from '@repo/packages-types';
+import { PaginatedResponse, User } from '@repo/packages-types';
 import { createZodDto } from 'nestjs-zod';
 
 import { Roles } from '@/auth/decorators/roles.decorator';
@@ -42,7 +40,9 @@ export class UsersController {
   @Get()
   @ApiOperation({ summary: 'Get paginated users with filtering and sorting' })
   @SwaggerResponse({ status: 200, description: 'Returns paginated users' })
-  getUsers(@Query() query: QueryUsersDto): PaginatedResponse<User> {
+  async getUsers(
+    @Query() query: QueryUsersDto
+  ): Promise<PaginatedResponse<User>> {
     return this.usersService.getUsers(query);
   }
 
@@ -50,11 +50,8 @@ export class UsersController {
   @ApiOperation({ summary: 'Get user by ID' })
   @SwaggerResponse({ status: 200, description: 'Returns user' })
   @SwaggerResponse({ status: 404, description: 'User not found' })
-  getUserById(@Param() params: GetUserByIdDto): ApiResponse<User> {
-    return {
-      success: true,
-      data: this.usersService.getUserById(params.id),
-    };
+  async getUserById(@Param() params: GetUserByIdDto): Promise<User> {
+    return this.usersService.getUserById(params.id);
   }
 
   @Post()
@@ -62,12 +59,8 @@ export class UsersController {
   @SwaggerResponse({ status: 201, description: 'User created successfully' })
   @SwaggerResponse({ status: 400, description: 'Invalid request body' })
   @HttpCode(HttpStatus.CREATED)
-  createUser(@Body() createUserDto: CreateUserDto): ApiResponse<User> {
-    return {
-      success: true,
-      message: 'User created successfully',
-      data: this.usersService.createUser(createUserDto),
-    };
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.createUser(createUserDto);
   }
 
   @Patch(':id')
@@ -75,15 +68,11 @@ export class UsersController {
   @SwaggerResponse({ status: 200, description: 'User updated successfully' })
   @SwaggerResponse({ status: 400, description: 'Invalid request body' })
   @SwaggerResponse({ status: 404, description: 'User not found' })
-  updateUser(
+  async updateUser(
     @Param() params: GetUserByIdDto,
     @Body() updateUserDto: UpdateUserDto
-  ): ApiResponse<User> {
-    return {
-      success: true,
-      message: 'User updated successfully',
-      data: this.usersService.updateUser(params.id, updateUserDto),
-    };
+  ): Promise<User> {
+    return this.usersService.updateUser(params.id, updateUserDto);
   }
 
   @Delete(':id')
@@ -92,11 +81,7 @@ export class UsersController {
   @SwaggerResponse({ status: 200, description: 'User deleted successfully' })
   @SwaggerResponse({ status: 403, description: 'Insufficient permissions' })
   @SwaggerResponse({ status: 404, description: 'User not found' })
-  deleteUser(@Param() params: GetUserByIdDto): ApiResponse<void> {
-    this.usersService.deleteUser(params.id);
-    return {
-      success: true,
-      message: 'User deleted successfully',
-    };
+  async deleteUser(@Param() params: GetUserByIdDto): Promise<void> {
+    return this.usersService.deleteUser(params.id);
   }
 }

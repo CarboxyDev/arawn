@@ -1,13 +1,38 @@
 import { NotFoundException } from '@nestjs/common';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { LoggerService } from '@/common/logger.service';
+import { PrismaService } from '@/database/prisma/prisma.service';
 
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
   let service: UsersService;
+  let prismaService: PrismaService;
+  let loggerService: LoggerService;
 
   beforeEach(() => {
-    service = new UsersService();
+    loggerService = {
+      setContext: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn(),
+      child: vi.fn(() => loggerService),
+    } as unknown as LoggerService;
+
+    prismaService = {
+      user: {
+        findMany: vi.fn(),
+        findUnique: vi.fn(),
+        count: vi.fn(),
+        create: vi.fn(),
+        update: vi.fn(),
+        delete: vi.fn(),
+      },
+    } as unknown as PrismaService;
+
+    service = new UsersService(prismaService, loggerService);
   });
 
   describe('getUsers', () => {
@@ -18,269 +43,217 @@ describe('UsersService', () => {
       sortOrder: 'desc' as const,
     };
 
-    it('should return empty paginated response initially', () => {
-      const result = service.getUsers(defaultQuery);
+    const mockUsers = [
+      {
+        id: '1',
+        email: 'user1@test.com',
+        name: 'User 1',
+        emailVerified: false,
+        image: null,
+        role: 'user' as const,
+        banned: false,
+        banReason: null,
+        banExpires: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: '2',
+        email: 'user2@test.com',
+        name: 'User 2',
+        emailVerified: false,
+        image: null,
+        role: 'user' as const,
+        banned: false,
+        banReason: null,
+        banExpires: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+
+    it('should return empty paginated response initially', async () => {
+      vi.mocked(prismaService.user.findMany).mockResolvedValue([]);
+      vi.mocked(prismaService.user.count).mockResolvedValue(0);
+
+      const result = await service.getUsers(defaultQuery);
       expect(result.success).toBe(true);
       expect(result.data).toEqual([]);
-      expect(result.data).toHaveLength(0);
       expect(result.pagination.total).toBe(0);
       expect(result.pagination.totalPages).toBe(0);
     });
 
-    it('should return paginated users', () => {
-      service.createUser({
-        email: 'user1@test.com',
-        name: 'User 1',
-        role: 'user',
-      });
-      service.createUser({
-        email: 'user2@test.com',
-        name: 'User 2',
-        role: 'user',
-      });
+    it('should return paginated users', async () => {
+      vi.mocked(prismaService.user.findMany).mockResolvedValue(mockUsers);
+      vi.mocked(prismaService.user.count).mockResolvedValue(2);
 
-      const result = service.getUsers(defaultQuery);
+      const result = await service.getUsers(defaultQuery);
       expect(result.data).toHaveLength(2);
       expect(result.pagination.total).toBe(2);
       expect(result.pagination.totalPages).toBe(1);
     });
 
-    it('should filter users by search query', () => {
-      service.createUser({
-        email: 'john@test.com',
-        name: 'John Doe',
-        role: 'user',
-      });
-      service.createUser({
-        email: 'jane@test.com',
-        name: 'Jane Smith',
-        role: 'user',
-      });
+    it('should handle pagination correctly', async () => {
+      vi.mocked(prismaService.user.findMany).mockResolvedValue([mockUsers[0]]);
+      vi.mocked(prismaService.user.count).mockResolvedValue(3);
 
-      const result = service.getUsers({ ...defaultQuery, search: 'john' });
+      const result = await service.getUsers({
+        ...defaultQuery,
+        page: 1,
+        limit: 2,
+      });
       expect(result.data).toHaveLength(1);
-      expect(result.data[0].name).toBe('John Doe');
-    });
-
-    it('should handle pagination correctly', () => {
-      service.createUser({
-        email: 'user1@test.com',
-        name: 'User 1',
-        role: 'user',
-      });
-      service.createUser({
-        email: 'user2@test.com',
-        name: 'User 2',
-        role: 'user',
-      });
-      service.createUser({
-        email: 'user3@test.com',
-        name: 'User 3',
-        role: 'user',
-      });
-
-      const result = service.getUsers({ ...defaultQuery, page: 1, limit: 2 });
-      expect(result.data).toHaveLength(2);
       expect(result.pagination.total).toBe(3);
       expect(result.pagination.totalPages).toBe(2);
     });
 
-    it('should sort users by name ascending', () => {
-      service.createUser({
-        email: 'charlie@test.com',
-        name: 'Charlie',
-        role: 'user',
-      });
-      service.createUser({
-        email: 'alice@test.com',
-        name: 'Alice',
-        role: 'user',
-      });
-      service.createUser({ email: 'bob@test.com', name: 'Bob', role: 'user' });
+    it('should filter users by search query', async () => {
+      vi.mocked(prismaService.user.findMany).mockResolvedValue([mockUsers[0]]);
+      vi.mocked(prismaService.user.count).mockResolvedValue(1);
 
-      const result = service.getUsers({
+      const result = await service.getUsers({
         ...defaultQuery,
-        sortBy: 'name',
-        sortOrder: 'asc',
+        search: 'user1',
       });
-
-      expect(result.data[0].name).toBe('Alice');
-      expect(result.data[1].name).toBe('Bob');
-      expect(result.data[2].name).toBe('Charlie');
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].email).toBe('user1@test.com');
     });
   });
 
   describe('getUserById', () => {
-    it('should return user by ID', () => {
-      const created = service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
-      });
+    const mockUser = {
+      id: '1',
+      email: 'test@example.com',
+      name: 'Test User',
+      emailVerified: false,
+      image: null,
+      role: 'user' as const,
+      banned: false,
+      banReason: null,
+      banExpires: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      const user = service.getUserById(created.id);
+    it('should return user by ID', async () => {
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(mockUser);
 
-      expect(user).toEqual(created);
-      expect(user.id).toBe(created.id);
+      const user = await service.getUserById('1');
+
+      expect(user).toEqual(mockUser);
+      expect(user.id).toBe('1');
     });
 
-    it('should throw NotFoundException when user not found', () => {
-      expect(() => service.getUserById('non-existent-id')).toThrow(
+    it('should throw NotFoundException when user not found', async () => {
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(null);
+
+      await expect(service.getUserById('non-existent-id')).rejects.toThrow(
         NotFoundException
-      );
-      expect(() => service.getUserById('non-existent-id')).toThrow(
-        'User with ID non-existent-id not found'
       );
     });
   });
 
   describe('createUser', () => {
-    it('should create a new user with generated ID', () => {
-      const createUser = {
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user' as const,
-      };
+    const mockUser = {
+      id: '1',
+      email: 'test@example.com',
+      name: 'Test User',
+      emailVerified: false,
+      image: null,
+      role: 'user' as const,
+      banned: false,
+      banReason: null,
+      banExpires: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      const user = service.createUser(createUser);
+    it('should create a new user', async () => {
+      vi.mocked(prismaService.user.create).mockResolvedValue(mockUser);
 
-      expect(user).toHaveProperty('id');
-      expect(user).toHaveProperty('email', createUser.email);
-      expect(user).toHaveProperty('name', createUser.name);
-      expect(user).toHaveProperty('createdAt');
-      expect(user).toHaveProperty('updatedAt');
-    });
-
-    it('should generate unique UUIDs for different users', () => {
-      const user1 = service.createUser({
-        email: 'user1@test.com',
-        name: 'User 1',
-        role: 'user',
-      });
-      const user2 = service.createUser({
-        email: 'user2@test.com',
-        name: 'User 2',
-        role: 'user',
-      });
-
-      expect(user1.id).not.toBe(user2.id);
-    });
-
-    it('should store created users', () => {
-      const createUser = {
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user' as const,
-      };
-
-      service.createUser(createUser);
-      const result = service.getUsers({
-        page: 1,
-        limit: 10,
-        sortBy: 'createdAt',
-        sortOrder: 'desc',
-      });
-
-      expect(result.data).toHaveLength(1);
-      expect(result.data[0].email).toBe(createUser.email);
-    });
-
-    it('should set timestamps as ISO strings', () => {
-      const user = service.createUser({
+      const user = await service.createUser({
         email: 'test@example.com',
         name: 'Test User',
         role: 'user',
       });
 
-      expect(typeof user.createdAt).toBe('string');
-      expect(typeof user.updatedAt).toBe('string');
-      expect(new Date(user.createdAt).toISOString()).toBe(user.createdAt);
-      expect(new Date(user.updatedAt).toISOString()).toBe(user.updatedAt);
+      expect(user.id).toBe('1');
+      expect(user.email).toBe('test@example.com');
+      expect(user.name).toBe('Test User');
     });
   });
 
   describe('updateUser', () => {
-    it('should update user successfully', () => {
-      const created = service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
-      });
+    const mockUser = {
+      id: '1',
+      email: 'test@example.com',
+      name: 'Test User',
+      emailVerified: false,
+      image: null,
+      role: 'user' as const,
+      banned: false,
+      banReason: null,
+      banExpires: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      const updated = service.updateUser(created.id, {
-        name: 'Updated Name',
-      });
+    const updatedUser = {
+      ...mockUser,
+      name: 'Updated Name',
+    };
 
-      expect(updated.id).toBe(created.id);
-      expect(updated.name).toBe('Updated Name');
-      expect(updated.email).toBe(created.email);
-      expect(updated).toHaveProperty('updatedAt');
+    it('should update user successfully', async () => {
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(mockUser);
+      vi.mocked(prismaService.user.update).mockResolvedValue(updatedUser);
+
+      const user = await service.updateUser('1', { name: 'Updated Name' });
+
+      expect(user.name).toBe('Updated Name');
+      expect(user.id).toBe('1');
     });
 
-    it('should throw NotFoundException when user not found', () => {
-      expect(() =>
+    it('should throw NotFoundException when user not found', async () => {
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(null);
+
+      await expect(
         service.updateUser('non-existent-id', { name: 'New Name' })
-      ).toThrow(NotFoundException);
-    });
-
-    it('should partially update user fields', () => {
-      const created = service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
-      });
-
-      const updated = service.updateUser(created.id, {
-        email: 'newemail@example.com',
-      });
-
-      expect(updated.name).toBe(created.name);
-      expect(updated.email).toBe('newemail@example.com');
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('deleteUser', () => {
-    it('should delete user successfully', () => {
-      const created = service.createUser({
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'user',
+    const mockUser = {
+      id: '1',
+      email: 'test@example.com',
+      name: 'Test User',
+      emailVerified: false,
+      image: null,
+      role: 'user' as const,
+      banned: false,
+      banReason: null,
+      banExpires: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    it('should delete user successfully', async () => {
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(mockUser);
+      vi.mocked(prismaService.user.delete).mockResolvedValue(mockUser);
+
+      await service.deleteUser('1');
+
+      expect(prismaService.user.delete).toHaveBeenCalledWith({
+        where: { id: '1' },
       });
-
-      service.deleteUser(created.id);
-
-      expect(() => service.getUserById(created.id)).toThrow(NotFoundException);
     });
 
-    it('should throw NotFoundException when user not found', () => {
-      expect(() => service.deleteUser('non-existent-id')).toThrow(
+    it('should throw NotFoundException when user not found', async () => {
+      vi.mocked(prismaService.user.findUnique).mockResolvedValue(null);
+
+      await expect(service.deleteUser('non-existent-id')).rejects.toThrow(
         NotFoundException
       );
-    });
-
-    it('should reduce total user count after deletion', () => {
-      service.createUser({
-        email: 'user1@test.com',
-        name: 'User 1',
-        role: 'user',
-      });
-      const user2 = service.createUser({
-        email: 'user2@test.com',
-        name: 'User 2',
-        role: 'user',
-      });
-
-      service.deleteUser(user2.id);
-
-      const result = service.getUsers({
-        page: 1,
-        limit: 10,
-        sortBy: 'createdAt',
-        sortOrder: 'desc',
-      });
-
-      expect(result.data).toHaveLength(1);
-      expect(result.pagination.total).toBe(1);
     });
   });
 });
