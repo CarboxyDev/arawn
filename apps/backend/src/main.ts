@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { loadEnv } from '@repo/shared-config';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import helmet from 'helmet';
 import { ZodValidationPipe } from 'nestjs-zod';
@@ -8,6 +7,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { AppModule } from '@/app.module';
 import { GlobalExceptionFilter } from '@/common/filters/http-exception.filter';
 import { LoggerService } from '@/common/logger.service';
+import { loadEnv } from '@/config/env';
 
 async function bootstrap() {
   const env = loadEnv();

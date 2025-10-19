@@ -44,8 +44,7 @@ export const features = [
   {
     iconName: 'PackageOpen' as const,
     title: 'Shared Packages',
-    description:
-      'Types, utilities, and config shared across frontend and backend',
+    description: 'Types and utilities shared across frontend and backend',
   },
   {
     iconName: 'Bot' as const,
@@ -90,12 +89,7 @@ export const techStack = {
   },
   sharedPackages: {
     title: 'Shared Packages',
-    items: [
-      'Zod Schemas',
-      'Utility Functions',
-      'Environment Config (dotenv-flow)',
-      'Type Definitions',
-    ],
+    items: ['Zod Schemas', 'Utility Functions', 'Type Definitions'],
   },
   devOps: {
     title: 'DevOps',

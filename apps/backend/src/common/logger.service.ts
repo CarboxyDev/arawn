@@ -1,8 +1,8 @@
 import { Injectable, LoggerService as NestLoggerService } from '@nestjs/common';
-import { loadEnv } from '@repo/shared-config';
 import pino, { type Logger } from 'pino';
 
 import { AsyncContextService } from '@/common/async-context';
+import { loadEnv } from '@/config/env';
 
 type VerbosityLevel = 'minimal' | 'normal' | 'detailed' | 'verbose';
 type LogLevel = 'error' | 'warn' | 'info' | 'debug' | 'http';

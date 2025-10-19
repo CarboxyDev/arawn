@@ -1,9 +1,9 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { loadEnv } from '@repo/shared-config';
 import type { NextFunction, Request, Response } from 'express';
 
 import { AsyncContextService } from '@/common/async-context';
 import { LoggerService } from '@/common/logger.service';
+import { loadEnv } from '@/config/env';
 
 /**
  * HTTP request/response logger middleware

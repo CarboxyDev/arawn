@@ -93,8 +93,7 @@ arawn/
 │   └── backend/      # NestJS API
 └── shared/
     ├── types/        # Zod schemas + inferred types
-    ├── utils/        # Shared utilities
-    └── config/       # Environment config
+    └── utils/        # Shared utilities
 ```
 
 ## Essential Commands

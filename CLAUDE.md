@@ -73,13 +73,13 @@ pnpm build            # Build with tsup
 
 ### Shared Packages
 
-All shared packages (`@repo/shared-types`, `@repo/shared-utils`, `@repo/shared-config`) are consumed as workspace dependencies:
+All shared packages (`@repo/shared-types`, `@repo/shared-utils`) are consumed as workspace dependencies:
 
 - Export both CJS and ESM formats
 - Include TypeScript declarations
 - Must be built before apps can run in dev mode
 - Frontend's `next.config.ts` transpiles these packages
-- All use Zod v4.1.12 for validation (types and config packages)
+- Both use Zod v4.1.12 for validation
 
 ### Database (Prisma + PostgreSQL)
 
@@ -131,16 +131,18 @@ docker-compose --profile tools up -d        # Start PostgreSQL + pgAdmin (option
 
 ### Environment Configuration
 
-Environment variables are managed per-app:
+Environment variables are managed per-app with Zod validation:
 
-- **Backend**: Uses `@repo/shared-config` with `dotenv-flow` and Zod v4 validation
-  - Configuration defined in `shared/config/src/index.ts`
-  - Required: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`
-  - Uses `loadEnv()` from `@repo/shared-config` on startup
-- **Frontend**: Uses Next.js environment variables
-  - Required: `NEXT_PUBLIC_API_URL` (exposed to browser)
-  - Configured in `apps/frontend/src/lib/env.ts`
-  - Only `NEXT_PUBLIC_*` variables are exposed to the client
+- **Backend**: Custom env loader with `dotenv-flow` and Zod v4 validation
+  - Configuration: `apps/backend/src/config/env.ts`
+  - Required: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`, `LOG_LEVEL`
+  - Uses `loadEnv()` helper that validates env vars on startup
+  - Reads from `apps/backend/.env.local` via `dotenv-flow`
+- **Frontend**: Next.js environment variables with Zod validation
+  - Configuration: `apps/frontend/src/lib/env.ts`
+  - Required: `NEXT_PUBLIC_API_URL`, `NODE_ENV`
+  - Only `NEXT_PUBLIC_*` variables are exposed to the browser
+  - Next.js automatically loads env files (no dotenv-flow needed)
 - Each app has `.env.local.example` files showing expected variables
 
 ### Security
@@ -561,7 +563,6 @@ import { UsersService } from '../modules/users/users.service';
 // ✅ CORRECT - Use workspace package names
 import { UserSchema } from '@repo/shared-types';
 import { formatDate } from '@repo/shared-utils';
-import { loadEnv } from '@repo/shared-config';
 ```
 
 ### Naming Conventions
