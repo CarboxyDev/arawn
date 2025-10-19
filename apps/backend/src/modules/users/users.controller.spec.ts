@@ -31,7 +31,11 @@ describe('UsersController', () => {
     });
 
     it('should return paginated users from service', () => {
-      service.createUser({ email: 'test@example.com', name: 'Test User' });
+      service.createUser({
+        email: 'test@example.com',
+        name: 'Test User',
+        role: 'user',
+      });
 
       const result = controller.getUsers(defaultQuery);
 
@@ -55,6 +59,7 @@ describe('UsersController', () => {
       const created = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
 
       const result = controller.getUserById({ id: created.id });
@@ -68,6 +73,7 @@ describe('UsersController', () => {
       const created = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
       const spy = vi.spyOn(service, 'getUserById');
 
@@ -83,6 +89,7 @@ describe('UsersController', () => {
       const createUserDto = {
         email: 'newuser@example.com',
         name: 'New User',
+        role: 'user' as const,
       };
 
       const result = controller.createUser(createUserDto);
@@ -99,6 +106,7 @@ describe('UsersController', () => {
       const createUserDto = {
         email: 'valid@example.com',
         name: 'Valid User',
+        role: 'user' as const,
       };
 
       expect(() => controller.createUser(createUserDto)).not.toThrow();
@@ -109,6 +117,7 @@ describe('UsersController', () => {
       const createUserDto = {
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user' as const,
       };
 
       controller.createUser(createUserDto);
@@ -123,6 +132,7 @@ describe('UsersController', () => {
       const created = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
 
       const updateUserDto = {
@@ -141,6 +151,7 @@ describe('UsersController', () => {
       const created = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
       const spy = vi.spyOn(service, 'updateUser');
       const updateUserDto = { name: 'Updated Name' };
@@ -157,6 +168,7 @@ describe('UsersController', () => {
       const created = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
 
       const result = controller.deleteUser({ id: created.id });
@@ -169,6 +181,7 @@ describe('UsersController', () => {
       const created = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
       const spy = vi.spyOn(service, 'deleteUser');
 

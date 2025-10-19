@@ -11,11 +11,17 @@ export const HealthCheckSchema = z.object({
 
 export type HealthCheck = z.infer<typeof HealthCheckSchema>;
 
+// Role Enum Schema
+export const RoleSchema = z.enum(['user', 'admin', 'super_admin']);
+
+export type Role = z.infer<typeof RoleSchema>;
+
 // User Schemas
 export const UserSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
   name: z.string().min(1),
+  role: RoleSchema.default('user'),
   createdAt: z.date().or(z.string().datetime()),
   updatedAt: z.date().or(z.string().datetime()),
 });

@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth';
@@ -16,6 +17,7 @@ import { authClient } from '@/lib/auth';
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
+  rememberMe: z.boolean().default(false),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -39,6 +41,7 @@ export default function LoginPage() {
       const result = await authClient.signIn.email({
         email: data.email,
         password: data.password,
+        rememberMe: data.rememberMe,
       });
 
       if (result.error) {
@@ -93,6 +96,15 @@ export default function LoginPage() {
                 {errors.password.message}
               </p>
             )}
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="rememberMe" {...register('rememberMe')} />
+            <Label
+              htmlFor="rememberMe"
+              className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Remember me for 30 days
+            </Label>
           </div>
           <div className="flex flex-col space-y-4 pt-2">
             <Button type="submit" className="w-full" disabled={isLoading}>

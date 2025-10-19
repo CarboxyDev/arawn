@@ -10,6 +10,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Role enum for user permissions
+enum Role {
+  user
+  admin
+  super_admin
+}
+
 // User model with better-auth support
 model User {
   id            String    @id @default(cuid())
@@ -17,6 +24,10 @@ model User {
   emailVerified Boolean   @default(false)
   name          String?
   image         String?
+  role          Role      @default(user)
+  banned        Boolean   @default(false)
+  banReason     String?
+  banExpires    DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -28,14 +39,15 @@ model User {
 
 // Session model for better-auth
 model Session {
-  id        String   @id @default(cuid())
-  userId    String
-  expiresAt DateTime
-  token     String   @unique
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(cuid())
+  userId         String
+  expiresAt      DateTime
+  token          String   @unique
+  ipAddress      String?
+  userAgent      String?
+  impersonatedBy String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

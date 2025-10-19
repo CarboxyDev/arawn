@@ -28,8 +28,16 @@ describe('UsersService', () => {
     });
 
     it('should return paginated users', () => {
-      service.createUser({ email: 'user1@test.com', name: 'User 1' });
-      service.createUser({ email: 'user2@test.com', name: 'User 2' });
+      service.createUser({
+        email: 'user1@test.com',
+        name: 'User 1',
+        role: 'user',
+      });
+      service.createUser({
+        email: 'user2@test.com',
+        name: 'User 2',
+        role: 'user',
+      });
 
       const result = service.getUsers(defaultQuery);
       expect(result.data).toHaveLength(2);
@@ -38,8 +46,16 @@ describe('UsersService', () => {
     });
 
     it('should filter users by search query', () => {
-      service.createUser({ email: 'john@test.com', name: 'John Doe' });
-      service.createUser({ email: 'jane@test.com', name: 'Jane Smith' });
+      service.createUser({
+        email: 'john@test.com',
+        name: 'John Doe',
+        role: 'user',
+      });
+      service.createUser({
+        email: 'jane@test.com',
+        name: 'Jane Smith',
+        role: 'user',
+      });
 
       const result = service.getUsers({ ...defaultQuery, search: 'john' });
       expect(result.data).toHaveLength(1);
@@ -47,9 +63,21 @@ describe('UsersService', () => {
     });
 
     it('should handle pagination correctly', () => {
-      service.createUser({ email: 'user1@test.com', name: 'User 1' });
-      service.createUser({ email: 'user2@test.com', name: 'User 2' });
-      service.createUser({ email: 'user3@test.com', name: 'User 3' });
+      service.createUser({
+        email: 'user1@test.com',
+        name: 'User 1',
+        role: 'user',
+      });
+      service.createUser({
+        email: 'user2@test.com',
+        name: 'User 2',
+        role: 'user',
+      });
+      service.createUser({
+        email: 'user3@test.com',
+        name: 'User 3',
+        role: 'user',
+      });
 
       const result = service.getUsers({ ...defaultQuery, page: 1, limit: 2 });
       expect(result.data).toHaveLength(2);
@@ -58,9 +86,17 @@ describe('UsersService', () => {
     });
 
     it('should sort users by name ascending', () => {
-      service.createUser({ email: 'charlie@test.com', name: 'Charlie' });
-      service.createUser({ email: 'alice@test.com', name: 'Alice' });
-      service.createUser({ email: 'bob@test.com', name: 'Bob' });
+      service.createUser({
+        email: 'charlie@test.com',
+        name: 'Charlie',
+        role: 'user',
+      });
+      service.createUser({
+        email: 'alice@test.com',
+        name: 'Alice',
+        role: 'user',
+      });
+      service.createUser({ email: 'bob@test.com', name: 'Bob', role: 'user' });
 
       const result = service.getUsers({
         ...defaultQuery,
@@ -79,6 +115,7 @@ describe('UsersService', () => {
       const created = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
 
       const user = service.getUserById(created.id);
@@ -102,6 +139,7 @@ describe('UsersService', () => {
       const createUser = {
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user' as const,
       };
 
       const user = service.createUser(createUser);
@@ -117,10 +155,12 @@ describe('UsersService', () => {
       const user1 = service.createUser({
         email: 'user1@test.com',
         name: 'User 1',
+        role: 'user',
       });
       const user2 = service.createUser({
         email: 'user2@test.com',
         name: 'User 2',
+        role: 'user',
       });
 
       expect(user1.id).not.toBe(user2.id);
@@ -130,6 +170,7 @@ describe('UsersService', () => {
       const createUser = {
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user' as const,
       };
 
       service.createUser(createUser);
@@ -148,6 +189,7 @@ describe('UsersService', () => {
       const user = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
 
       expect(typeof user.createdAt).toBe('string');
@@ -162,6 +204,7 @@ describe('UsersService', () => {
       const created = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
 
       const updated = service.updateUser(created.id, {
@@ -184,6 +227,7 @@ describe('UsersService', () => {
       const created = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
 
       const updated = service.updateUser(created.id, {
@@ -200,6 +244,7 @@ describe('UsersService', () => {
       const created = service.createUser({
         email: 'test@example.com',
         name: 'Test User',
+        role: 'user',
       });
 
       service.deleteUser(created.id);
@@ -214,10 +259,15 @@ describe('UsersService', () => {
     });
 
     it('should reduce total user count after deletion', () => {
-      service.createUser({ email: 'user1@test.com', name: 'User 1' });
+      service.createUser({
+        email: 'user1@test.com',
+        name: 'User 1',
+        role: 'user',
+      });
       const user2 = service.createUser({
         email: 'user2@test.com',
         name: 'User 2',
+        role: 'user',
       });
 
       service.deleteUser(user2.id);

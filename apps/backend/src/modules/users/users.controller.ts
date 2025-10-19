@@ -26,6 +26,7 @@ import { User } from '@repo/shared-types';
 import { ApiResponse } from '@repo/shared-types';
 import { createZodDto } from 'nestjs-zod';
 
+import { Roles } from '@/auth/decorators/roles.decorator';
 import { UsersService } from '@/modules/users/users.service';
 
 class CreateUserDto extends createZodDto(CreateUserSchema) {}
@@ -86,8 +87,10 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete user by ID' })
+  @Roles('admin', 'super_admin')
+  @ApiOperation({ summary: 'Delete user by ID (Admin only)' })
   @SwaggerResponse({ status: 200, description: 'User deleted successfully' })
+  @SwaggerResponse({ status: 403, description: 'Insufficient permissions' })
   @SwaggerResponse({ status: 404, description: 'User not found' })
   deleteUser(@Param() params: GetUserByIdDto): ApiResponse<void> {
     this.usersService.deleteUser(params.id);

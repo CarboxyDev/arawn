@@ -1,3 +1,4 @@
+import { adminClient } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
 
 import { env } from '@/lib/env';
@@ -10,5 +11,6 @@ import { env } from '@/lib/env';
  */
 export const authClient = createAuthClient({
   baseURL: `${env.apiUrl}/api/auth`,
+  plugins: [adminClient()],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }) as any;
