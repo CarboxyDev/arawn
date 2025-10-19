@@ -66,6 +66,7 @@ describe('useUsers API Hooks', () => {
             name: 'Test User',
             createdAt: '2024-01-01T00:00:00Z',
             updatedAt: '2024-01-01T00:00:00Z',
+            role: 'user',
           },
         ],
         pagination: {
@@ -120,6 +121,7 @@ describe('useUsers API Hooks', () => {
           name: 'Test User',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
+          role: 'user',
         },
       };
 
@@ -150,6 +152,7 @@ describe('useUsers API Hooks', () => {
       const newUser: CreateUser = {
         name: 'New User',
         email: 'new@example.com',
+        role: 'user',
       };
 
       const mockResponse: ApiResponse<User> = {

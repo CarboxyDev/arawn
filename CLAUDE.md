@@ -150,6 +150,22 @@ Backend security middleware configured in `main.ts`:
 - **CORS**: Strict origin policy allowing only `FRONTEND_URL`
 - ThrottlerGuard is applied globally to all routes
 
+**Authentication & Session Security:**
+
+- **Better Auth**: Modern authentication library with built-in CSRF protection
+  - Session tokens stored in httpOnly cookies (protected from XSS)
+  - Automatic CSRF validation for state-changing operations
+  - Trusted origins validation via `trustedOrigins` config
+  - No additional CSRF middleware needed - handled by Better Auth
+- **Session Management**: Users can view and revoke active sessions
+  - `GET /sessions` - List all active sessions with device info
+  - `DELETE /sessions/:id` - Revoke specific session
+  - `DELETE /sessions` - Sign out from all other devices
+- **Password Security**: Password changes automatically invalidate all other sessions
+  - `POST /password/change` - Change password with current password verification
+  - Uses bcryptjs for password hashing
+  - Prevents reuse of current password
+
 ### Production Logging & Error Tracking
 
 The backend uses Pino for structured, production-ready logging with request tracing and configurable verbosity.
@@ -587,6 +603,24 @@ The frontend uses a hybrid state management approach:
 - Implement optimistic updates for better UX
 - Handle loading states and errors gracefully
 - Always define TypeScript types for API payloads and responses
+
+### Authentication & Protected Routes
+
+The frontend uses Better Auth React client for authentication with modern patterns:
+
+- **Auth Client**: Configured in `apps/frontend/src/lib/auth.ts`
+  - Uses Better Auth's `createAuthClient` with admin plugin
+  - Provides `useSession()` hook for accessing current user/session
+  - Handles sign in/out, session persistence via cookies
+- **Protected Routes**: Two approaches available
+  - `<ProtectedRoute>` wrapper component for page-level protection
+  - `withAuth()` HOC for functional component wrapping
+  - Both provide automatic redirects and loading states
+  - Example: `<ProtectedRoute redirectTo="/login">{children}</ProtectedRoute>`
+- **Session Management**: Full device/session management UI
+  - View active sessions with device info (IP, user agent, timestamps)
+  - Revoke individual sessions or sign out from all devices
+  - Available at `/dashboard/sessions`
 
 ### UI Component Patterns
 

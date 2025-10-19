@@ -17,7 +17,7 @@ interface FetcherOptions extends RequestInit {
   timeout?: number;
 }
 
-async function fetcher<T>(
+export async function fetcher<T>(
   endpoint: string,
   options: FetcherOptions = {}
 ): Promise<T> {

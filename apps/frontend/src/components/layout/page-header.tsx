@@ -2,7 +2,6 @@
 
 import { Github } from 'lucide-react';
 
-import { AuthNav } from '@/components/layout/auth-nav';
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
@@ -10,7 +9,6 @@ import { siteConfig } from '@/config/site';
 export function PageHeader() {
   return (
     <div className="absolute right-8 top-8 flex items-center gap-2">
-      <AuthNav />
       <Button asChild variant="default">
         <a
           href={siteConfig.github}

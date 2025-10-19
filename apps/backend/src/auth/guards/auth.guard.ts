@@ -41,9 +41,11 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('No active session');
       }
 
-      // Attach user and session to request
-      (request as any).user = session.user;
-      (request as any).session = session.session;
+      // Attach user and session to request (with session object for tracking)
+      (request as any).user = {
+        ...session.user,
+        session: session.session,
+      };
 
       return true;
     } catch (error) {

@@ -1,6 +1,5 @@
 import { type HealthCheck } from '@repo/shared-types';
-import { formatDateTime } from '@repo/shared-utils';
-import { Activity, ArrowRight, Boxes, Terminal } from 'lucide-react';
+import { ArrowRight, Boxes, Terminal } from 'lucide-react';
 import Link from 'next/link';
 
 import { CommandBlock } from '@/components/landing/command-block';
@@ -74,66 +73,6 @@ export default async function Home() {
           </div>
         </div>
 
-        {health && isLocalDev && (
-          <div className="border-border bg-card rounded-lg border p-8">
-            <div className="mb-8 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Activity className="text-foreground h-5 w-5" />
-                <h2 className="text-card-foreground text-xl font-medium">
-                  API Status
-                </h2>
-              </div>
-              <span
-                className={`rounded-md px-3 py-1 text-xs font-medium ${
-                  health.status === 'ok'
-                    ? 'border border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400'
-                    : 'border border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400'
-                }`}
-              >
-                {health.status === 'ok' ? 'Healthy' : 'Error'}
-              </span>
-            </div>
-            <div className="grid grid-cols-4 gap-8">
-              <div>
-                <p className="text-muted-foreground mb-2 text-xs">
-                  Environment
-                </p>
-                <p className="text-card-foreground text-base font-medium capitalize">
-                  {health.environment}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-2 text-xs">Version</p>
-                <p className="text-card-foreground text-base font-medium">
-                  {health.version}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-2 text-xs">Uptime</p>
-                <p className="text-card-foreground text-base font-medium">
-                  {health.uptime}s
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-2 text-xs">
-                  Last Checked
-                </p>
-                <p className="text-card-foreground text-base font-medium">
-                  {formatDateTime(health.timestamp)}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {!health && isLocalDev && (
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-6 dark:border-amber-800 dark:bg-amber-950">
-            <p className="text-center text-sm text-amber-900 dark:text-amber-400">
-              Unable to connect to backend API. Make sure the backend is
-              running.
-            </p>
-          </div>
-        )}
         <div className="grid gap-6 md:grid-cols-3">
           {features.map((feature) => (
             <FeatureCard

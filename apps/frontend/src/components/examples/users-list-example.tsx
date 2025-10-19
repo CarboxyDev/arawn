@@ -56,6 +56,7 @@ export function UsersListExample() {
     const userData: CreateUser = {
       name: newUserName,
       email: newUserEmail,
+      role: 'user',
     };
 
     createUser(userData, {
