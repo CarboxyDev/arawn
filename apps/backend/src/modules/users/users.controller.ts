@@ -16,14 +16,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
-  type ApiResponse,
   CreateUserSchema,
   GetUserByIdSchema,
-  type PaginatedResponse,
   QueryUsersSchema,
   UpdateUserSchema,
-  type User,
 } from '@repo/shared-types';
+import { PaginatedResponse } from '@repo/shared-types';
+import { User } from '@repo/shared-types';
+import { ApiResponse } from '@repo/shared-types';
 import { createZodDto } from 'nestjs-zod';
 
 import { UsersService } from '@/modules/users/users.service';

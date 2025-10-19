@@ -4,7 +4,7 @@ import {
   ApiResponse as SwaggerResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { type ApiResponse, type HealthCheck } from '@repo/shared-types';
+import { ApiResponse, HealthCheck } from '@repo/shared-types';
 
 import { AppService } from '@/app.service';
 import { CurrentUser } from '@/auth/decorators/current-user.decorator';

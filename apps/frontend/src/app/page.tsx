@@ -1,16 +1,15 @@
 import { type HealthCheck } from '@repo/shared-types';
 import { formatDateTime } from '@repo/shared-utils';
-import { Activity, ArrowRight, Boxes, Github, Terminal } from 'lucide-react';
+import { Activity, ArrowRight, Boxes, Terminal } from 'lucide-react';
 import Link from 'next/link';
 
 import { CommandBlock } from '@/components/landing/command-block';
 import { FeatureCard } from '@/components/landing/feature-card';
 import { Logo } from '@/components/landing/logo';
 import { TechBadge } from '@/components/landing/tech-badge';
-import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
+import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
 import { features, quickStartCommands, techStack } from '@/config/landing-data';
-import { siteConfig } from '@/config/site';
 
 async function getHealth(): Promise<HealthCheck | null> {
   try {
@@ -36,20 +35,7 @@ export default async function Home() {
 
   return (
     <main className="bg-background relative flex flex-1 flex-col items-center justify-center p-8 pb-0">
-      <div className="absolute right-8 top-8 flex items-center gap-2">
-        <Button asChild variant="default">
-          <a
-            href={siteConfig.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2"
-          >
-            <Github className="h-4 w-4" />
-            GitHub
-          </a>
-        </Button>
-        <AnimatedThemeToggler />
-      </div>
+      <PageHeader />
       <div className="w-full max-w-5xl space-y-12">
         <div className="space-y-6 text-center">
           <div className="flex justify-center">

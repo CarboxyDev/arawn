@@ -1,14 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Code2, Database, Flame, Github } from 'lucide-react';
+import { ArrowRight, Code2, Database, Flame } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
 import { ExampleForm } from '@/components/examples/example-form';
 import { ExampleJotai } from '@/components/examples/example-jotai';
 import { ExampleQuery } from '@/components/examples/example-query';
-import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
+import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
@@ -41,20 +41,7 @@ export default function ExamplesPage() {
 
   return (
     <div className="bg-background relative min-h-screen">
-      <div className="absolute right-8 top-8 flex items-center gap-2">
-        <Button asChild variant="default">
-          <a
-            href={siteConfig.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2"
-          >
-            <Github className="h-4 w-4" />
-            GitHub
-          </a>
-        </Button>
-        <AnimatedThemeToggler />
-      </div>
+      <PageHeader />
 
       <div className="container mx-auto px-8 py-12">
         <div className="mx-auto max-w-5xl space-y-8">

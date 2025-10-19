@@ -11,7 +11,7 @@ import { Public } from '@/auth/decorators/public.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @All('*')
+  @All('*path')
   async handleAuth(@Req() req: Request, @Res() res: Response) {
     const auth = this.authService.getAuthInstance();
 
