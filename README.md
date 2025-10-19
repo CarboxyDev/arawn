@@ -69,7 +69,11 @@ The setup script handles everything: environment files, docker containers, datab
 - Frontend: [http://localhost:3000](http://localhost:3000)
 - Backend: [http://localhost:8080](http://localhost:8080)
 - API Docs: [http://localhost:8080/docs](http://localhost:8080/docs)
-- pgAdmin: [http://localhost:5050](http://localhost:5050) (admin@localhost / admin123)
+
+**Database tools:**
+
+- Prisma Studio: Run `pnpm db:studio` to open [http://localhost:5555](http://localhost:5555) (recommended for data inspection)
+- pgAdmin (optional): Run `docker-compose --profile tools up -d` for [http://localhost:5050](http://localhost:5050) (admin@example.com / admin123)
 
 **Built-in pages:**
 

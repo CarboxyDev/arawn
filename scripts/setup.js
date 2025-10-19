@@ -29,7 +29,7 @@ const SETUP_CONFIG = {
   maxWaitAttempts: 30,
   retryDelay: 1000,
   maxRetries: 3,
-  services: ['postgres', 'pgadmin'],
+  services: ['postgres'],
   envFiles: [
     {
       from: 'apps/frontend/.env.local.example',
@@ -424,9 +424,9 @@ ${bright}To run the actual setup:${reset}
   if (isComposeRunning && isPostgresHealthy()) {
     log.info('Docker services are already running');
   } else {
-    log.info('Starting PostgreSQL and pgAdmin...');
+    log.info('Starting PostgreSQL...');
     runDockerCompose('up -d', ROOT_DIR, { quiet: true });
-    log.success('Docker services started');
+    log.success('PostgreSQL started');
 
     // Wait for PostgreSQL to be ready
     const isHealthy = await waitForPostgres();
@@ -493,10 +493,13 @@ ${bright}Next steps:${reset}
      ${cyan}pnpm dev${reset}
 
   2. Open your browser:
-     ${dim}Frontend:${reset}  http://localhost:3000
-     ${dim}Backend:${reset}   http://localhost:8080
-     ${dim}API Docs:${reset}  http://localhost:8080/docs
-     ${dim}pgAdmin:${reset}   http://localhost:5050
+     ${dim}Frontend:${reset}      http://localhost:3000
+     ${dim}Backend:${reset}       http://localhost:8080
+     ${dim}API Docs:${reset}      http://localhost:8080/docs
+
+${bright}Database tools:${reset}
+  ${cyan}pnpm db:studio${reset}                        Open Prisma Studio (recommended)
+  ${cyan}docker-compose --profile tools up -d${reset}  Start pgAdmin (optional)
 
 ${bright}Setup options:${reset}
   ${cyan}node scripts/setup.js${reset}          Run setup with seeding (default)

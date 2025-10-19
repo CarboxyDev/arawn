@@ -107,13 +107,15 @@ pnpm db:seed        # Seed database
 PostgreSQL runs in Docker via `docker-compose.yml` at the root:
 
 ```bash
-docker-compose up -d      # Start PostgreSQL + pgAdmin
-docker-compose down       # Stop services
-docker-compose down -v    # Stop and wipe data
+docker-compose up -d                        # Start PostgreSQL only
+docker-compose down                         # Stop services
+docker-compose down -v                      # Stop and wipe data
+docker-compose --profile tools up -d        # Start PostgreSQL + pgAdmin (optional)
 ```
 
 - **PostgreSQL**: `localhost:5432` (credentials in `docker-compose.yml`)
-- **pgAdmin**: `http://localhost:5050` (admin@localhost / admin123)
+- **Prisma Studio**: `http://localhost:5555` - Run `pnpm db:studio` for database GUI (recommended)
+- **pgAdmin** (optional): `http://localhost:5050` (admin@example.com / admin123) - Only for advanced PostgreSQL administration
 
 **Environment Variables:**
 
