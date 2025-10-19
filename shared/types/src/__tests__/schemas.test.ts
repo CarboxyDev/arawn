@@ -154,6 +154,7 @@ describe('CreateUserSchema', () => {
       expect(result.data).toEqual({
         email: 'new@example.com',
         name: 'Jane Doe',
+        role: 'user',
       });
     }
   });
