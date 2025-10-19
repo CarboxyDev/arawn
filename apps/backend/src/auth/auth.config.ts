@@ -14,7 +14,7 @@ export function createAuthInstance(prisma: PrismaService) {
     }),
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: false, // Set to true in production with email service
+      requireEmailVerification: false, // IMPORTANT: Set to true in production with email service
     },
     session: {
       expiresIn: 60 * 60 * 24 * 7, // 7 days
@@ -22,7 +22,7 @@ export function createAuthInstance(prisma: PrismaService) {
     },
     trustedOrigins: [process.env.FRONTEND_URL || 'http://localhost:3000'],
     socialProviders: {
-      // OAuth providers will be added here
+      // OAuth providers go here
       // github: {
       //   clientId: process.env.GITHUB_CLIENT_ID!,
       //   clientSecret: process.env.GITHUB_CLIENT_SECRET!,

@@ -5,6 +5,7 @@ import {
   Bot,
   Code2,
   GitBranch,
+  Lock,
   PackageOpen,
   Rocket,
   Shield,
@@ -15,6 +16,7 @@ import {
 
 const iconMap = {
   Rocket,
+  Lock,
   Zap,
   Shield,
   Workflow,

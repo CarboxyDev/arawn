@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth';
 
-const registerSchema = z
+const signupSchema = z
   .object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
     email: z.string().email('Invalid email address'),
@@ -25,9 +25,9 @@ const registerSchema = z
     path: ['confirmPassword'],
   });
 
-type RegisterFormData = z.infer<typeof registerSchema>;
+type SignupFormData = z.infer<typeof signupSchema>;
 
-export default function RegisterPage() {
+export default function SignupPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,11 +35,11 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = async (data: RegisterFormData) => {
+  const onSubmit = async (data: SignupFormData) => {
     setIsLoading(true);
 
     try {
@@ -58,7 +58,7 @@ export default function RegisterPage() {
       router.push('/dashboard');
     } catch (error) {
       toast.error('An unexpected error occurred');
-      console.error('Registration error:', error);
+      console.error('Signup error:', error);
     } finally {
       setIsLoading(false);
     }

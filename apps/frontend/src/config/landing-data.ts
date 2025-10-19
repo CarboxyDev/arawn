@@ -3,7 +3,13 @@ export const features = [
     iconName: 'Rocket' as const,
     title: 'Production Ready',
     description:
-      'Helmet security, rate limiting, CORS, and validated environment configs',
+      'Helmet security, rate limiting, CORS, validated environment configs, and GitHub Actions CI/CD',
+  },
+  {
+    iconName: 'Lock' as const,
+    title: 'Authentication',
+    description:
+      'Better-auth with email/password, session management, and OAuth ready for GitHub and Google',
   },
   {
     iconName: 'Zap' as const,
@@ -42,12 +48,6 @@ export const features = [
       'Types, utilities, and config shared across frontend and backend',
   },
   {
-    iconName: 'GitBranch' as const,
-    title: 'CI/CD Ready',
-    description:
-      'GitHub Actions workflow with automated testing, type checking, and linting',
-  },
-  {
     iconName: 'Bot' as const,
     title: 'AI-Assisted Development',
     description:
@@ -80,6 +80,7 @@ export const techStack = {
       'TypeScript',
       'Prisma',
       'PostgreSQL',
+      'Better-auth',
       'Zod',
       'Scalar Docs',
       'Helmet',

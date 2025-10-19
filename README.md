@@ -14,7 +14,8 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 - **Full-stack type safety**: Zod schemas define your API contracts. Types flow from database to UI automatically without any hassle.
 - **Zero-config setup**: One command creates env files, spins up docker, runs migrations, and gets you ready to ship in a fraction of the time.
-- **Production-grade**: Global exception filter with request ID tracing, automatic Zod validation on all endpoints, rate limiting, environment-aware error responses
+- **Production-grade authentication**: Better-auth integration with email/password, session management, and OAuth ready (GitHub, Google). Protected routes and auth guards out of the box.
+- **Production-grade infrastructure**: Global exception filter with request ID tracing, automatic Zod validation on all endpoints, rate limiting, environment-aware error responses
 - **Shared validation logic**: Write your schemas once in `shared/types`, use them everywhere (frontend forms, API validation, DB queries)
 - **Real testing infrastructure**: Vitest configured for frontend, backend, and shared packages with coverage reports
 - **Auto-generated API docs**: Swagger + Scalar documentation generated directly from your Zod schemas
@@ -36,6 +37,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 - NestJS 11
 - Prisma 6 + PostgreSQL 17
+- Better-auth for authentication
 - Pino for logging infrastructure
 - Swagger + Scalar API docs
 - Helmet + rate limiting
@@ -68,6 +70,13 @@ The setup script handles everything: environment files, docker containers, datab
 - Backend: [http://localhost:8080](http://localhost:8080)
 - API Docs: [http://localhost:8080/docs](http://localhost:8080/docs)
 - pgAdmin: [http://localhost:5050](http://localhost:5050) (admin@localhost / admin123)
+
+**Built-in pages:**
+
+- `/login` - Sign in page
+- `/signup` - Create new account
+- `/dashboard` - Protected user dashboard
+- `/examples` - Component examples
 
 **Requirements:** Node.js ≥20, pnpm ≥9, docker
 
@@ -120,8 +129,12 @@ pnpm db:reset         # Fresh database
 - Intelligent caching speeds up subsequent builds
 - Parallel execution where possible
 
-**Production Hardening**
+**Authentication & Security**
 
+- Better-auth with email/password authentication
+- Session-based auth with 7-day expiration
+- Protected routes with auth guards
+- OAuth ready for GitHub and Google
 - Helmet for secure HTTP headers
 - Rate limiting (default 30 req/min per IP)
 - CORS configured for frontend origin only

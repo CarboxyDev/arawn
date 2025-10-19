@@ -26,7 +26,6 @@ import {
 } from '@repo/shared-types';
 import { createZodDto } from 'nestjs-zod';
 
-import { Public } from '@/auth/decorators/public.decorator';
 import { UsersService } from '@/modules/users/users.service';
 
 class CreateUserDto extends createZodDto(CreateUserSchema) {}
@@ -36,7 +35,6 @@ class QueryUsersDto extends createZodDto(QueryUsersSchema) {}
 
 @ApiTags('Users')
 @Controller('users')
-@Public() // Make all user routes public for now - remove this to protect routes
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
