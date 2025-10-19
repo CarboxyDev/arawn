@@ -4,7 +4,7 @@ import {
   ApiResponse as SwaggerResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ApiResponse, HealthCheck } from '@repo/shared-types';
+import { ApiResponse, HealthCheck, User } from '@repo/shared-types';
 
 import { AppService } from '@/app.service';
 import { CurrentUser } from '@/auth/decorators/current-user.decorator';
@@ -39,7 +39,7 @@ export class AppController {
   @ApiOperation({ summary: 'Get current user (protected route example)' })
   @SwaggerResponse({ status: 200, description: 'Returns current user' })
   @SwaggerResponse({ status: 401, description: 'Unauthorized' })
-  getMe(@CurrentUser() user: any): ApiResponse<any> {
+  getMe(@CurrentUser() user: User): ApiResponse<User> {
     return {
       success: true,
       message: 'Current user retrieved successfully',

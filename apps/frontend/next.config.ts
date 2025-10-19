@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     '@repo/shared-utils',
     '@repo/shared-config',
   ],
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
 };
 
 export default nextConfig;
