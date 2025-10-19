@@ -20,10 +20,10 @@ import {
   GetUserByIdSchema,
   QueryUsersSchema,
   UpdateUserSchema,
-} from '@repo/shared-types';
-import { PaginatedResponse } from '@repo/shared-types';
-import { User } from '@repo/shared-types';
-import { ApiResponse } from '@repo/shared-types';
+} from '@repo/packages-types';
+import { PaginatedResponse } from '@repo/packages-types';
+import { User } from '@repo/packages-types';
+import { ApiResponse } from '@repo/packages-types';
 import { createZodDto } from 'nestjs-zod';
 
 import { Roles } from '@/auth/decorators/roles.decorator';

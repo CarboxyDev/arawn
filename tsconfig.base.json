@@ -12,7 +12,14 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@repo/packages-types": ["packages/types/src/index.ts"],
+      "@repo/packages-types/*": ["packages/types/src/*"],
+      "@repo/packages-utils": ["packages/utils/src/index.ts"],
+      "@repo/packages-utils/*": ["packages/utils/src/*"]
+    }
   },
   "exclude": ["node_modules", "dist", "build", ".next"]
 }

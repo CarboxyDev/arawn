@@ -4,7 +4,7 @@ import type {
   PaginatedResponse,
   QueryUsers,
   User,
-} from '@repo/shared-types';
+} from '@repo/packages-types';
 import {
   useMutation,
   useQuery,

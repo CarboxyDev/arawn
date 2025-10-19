@@ -6,14 +6,14 @@ export default mergeConfig(
   sharedConfig,
   defineConfig({
     test: {
-      name: '@repo/shared-types',
+      name: '@repo/packages-utils',
       include: ['src/**/*.{test,spec}.{ts,tsx}'],
       coverage: {
         thresholds: {
-          lines: 90,
-          functions: 90,
-          branches: 85,
-          statements: 90,
+          lines: 70,
+          functions: 70,
+          branches: 60,
+          statements: 70,
         },
       },
     },

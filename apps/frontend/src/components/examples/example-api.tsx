@@ -1,6 +1,6 @@
 'use client';
 
-import type { CreateUser, User } from '@repo/shared-types';
+import type { CreateUser, User } from '@repo/packages-types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 

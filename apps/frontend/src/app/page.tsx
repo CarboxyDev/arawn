@@ -1,4 +1,4 @@
-import { type HealthCheck } from '@repo/shared-types';
+import { type HealthCheck } from '@repo/packages-types';
 import { ArrowRight, Boxes, Terminal } from 'lucide-react';
 import Link from 'next/link';
 

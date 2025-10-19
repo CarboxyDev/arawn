@@ -1,4 +1,4 @@
-import type { ApiResponse } from '@repo/shared-types';
+import type { ApiResponse } from '@repo/packages-types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetcher } from '@/lib/api';

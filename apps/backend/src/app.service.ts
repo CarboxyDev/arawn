@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
-import { HealthCheck } from '@repo/shared-types';
+import { HealthCheck } from '@repo/packages-types';
 
 @Injectable()
 export class AppService {

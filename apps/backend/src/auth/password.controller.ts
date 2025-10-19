@@ -7,7 +7,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import type { ApiResponse as ApiResponseType } from '@repo/shared-types';
+import type { ApiResponse as ApiResponseType } from '@repo/packages-types';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 

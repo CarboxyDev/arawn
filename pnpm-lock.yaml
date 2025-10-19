@@ -94,9 +94,9 @@ importers:
       '@prisma/client':
         specifier: 6.17.1
         version: 6.17.1(prisma@6.17.1(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3)
-      '@repo/shared-types':
+      '@repo/packages-types':
         specifier: workspace:*
-        version: link:../../shared/types
+        version: link:../../packages/types
       '@scalar/nestjs-api-reference':
         specifier: ^1.0.4
         version: 1.0.5
@@ -137,9 +137,9 @@ importers:
       '@nestjs/testing':
         specifier: ^11.1.6
         version: 11.1.6(@nestjs/common@11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(@nestjs/platform-express@11.1.6)
-      '@repo/shared-utils':
+      '@repo/packages-utils':
         specifier: workspace:*
-        version: link:../../shared/utils
+        version: link:../../packages/utils
       '@types/bcryptjs':
         specifier: ^3.0.0
         version: 3.0.0
@@ -245,12 +245,12 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@repo/shared-types':
+      '@repo/packages-types':
         specifier: workspace:*
-        version: link:../../shared/types
-      '@repo/shared-utils':
+        version: link:../../packages/types
+      '@repo/packages-utils':
         specifier: workspace:*
-        version: link:../../shared/utils
+        version: link:../../packages/utils
       '@tanstack/react-query':
         specifier: ^5.90.2
         version: 5.90.4(react@19.2.0)
@@ -334,7 +334,7 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@24.8.0)(jiti@2.6.1)(jsdom@27.0.0(postcss@8.5.6))(lightningcss@1.30.1)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
-  shared/types:
+  packages/types:
     dependencies:
       zod:
         specifier: ^4.1.12
@@ -353,7 +353,7 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@22.18.10)(jiti@2.6.1)(jsdom@27.0.0(postcss@8.5.6))(lightningcss@1.30.1)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
-  shared/utils:
+  packages/utils:
     devDependencies:
       '@types/node':
         specifier: ^22.10.5

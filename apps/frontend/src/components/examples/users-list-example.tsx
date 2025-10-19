@@ -1,6 +1,6 @@
 'use client';
 
-import type { CreateUser, QueryUsers, User } from '@repo/shared-types';
+import type { CreateUser, QueryUsers, User } from '@repo/packages-types';
 import { useState } from 'react';
 import { toast } from 'sonner';
 

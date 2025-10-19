@@ -7,7 +7,7 @@ import {
   Param,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import type { ApiResponse as ApiResponseType } from '@repo/shared-types';
+import type { ApiResponse as ApiResponseType } from '@repo/packages-types';
 
 import { CurrentUser } from '@/auth/decorators/current-user.decorator';
 import { SessionsService } from '@/auth/sessions.service';

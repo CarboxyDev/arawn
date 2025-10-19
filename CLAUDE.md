@@ -73,7 +73,7 @@ pnpm build            # Build with tsup
 
 ### Shared Packages
 
-All shared packages (`@repo/shared-types`, `@repo/shared-utils`) are consumed as workspace dependencies:
+All shared packages (`@repo/packages-types`, `@repo/packages-utils`) are consumed as workspace dependencies:
 
 - Export both CJS and ESM formats
 - Include TypeScript declarations
@@ -459,7 +459,7 @@ import {
   CreateUserSchema,
   QueryUsersSchema,
   type User,
-} from '@repo/shared-types';
+} from '@repo/packages-types';
 import { createZodDto } from 'nestjs-zod';
 
 import { UsersService } from '@/modules/users/users.service';
@@ -561,8 +561,8 @@ import { UsersService } from '../modules/users/users.service';
 
 ```typescript
 // ✅ CORRECT - Use workspace package names
-import { UserSchema } from '@repo/shared-types';
-import { formatDate } from '@repo/shared-utils';
+import { UserSchema } from '@repo/packages-types';
+import { formatDate } from '@repo/packages-utils';
 ```
 
 ### Naming Conventions

@@ -5,7 +5,7 @@ import {
   type QueryUsers,
   type UpdateUser,
   type User,
-} from '@repo/shared-types';
+} from '@repo/packages-types';
 import { randomUUID } from 'crypto';
 
 @Injectable()

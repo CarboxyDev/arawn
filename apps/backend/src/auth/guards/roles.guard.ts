@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import type { Role } from '@repo/shared-types';
+import type { Role } from '@repo/packages-types';
 import type { Request } from 'express';
 
 import { ROLES_KEY } from '@/auth/decorators/roles.decorator';

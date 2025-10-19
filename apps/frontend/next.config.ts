@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@repo/shared-types', '@repo/shared-utils'],
+  transpilePackages: ['@repo/packages-types', '@repo/packages-utils'],
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
