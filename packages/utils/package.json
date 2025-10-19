@@ -37,7 +37,7 @@
     }
   },
   "scripts": {
-    "update-exports": "tsx ../../turbo/update-exports.ts .",
+    "update-exports": "tsx ../../config/update-exports.ts .",
     "dev": "pnpm update-exports && tsup --watch",
     "build": "pnpm update-exports && tsup",
     "typecheck": "tsc --noEmit",

@@ -49,7 +49,7 @@ export function generateExports(
 
 /**
  * Usage in tsup config:
- * import { generateEntries } from '../../turbo/generate-exports';
+ * import { generateEntries } from '../config/generate-exports';
  *
  * export default createSharedPackageConfig({
  *   entry: generateEntries(join(__dirname, '../packages/types/src'))
