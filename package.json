@@ -7,6 +7,8 @@
   "scripts": {
     "init:project": "node scripts/setup.js",
     "dev": "turbo run dev --output-logs=full",
+    "dev:app": "turbo run dev --filter @repo/frontend --filter @repo/backend",
+    "dev:packages": "turbo run dev --filter '@repo/packages-*'",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
@@ -41,6 +43,7 @@
     "lint-staged": "^15.2.11",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
+    "tsx": "^4.20.0",
     "turbo": "^2.3.4",
     "typescript": "^5.7.2",
     "vitest": "^3.2.4"

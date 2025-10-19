@@ -24,7 +24,8 @@
     "dev": {
       "dependsOn": ["^build", "db:generate"],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "outputLogs": "hash-only"
     },
     "db:generate": {
       "cache": false
