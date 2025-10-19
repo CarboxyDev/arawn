@@ -154,14 +154,6 @@ export default async function Home() {
                     :{backendPort}/docs
                   </span>
                 </a>
-                <a
-                  href="http://localhost:5050"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
-                >
-                  pgAdmin <span className="text-muted-foreground">:5050</span>
-                </a>
               </div>
               <p className="text-muted-foreground mt-4 text-center text-xs">
                 See{' '}

@@ -6,12 +6,6 @@ export const features = [
       'Helmet security, rate limiting, CORS, validated environment configs, and GitHub Actions CI/CD',
   },
   {
-    iconName: 'Lock' as const,
-    title: 'Authentication',
-    description:
-      'Better-auth with email/password, session management, and OAuth ready for GitHub and Google',
-  },
-  {
     iconName: 'Zap' as const,
     title: 'Fast Development',
     description:
@@ -21,19 +15,25 @@ export const features = [
     iconName: 'Shield' as const,
     title: 'Type Safe',
     description:
-      'Zod schemas with TypeScript for runtime and compile-time safety',
-  },
-  {
-    iconName: 'Workflow' as const,
-    title: 'Database Ready',
-    description:
-      'Prisma ORM with PostgreSQL, migrations, and Docker setup included',
+      'Zod schemas with TypeScript everywhere for runtime and compile-time safety',
   },
   {
     iconName: 'Code2' as const,
     title: 'Modern UI Components',
     description:
       'shadcn/ui with Radix primitives, Tailwind v4, dark mode, and Framer Motion',
+  },
+  {
+    iconName: 'Workflow' as const,
+    title: 'Database Ready',
+    description:
+      'Prisma ORM with PostgreSQL, migrations, better-auth and Docker setup',
+  },
+  {
+    iconName: 'Lock' as const,
+    title: 'Authentication',
+    description:
+      'Better-auth with email/password, session management and OAuth support',
   },
   {
     iconName: 'TestTube' as const,
