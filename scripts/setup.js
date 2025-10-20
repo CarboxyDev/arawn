@@ -30,6 +30,11 @@ const SETUP_CONFIG = {
   retryDelay: 1000,
   maxRetries: 3,
   services: ['postgres'],
+  ports: [
+    { port: 5432, service: 'PostgreSQL' },
+    { port: 3000, service: 'Frontend (Next.js)' },
+    { port: 8080, service: 'Backend (NestJS)' },
+  ],
   envFiles: [
     {
       from: 'apps/frontend/.env.local.example',
@@ -38,8 +43,18 @@ const SETUP_CONFIG = {
     { from: 'apps/backend/.env.local.example', to: 'apps/backend/.env.local' },
   ],
   requiredCommands: [
-    { command: 'node', name: 'Node.js', versionFlag: '--version' },
-    { command: 'pnpm', name: 'pnpm', versionFlag: '--version' },
+    {
+      command: 'node',
+      name: 'Node.js',
+      versionFlag: '--version',
+      minVersion: '20.0.0',
+    },
+    {
+      command: 'pnpm',
+      name: 'pnpm',
+      versionFlag: '--version',
+      minVersion: '9.0.0',
+    },
     { command: 'docker', name: 'Docker', versionFlag: '--version' },
   ],
 };
@@ -135,6 +150,52 @@ function checkCommand({ command, name, versionFlag = '--version' }) {
   }
 }
 
+function compareVersions(current, required) {
+  const parseCurrent = current.match(/(\d+)\.(\d+)\.(\d+)/);
+  const parseRequired = required.match(/(\d+)\.(\d+)\.(\d+)/);
+
+  if (!parseCurrent || !parseRequired) return true;
+
+  const [, currMajor, currMinor, currPatch] = parseCurrent.map(Number);
+  const [, reqMajor, reqMinor, reqPatch] = parseRequired.map(Number);
+
+  if (currMajor !== reqMajor) return currMajor > reqMajor;
+  if (currMinor !== reqMinor) return currMinor > reqMinor;
+  return currPatch >= reqPatch;
+}
+
+function checkVersion({
+  command,
+  name,
+  versionFlag = '--version',
+  minVersion,
+}) {
+  if (!minVersion) return { valid: true };
+
+  try {
+    const output = execSync(`${command} ${versionFlag}`, {
+      encoding: 'utf-8',
+    }).trim();
+    const version = output.match(/v?(\d+\.\d+\.\d+)/)?.[1];
+
+    if (!version) return { valid: true, version: 'unknown' };
+
+    const valid = compareVersions(version, minVersion);
+    return { valid, version, minVersion };
+  } catch {
+    return { valid: false };
+  }
+}
+
+function checkPortAvailable(port) {
+  try {
+    execSync(`lsof -i :${port} -sTCP:LISTEN`, { stdio: 'pipe' });
+    return false;
+  } catch {
+    return true;
+  }
+}
+
 // Docker Compose v2 compatibility with fallback
 function runDockerCompose(args, cwd = ROOT_DIR, options = {}) {
   const { quiet = false } = options;
@@ -215,6 +276,45 @@ function checkDockerRunning() {
   try {
     execSync('docker ps', { stdio: 'ignore' });
     return true;
+  } catch {
+    return false;
+  }
+}
+
+async function startDockerDesktop() {
+  const platform = process.platform;
+
+  try {
+    if (platform === 'darwin') {
+      log.info('Starting Docker Desktop...');
+      execSync('open -a Docker', { stdio: 'ignore' });
+    } else if (platform === 'linux') {
+      log.info('Starting Docker service...');
+      execSync('sudo systemctl start docker', { stdio: 'ignore' });
+    } else if (platform === 'win32') {
+      log.info('Starting Docker Desktop...');
+      execSync(
+        'start "" "C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe"',
+        {
+          stdio: 'ignore',
+          shell: true,
+        }
+      );
+    }
+
+    const spinner = createSpinner('Waiting for Docker to start (max 30s)');
+    spinner.start();
+
+    for (let i = 0; i < 30; i++) {
+      await sleep(1000);
+      if (checkDockerRunning()) {
+        spinner.succeed('Docker is now running');
+        return true;
+      }
+    }
+
+    spinner.fail('Docker did not start in time');
+    return false;
   } catch {
     return false;
   }
@@ -314,6 +414,14 @@ async function promptUser(question) {
 }
 
 async function main() {
+  const setupState = {
+    portsChecked: false,
+    envFilesCopied: false,
+    dockerStarted: false,
+    migrationsRan: false,
+    seeded: false,
+  };
+
   if (isDryRun) {
     console.log(`
 ${bright}${cyan}┌─────────────────────────────────────────┐
@@ -332,7 +440,6 @@ ${bright}${cyan}┌────────────────────�
 `);
   }
 
-  // Handle dry run early exit
   if (isDryRun) {
     log.info('DRY RUN MODE - No changes will be made');
     log.step('Step 1: Checking prerequisites (simulated)');
@@ -373,20 +480,68 @@ ${bright}To run the actual setup:${reset}
     return;
   }
 
-  // Step 1: Check prerequisites
   log.step('Step 1: Checking prerequisites');
 
-  // Check all required commands using configuration
-  for (const { command, name, versionFlag } of SETUP_CONFIG.requiredCommands) {
-    const isAvailable = checkCommand({ command, name, versionFlag });
-    if (!isAvailable) {
-      log.error(`${name} is not installed. Please install ${name}`);
+  for (const { port, service } of SETUP_CONFIG.ports) {
+    if (!checkPortAvailable(port)) {
+      log.error(`Port ${port} is already in use (needed for ${service})`);
+      console.log(`
+${yellow}Troubleshooting:${reset}
+  ${dim}•${reset} Find process: ${cyan}lsof -i :${port}${reset}
+  ${dim}•${reset} Kill process: ${cyan}kill -9 $(lsof -t -i :${port})${reset}
+`);
       process.exit(1);
     }
-    log.success(`${name} is installed`);
+  }
+  setupState.portsChecked = true;
+  log.success('All required ports are available');
+
+  for (const cmdConfig of SETUP_CONFIG.requiredCommands) {
+    const { name, minVersion } = cmdConfig;
+
+    if (!checkCommand(cmdConfig)) {
+      log.error(`${name} is not installed`);
+      console.log(`
+${yellow}Installation required:${reset}
+  ${dim}•${reset} Visit: ${cyan}https://nodejs.org${reset} (Node.js)
+  ${dim}•${reset} Visit: ${cyan}https://pnpm.io/installation${reset} (pnpm)
+`);
+      process.exit(1);
+    }
+
+    const versionCheck = checkVersion(cmdConfig);
+    if (!versionCheck.valid) {
+      log.error(
+        `${name} version ${versionCheck.version} is below required ${versionCheck.minVersion}`
+      );
+      process.exit(1);
+    }
+
+    if (minVersion && versionCheck.version) {
+      log.success(`${name} ${versionCheck.version} (>= ${minVersion})`);
+    } else {
+      log.success(`${name} is installed`);
+    }
   }
 
-  // Check Docker Compose separately since it needs special handling
+  if (!checkDockerRunning()) {
+    log.warn('Docker is not running');
+    const started = await startDockerDesktop();
+
+    if (!started) {
+      log.error('Failed to start Docker automatically');
+      console.log(`
+${yellow}Please start Docker manually:${reset}
+  ${dim}•${reset} macOS: Open Docker Desktop from Applications
+  ${dim}•${reset} Windows: Start Docker Desktop from Start Menu
+  ${dim}•${reset} Linux: ${cyan}sudo systemctl start docker${reset}
+`);
+      process.exit(1);
+    }
+  } else {
+    log.success('Docker is running');
+  }
+
   const hasDockerCompose = checkDockerCompose();
   if (!hasDockerCompose) {
     log.error('docker-compose/docker compose is not available');
@@ -394,18 +549,9 @@ ${bright}To run the actual setup:${reset}
   }
   log.success('Docker Compose is available');
 
-  if (!checkDockerRunning()) {
-    log.error(
-      'Docker is not running. Please start Docker Desktop and try again'
-    );
-    process.exit(1);
-  }
-  log.success('Docker is running');
-
   // Step 2: Copy environment files
   log.step('Step 2: Setting up environment files');
 
-  // Use configuration for environment files
   let anyEnvCopied = false;
   for (const { from, to } of SETUP_CONFIG.envFiles) {
     const copied = copyEnvFile(from, to);
@@ -414,9 +560,10 @@ ${bright}To run the actual setup:${reset}
 
   if (!anyEnvCopied) {
     log.info('Environment files already configured');
+  } else {
+    setupState.envFilesCopied = true;
   }
 
-  // Step 3: Start Docker Compose
   log.step('Step 3: Starting Docker services');
 
   const isComposeRunning = checkDockerCompose();
@@ -427,65 +574,87 @@ ${bright}To run the actual setup:${reset}
     log.info('Starting PostgreSQL...');
     runDockerCompose('up -d', ROOT_DIR, { quiet: true });
     log.success('PostgreSQL started');
+    setupState.dockerStarted = true;
 
-    // Wait for PostgreSQL to be ready
     const isHealthy = await waitForPostgres();
 
     if (!isHealthy) {
       log.error('PostgreSQL did not become healthy in time');
-      log.info('Try running: docker compose logs postgres');
+      console.log(`
+${yellow}Troubleshooting:${reset}
+  ${dim}•${reset} Check logs: ${cyan}docker compose logs postgres${reset}
+  ${dim}•${reset} Verify Docker: ${cyan}docker ps${reset}
+  ${dim}•${reset} Restart: ${cyan}docker compose restart postgres${reset}
+  ${dim}•${reset} Reset: ${cyan}docker compose down -v && node scripts/setup.js${reset}
+`);
       process.exit(1);
     }
   }
 
-  // Step 4: Run database migrations
   log.step('Step 4: Running database migrations');
 
   try {
-    await runCommandWithRetry('pnpm --filter @repo/backend db:migrate', {
-      maxRetries: SETUP_CONFIG.maxRetries,
-      delay: SETUP_CONFIG.retryDelay,
-    });
-    log.success('Database migrations completed');
+    const migrateStatus = execSync(
+      'pnpm --filter @repo/backend dotenv -e .env.local -- prisma migrate status',
+      { cwd: ROOT_DIR, encoding: 'utf-8', stdio: 'pipe' }
+    );
+
+    if (migrateStatus.includes('Database schema is up to date')) {
+      log.info('Database migrations already up-to-date');
+    } else {
+      await runCommandWithRetry('pnpm --filter @repo/backend db:migrate', {
+        maxRetries: SETUP_CONFIG.maxRetries,
+        delay: SETUP_CONFIG.retryDelay,
+      });
+      log.success('Database migrations completed');
+      setupState.migrationsRan = true;
+    }
   } catch (error) {
     log.error('Failed to run migrations');
-    log.dimmed(error.message);
+    console.log(`
+${yellow}Troubleshooting:${reset}
+  ${dim}•${reset} Check DATABASE_URL: ${cyan}cat apps/backend/.env.local${reset}
+  ${dim}•${reset} Verify PostgreSQL: ${cyan}docker compose ps postgres${reset}
+  ${dim}•${reset} Check connection: ${cyan}docker exec -it $(docker compose ps -q postgres) psql -U postgres -d app_dev -c "\\dt"${reset}
+  ${dim}•${reset} Reset database: ${cyan}docker compose down -v && node scripts/setup.js${reset}
+`);
     process.exit(1);
   }
 
-  // Step 5: Optional database seeding
   log.step('Step 5: Database seeding (optional)');
 
-  // Handle seeding based on command line flags
   if (shouldNotSeed) {
-    log.info('Skipping database seeding (use --seed flag to enable)');
+    log.info('Skipping database seeding (--no-seed flag)');
     log.dimmed(
       'Tip: Run "pnpm --filter @repo/backend db:seed" manually if needed'
     );
   } else {
-    if (isDryRun) {
-      log.dryRun('Would run: pnpm --filter @repo/backend db:seed');
-    } else {
-      try {
-        await runCommandWithRetry('pnpm --filter @repo/backend db:seed', {
-          maxRetries: SETUP_CONFIG.maxRetries,
-          delay: SETUP_CONFIG.retryDelay,
-        });
-        log.success('Database seeded successfully');
-      } catch (error) {
-        log.warn('Failed to seed database (non-critical)');
-        log.dimmed(error.message);
-      }
+    try {
+      await runCommandWithRetry('pnpm --filter @repo/backend db:seed', {
+        maxRetries: SETUP_CONFIG.maxRetries,
+        delay: SETUP_CONFIG.retryDelay,
+      });
+      log.success('Database seeded successfully');
+      setupState.seeded = true;
+    } catch (error) {
+      log.warn('Failed to seed database (non-critical)');
+      log.dimmed(error.message);
     }
   }
 
-  // Done!
   console.log(`
 ${green}${bright}┌─────────────────────────────────────────┐
 │                                         │
 │           Setup Complete                │
 │                                         │
 └─────────────────────────────────────────┘${reset}
+
+${bright}Setup Summary:${reset}
+  ${setupState.portsChecked ? green + '✓' : dim + '○'}${reset} Ports available (5432, 3000, 8080)
+  ${setupState.envFilesCopied ? green + '✓' : dim + '○'}${reset} Environment files ${setupState.envFilesCopied ? 'created' : 'already configured'}
+  ${setupState.dockerStarted ? green + '✓' : dim + '○'}${reset} PostgreSQL ${setupState.dockerStarted ? 'started' : 'already running'}
+  ${setupState.migrationsRan ? green + '✓' : dim + '○'}${reset} Database migrations ${setupState.migrationsRan ? 'applied' : 'up-to-date'}
+  ${setupState.seeded ? green + '✓' : dim + '○'}${reset} Database ${setupState.seeded ? 'seeded' : shouldNotSeed ? 'not seeded (--no-seed)' : 'seeding skipped'}
 
 ${bright}Next steps:${reset}
 
@@ -499,18 +668,12 @@ ${bright}Next steps:${reset}
 
 ${bright}Database tools:${reset}
   ${cyan}pnpm db:studio${reset}                        Open Prisma Studio (recommended)
-  ${cyan}docker-compose --profile tools up -d${reset}  Start pgAdmin (optional)
-
-${bright}Setup options:${reset}
-  ${cyan}node scripts/setup.js${reset}          Run setup with seeding (default)
-  ${cyan}node scripts/setup.js --no-seed${reset} Setup without database seeding
-  ${cyan}node scripts/setup.js --dry-run${reset} Preview what would be executed
+  ${cyan}docker compose --profile tools up -d${reset}  Start pgAdmin (optional)
 
 ${dim}Tip: You can run this setup script again anytime - it's safe!${reset}
 `);
 }
 
-// Run the script
 (async () => {
   try {
     await main();
