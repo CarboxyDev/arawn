@@ -23,6 +23,10 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 **Arawn is built for teams shipping real products, not toy demos.**
 
+## Getting Started
+
+**New to Arawn?** Check out [GETTING_STARTED.md](GETTING_STARTED.md) for a streamlined setup guide. The template works out of the box - customiziation is optional!
+
 ## Tech Stack
 
 **Frontend**
