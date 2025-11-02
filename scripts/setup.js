@@ -15,13 +15,14 @@
 
 import { execSync, spawn } from 'child_process';
 import { copyFileSync, existsSync } from 'fs';
-import { dirname, resolve } from 'path';
+import { basename, dirname, resolve } from 'path';
 import { createInterface } from 'readline';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const ROOT_DIR = resolve(__dirname, '..');
+const PROJECT_NAME = basename(ROOT_DIR); // Used for Docker container naming
 
 // Configuration object for setup parameters
 const SETUP_CONFIG = {
@@ -422,6 +423,22 @@ async function main() {
     seeded: false,
   };
 
+  // Cleanup handler for interruptions
+  const cleanup = () => {
+    log.warn('\nSetup interrupted by user');
+    console.log(`
+${yellow}Setup was interrupted. You can safely run the setup again:${reset}
+  ${cyan}node scripts/setup.js${reset}
+
+${dim}The script will skip any completed steps automatically.${reset}
+`);
+    process.exit(130); // Standard exit code for SIGINT
+  };
+
+  // Register cleanup handlers
+  process.on('SIGINT', cleanup);
+  process.on('SIGTERM', cleanup);
+
   if (isDryRun) {
     console.log(`
 ${bright}${cyan}┌─────────────────────────────────────────┐
@@ -615,7 +632,7 @@ ${yellow}Troubleshooting:${reset}
 ${yellow}Troubleshooting:${reset}
   ${dim}•${reset} Check DATABASE_URL: ${cyan}cat apps/backend/.env.local${reset}
   ${dim}•${reset} Verify PostgreSQL: ${cyan}docker compose ps postgres${reset}
-  ${dim}•${reset} Check connection: ${cyan}docker exec -it $(docker compose ps -q postgres) psql -U postgres -d app_dev -c "\\dt"${reset}
+  ${dim}•${reset} Check connection: ${cyan}docker exec -it ${PROJECT_NAME}-postgres-1 psql -U postgres -d app_dev -c "\\dt"${reset}
   ${dim}•${reset} Reset database: ${cyan}docker compose down -v && node scripts/setup.js${reset}
 `);
     process.exit(1);
