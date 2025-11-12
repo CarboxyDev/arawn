@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/logo.svg" alt="Arawn Logo" width="200">
   <h1>Arawn</h1>
-  <p>Production-ready TypeScript monorepo with Next.js 15, NestJS 11, Turborepo and other modern technologies. Everything you need to ship fast.</p>
+  <p>Production-ready TypeScript monorepo with Next.js 15, Fastify 5, Turborepo and other modern technologies. Everything you need to ship fast.</p>
 </div>
 
 ---
@@ -39,12 +39,12 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 **Backend**
 
-- NestJS 11
+- Fastify 5 (ultra-fast, low overhead)
 - Prisma 6 + PostgreSQL 17
 - Better-auth for authentication
-- Pino for logging infrastructure
-- Swagger + Scalar API docs
-- Helmet + rate limiting
+- Pino for logging infrastructure (native Fastify integration)
+- Scalar API docs (Zod → OpenAPI)
+- Helmet + rate limiting + CORS
 
 **Monorepo**
 
@@ -94,8 +94,8 @@ The setup script handles everything: environment files, docker containers, datab
 arawn/
 ├── apps/
 │   ├── frontend/     # Next.js 15 app
-│   └── backend/      # NestJS API
-└── shared/
+│   └── api/          # Fastify backend
+└── packages/
     ├── types/        # Zod schemas + inferred types
     └── utils/        # Shared utilities
 ```
@@ -111,7 +111,7 @@ pnpm typecheck        # Type check
 pnpm test             # Run tests
 ```
 
-**Database** (from `apps/backend`)
+**Database** (from `apps/api`)
 
 ```bash
 pnpm db:migrate       # Run migrations

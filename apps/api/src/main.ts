@@ -4,6 +4,7 @@ import formbody from '@fastify/formbody';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import closeWithGrace from 'close-with-grace';
+import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import Fastify from 'fastify';
 import {
   serializerCompiler,
@@ -79,17 +80,35 @@ await app.register(cookie, {
 
 await app.register(formbody);
 
+const { default: loggerPlugin } = await import('@/plugins/logger.js');
+await app.register(loggerPlugin);
+
 const { default: databasePlugin } = await import('@/plugins/database.js');
 await app.register(databasePlugin);
+
+const { default: servicesPlugin } = await import('@/plugins/services.js');
+await app.register(servicesPlugin);
 
 const { default: authPlugin } = await import('@/plugins/auth.js');
 await app.register(authPlugin);
 
-app.setErrorHandler((error, request, reply) => {
-  const err = error as any;
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'An error occurred';
-  const validation = err.validation;
+const { default: swaggerPlugin } = await import('@/plugins/swagger.js');
+await app.register(swaggerPlugin);
+
+const { default: scalarPlugin } = await import('@/plugins/scalar.js');
+await app.register(scalarPlugin);
+
+const { default: schedulePlugin } = await import('@/plugins/schedule.js');
+await app.register(schedulePlugin);
+
+const errorHandler = async (
+  error: FastifyError,
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  const statusCode = error.statusCode || 500;
+  const message = error.message || 'An error occurred';
+  const validation = error.validation;
 
   request.log.error(
     {
@@ -113,10 +132,12 @@ app.setErrorHandler((error, request, reply) => {
   const isProduction = env.NODE_ENV === 'production';
   return reply.status(statusCode).send({
     statusCode,
-    error: err.name || 'Internal Server Error',
+    error: error.name || 'Internal Server Error',
     message: isProduction && statusCode === 500 ? 'An error occurred' : message,
   });
-});
+};
+
+app.setErrorHandler(errorHandler);
 
 app.addHook('onRequest', async (request) => {
   request.log = request.log.child({ reqId: request.id });
@@ -161,9 +182,13 @@ app.get('/health', async (request, reply) => {
 const registerRoutes = async () => {
   const { default: exampleRoutes } = await import('@/routes/example.js');
   const { default: usersRoutes } = await import('@/routes/users.js');
+  const { default: sessionsRoutes } = await import('@/routes/sessions.js');
+  const { default: passwordRoutes } = await import('@/routes/password.js');
 
   await app.register(exampleRoutes);
   await app.register(usersRoutes);
+  await app.register(sessionsRoutes);
+  await app.register(passwordRoutes);
 };
 
 const start = async () => {
