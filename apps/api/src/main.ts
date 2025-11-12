@@ -79,8 +79,17 @@ await app.register(cookie, {
 
 await app.register(formbody);
 
+const { default: databasePlugin } = await import('@/plugins/database.js');
+await app.register(databasePlugin);
+
+const { default: authPlugin } = await import('@/plugins/auth.js');
+await app.register(authPlugin);
+
 app.setErrorHandler((error, request, reply) => {
-  const { statusCode = 500, message, validation } = error as any;
+  const err = error as any;
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'An error occurred';
+  const validation = err.validation;
 
   request.log.error(
     {
@@ -104,7 +113,7 @@ app.setErrorHandler((error, request, reply) => {
   const isProduction = env.NODE_ENV === 'production';
   return reply.status(statusCode).send({
     statusCode,
-    error: error.name || 'Internal Server Error',
+    error: err.name || 'Internal Server Error',
     message: isProduction && statusCode === 500 ? 'An error occurred' : message,
   });
 });
@@ -131,13 +140,30 @@ app.addHook('onResponse', async (request, reply) => {
   );
 });
 
-app.get('/health', async () => {
-  return { status: 'ok', timestamp: new Date().toISOString() };
+app.get('/health', async (request, reply) => {
+  try {
+    await app.prisma.$queryRaw`SELECT 1`;
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      database: 'connected',
+    };
+  } catch (error) {
+    request.log.error(error, 'Database health check failed');
+    return reply.status(503).send({
+      status: 'error',
+      timestamp: new Date().toISOString(),
+      database: 'disconnected',
+    });
+  }
 });
 
 const registerRoutes = async () => {
   const { default: exampleRoutes } = await import('@/routes/example.js');
+  const { default: usersRoutes } = await import('@/routes/users.js');
+
   await app.register(exampleRoutes);
+  await app.register(usersRoutes);
 };
 
 const start = async () => {

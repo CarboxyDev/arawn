@@ -37,6 +37,9 @@ export default [
         fetch: 'readonly',
         React: 'readonly',
         URL: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        Headers: 'readonly',
 
         /** Browser globals */
         window: 'readonly',
