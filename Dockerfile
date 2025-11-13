@@ -38,10 +38,14 @@ COPY --from=deps /app/packages/utils/node_modules ./packages/utils/node_modules
 # Copy source code
 COPY . .
 
+# Build shared packages first (types and utils)
+RUN pnpm --filter @repo/packages-types build
+RUN pnpm --filter @repo/packages-utils build
+
 # Generate Prisma Client
 RUN pnpm --filter @repo/api db:generate
 
-# Build the API (and shared packages if needed)
+# Build the API
 RUN pnpm --filter @repo/api build
 
 # Stage 3: Runner (production)
@@ -79,4 +83,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD node -e "require('http').get('http://localhost:8080/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
 # Start command (run migrations then start server)
-CMD ["sh", "-c", "pnpm db:migrate && pnpm start"]
+# Use prisma migrate deploy (production-safe, doesn't prompt)
+CMD ["sh", "-c", "cd /app/apps/api && npx prisma migrate deploy && node dist/src/main.js"]

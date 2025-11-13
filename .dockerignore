@@ -4,11 +4,12 @@ npm-debug.log
 pnpm-debug.log
 yarn-error.log
 
-# Build outputs
-dist
+# Build outputs (but keep package dist/ folders for copying built packages)
+# We ignore these initially but packages/*/dist will be built during Docker build
 .next
 .turbo
 *.tsbuildinfo
+apps/*/dist
 
 # Testing
 coverage
@@ -55,3 +56,4 @@ docker-compose.yml
 # Misc
 .husky
 scripts
+# Keep config/ for package builds

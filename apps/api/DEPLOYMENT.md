@@ -43,8 +43,10 @@ Railway provides the easiest deployment experience for the Fastify API with auto
 1. Create a new service for the API
 2. In service settings, go to **Build** section
 3. Select **Builder**: "Dockerfile" (not Railpack or Nixpacks)
-4. Railway will automatically detect the `Dockerfile` at project root
-5. No need to configure build/start commands - Docker handles everything
+4. **Important**: Leave **Root Directory** empty (or set to `/`)
+5. Set **Dockerfile Path**: `Dockerfile`
+6. Railway will build using the Dockerfile at project root
+7. No need to configure build/start commands - Docker handles everything
 
 ### Step 4: Set Environment Variables
 
@@ -255,35 +257,6 @@ gcloud run deploy arawn-api \
 ```
 
 ---
-
-## Environment Variables
-
-### Required Variables (API)
-
-| Variable        | Description                               | Example                               |
-| --------------- | ----------------------------------------- | ------------------------------------- |
-| `NODE_ENV`      | Environment mode                          | `production`                          |
-| `PORT`          | Server port (Railway auto-provides)       | `8080`                                |
-| `DATABASE_URL`  | PostgreSQL connection string              | `postgresql://user:pass@host:5432/db` |
-| `COOKIE_SECRET` | Secret for cookie signing (32+ chars)     | `<openssl rand -hex 32>`              |
-| `API_URL`       | Public API URL                            | `https://api.example.com`             |
-| `FRONTEND_URL`  | Frontend URL for CORS                     | `https://example.com`                 |
-| `LOG_LEVEL`     | Logging verbosity (minimal/normal/detail) | `normal`                              |
-
-### Required Variables (Frontend)
-
-| Variable              | Description                      | Example                   |
-| --------------------- | -------------------------------- | ------------------------- |
-| `NODE_ENV`            | Environment mode                 | `production`              |
-| `NEXT_PUBLIC_API_URL` | Public API URL (browser-exposed) | `https://api.example.com` |
-
-### Generating Secrets
-
-**COOKIE_SECRET** (required for session security):
-
-```bash
-openssl rand -hex 32
-```
 
 ---
 
