@@ -34,7 +34,7 @@ const SETUP_CONFIG = {
   ports: [
     { port: 5432, service: 'PostgreSQL' },
     { port: 3000, service: 'Frontend (Next.js)' },
-    { port: 8080, service: 'Backend (NestJS)' },
+    { port: 8080, service: 'API (Fastify)' },
   ],
   envFiles: [
     {
@@ -678,7 +678,7 @@ ${bright}Next steps:${reset}
 
   2. Open your browser:
      ${dim}Frontend:${reset}      http://localhost:3000
-     ${dim}Backend:${reset}       http://localhost:8080
+     ${dim}API:${reset}           http://localhost:8080
      ${dim}API Docs:${reset}      http://localhost:8080/docs
 
 ${bright}Database tools:${reset}

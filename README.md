@@ -17,7 +17,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 - **Production-grade authentication**: Better-auth integration with email/password, session management, and OAuth ready (GitHub, Google). Protected routes and auth guards out of the box.
 - **Production-grade infrastructure**: Global exception filter with request ID tracing, automatic Zod validation on all endpoints, rate limiting, environment-aware error responses
 - **Shared validation logic**: Write your schemas once in `shared/types`, use them everywhere (frontend forms, API validation, DB queries)
-- **Real testing infrastructure**: Vitest configured for frontend, backend, and shared packages with coverage reports
+- **Real testing infrastructure**: Vitest configured for frontend, API, and shared packages with coverage reports
 - **Auto-generated API docs**: Swagger + Scalar documentation generated directly from your Zod schemas
 - **AI pair programming ready**: This template ships with a comprehensive CLAUDE.md file that means AI assistants understand your architecture instantly and can help accelerate your development process.
 
@@ -37,7 +37,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 - React Hook Form + Zod validation
 - Jotai for client state
 
-**Backend**
+**API**
 
 - Fastify 5 (ultra-fast, low overhead)
 - Prisma 6 + PostgreSQL 17
@@ -71,7 +71,7 @@ The setup script handles everything: environment files, docker containers, datab
 **What's running:**
 
 - Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend: [http://localhost:8080](http://localhost:8080)
+- API: [http://localhost:8080](http://localhost:8080)
 - API Docs: [http://localhost:8080/docs](http://localhost:8080/docs)
 
 **Database tools:**
@@ -94,7 +94,7 @@ The setup script handles everything: environment files, docker containers, datab
 arawn/
 ├── apps/
 │   ├── frontend/     # Next.js 15 app
-│   └── api/          # Fastify backend
+│   └── api/          # Fastify API
 └── packages/
     ├── types/        # Zod schemas + inferred types
     └── utils/        # Shared utilities

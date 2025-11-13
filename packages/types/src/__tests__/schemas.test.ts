@@ -65,9 +65,10 @@ describe('HealthCheckSchema', () => {
 describe('UserSchema', () => {
   it('should validate a valid user object with Date', () => {
     const validUser = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'cm1abc2def3ghi4jkl',
       email: 'test@example.com',
       name: 'John Doe',
+      role: 'user' as const,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -78,9 +79,10 @@ describe('UserSchema', () => {
 
   it('should validate a valid user object with ISO string dates', () => {
     const validUser = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'cm1abc2def3ghi4jkl',
       email: 'test@example.com',
       name: 'John Doe',
+      role: 'user' as const,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -89,11 +91,12 @@ describe('UserSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should reject invalid UUID', () => {
+  it('should reject invalid CUID', () => {
     const invalidUser = {
-      id: 'not-a-uuid',
+      id: 'not-a-cuid',
       email: 'test@example.com',
       name: 'John Doe',
+      role: 'user' as const,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -104,9 +107,10 @@ describe('UserSchema', () => {
 
   it('should reject invalid email', () => {
     const invalidUser = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'cm1abc2def3ghi4jkl',
       email: 'not-an-email',
       name: 'John Doe',
+      role: 'user' as const,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -117,9 +121,10 @@ describe('UserSchema', () => {
 
   it('should reject empty name', () => {
     const invalidUser = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'cm1abc2def3ghi4jkl',
       email: 'test@example.com',
       name: '',
+      role: 'user' as const,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -194,7 +199,24 @@ describe('MessageResponseSchema', () => {
 describe('ListResponseSchema', () => {
   it('should validate list response with data array', () => {
     const validResponse = {
-      data: [{ id: 1 }, { id: 2 }],
+      data: [
+        {
+          id: 'cm1abc2def3ghi4jkl',
+          email: 'user1@example.com',
+          name: 'User One',
+          role: 'user' as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 'cm2xyz3abc4def5ghi',
+          email: 'user2@example.com',
+          name: 'User Two',
+          role: 'admin' as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
     };
 
     const result = ListResponseSchema(UserSchema).safeParse(validResponse);
@@ -203,7 +225,16 @@ describe('ListResponseSchema', () => {
 
   it('should reject response without data field', () => {
     const invalidResponse = {
-      items: [{ id: 1 }],
+      items: [
+        {
+          id: 'cm1abc2def3ghi4jkl',
+          email: 'user1@example.com',
+          name: 'User One',
+          role: 'user' as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
     };
 
     const result = ListResponseSchema(UserSchema).safeParse(invalidResponse);

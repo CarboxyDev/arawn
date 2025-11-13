@@ -7,7 +7,7 @@ You are a Senior Full-stack Developer and an Expert in TypeScript, Next.js 15, R
 
 ## Project Overview
 
-Production-ready TypeScript monorepo using pnpm workspaces and Turborepo, featuring a Next.js frontend and Fastify backend with shared packages for types, utilities, and configuration.
+Production-ready TypeScript monorepo using pnpm workspaces and Turborepo, featuring a Next.js frontend and Fastify API with shared packages for types, utilities, and configuration.
 
 ## Prerequisites
 
@@ -40,7 +40,7 @@ The `pnpm init:project` command automates the entire setup process:
 
 ```bash
 pnpm init:project     # Run automated setup (first time or to fix issues)
-pnpm dev              # Start all applications in dev mode (frontend on :3000, backend on :8080)
+pnpm dev              # Start all applications in dev mode (frontend on :3000, api on :8080)
 pnpm build            # Build all packages and applications
 pnpm typecheck        # Type check all packages
 pnpm lint             # Lint all packages
@@ -56,7 +56,7 @@ pnpm dev              # Start Next.js dev server
 pnpm build            # Build production bundle
 pnpm typecheck        # Type check only
 
-# API Backend (Fastify on port 8080)
+# API (Fastify on port 8080)
 cd apps/api
 pnpm dev              # Start Fastify with hot reload (tsx watch)
 pnpm build            # Build production bundle (TypeScript → dist/)
@@ -83,7 +83,7 @@ All shared packages (`@repo/packages-types`, `@repo/packages-utils`) are consume
 
 ### Database (Prisma + PostgreSQL)
 
-The API backend uses Prisma 6.17.1 as the ORM with PostgreSQL:
+The API uses Prisma 6.17.1 as the ORM with PostgreSQL:
 
 - **Schema**: Located in `apps/api/prisma/schema.prisma`
 - **Client**: Generated to `apps/api/node_modules/.prisma/client`
@@ -120,7 +120,7 @@ docker-compose --profile tools up -d        # Start PostgreSQL + pgAdmin (option
 
 **Environment Variables:**
 
-- API backend uses `.env.local` for all environment variables (via dotenv-flow)
+- API uses `.env.local` for all environment variables (via dotenv-flow)
 - Prisma CLI commands are wrapped with `dotenv-cli` to read from `.env.local`
 - All database commands automatically load `.env.local` (see `apps/api/package.json`)
 - `DATABASE_URL` must match Docker credentials: `postgresql://postgres:postgres_dev_password@localhost:5432/app_dev`
@@ -134,7 +134,7 @@ docker-compose --profile tools up -d        # Start PostgreSQL + pgAdmin (option
 
 Environment variables are managed per-app with Zod validation:
 
-- **API Backend**: Custom env loader with `dotenv-flow` and Zod v4 validation
+- **API**: Custom env loader with `dotenv-flow` and Zod v4 validation
   - Configuration: `apps/api/src/config/env.ts`
   - Required: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`, `LOG_LEVEL`, `COOKIE_SECRET`
   - Uses `loadEnv()` helper that validates env vars on startup
@@ -148,7 +148,7 @@ Environment variables are managed per-app with Zod validation:
 
 ### Security
 
-API backend security middleware configured in `main.ts`:
+API security middleware configured in `main.ts`:
 
 - **Helmet**: Secure HTTP headers with dev-friendly CSP settings via `@fastify/helmet`
 - **Rate Limiting**: 30 requests per 60 seconds per IP via `@fastify/rate-limit`
@@ -174,7 +174,7 @@ API backend security middleware configured in `main.ts`:
 
 ### Production Logging & Error Tracking
 
-The backend uses Pino for structured, production-ready logging with request tracing and configurable verbosity.
+The API uses Pino for structured, production-ready logging with request tracing and configurable verbosity.
 
 **Philosophy**: Single unified logging pattern throughout the codebase. No alternatives - this is the way.
 
@@ -278,7 +278,7 @@ this.logger.info('Processing order', { orderId: 123 });
 Request IDs enable:
 
 - Tracing a single request through logs
-- Correlating frontend errors with backend logs
+- Correlating frontend errors with API logs
 - Debugging distributed systems
 - Production issue investigation
 
@@ -436,9 +436,9 @@ The codebase emphasizes runtime and compile-time type safety with Zod v4 as the 
 - **Consistency**: All packages use Zod v4.1.12 for validation
 - **No Dual Systems**: We DO NOT use class-validator - only Zod everywhere
 
-#### API Request Validation with Zod (Fastify Backend)
+#### API Request Validation with Zod (Fastify)
 
-The backend uses `fastify-type-provider-zod` for automatic request validation:
+The API uses `fastify-type-provider-zod` for automatic request validation:
 
 **Step 1: Define Schemas in `shared/types`**
 
@@ -574,7 +574,7 @@ import { Button } from '../../components/ui/button';
 import { api } from '../lib/api';
 ```
 
-**API Backend (Fastify):**
+**API (Fastify):**
 
 ```typescript
 // ✅ CORRECT - Use @/* alias
@@ -666,11 +666,11 @@ The frontend uses Better Auth React client for authentication with modern patter
 - Prefer `Skeleton` components for loading states instead of spinners
 - Favor named exports for components
 
-## Backend Architecture Patterns
+## API Architecture Patterns
 
 ### Fastify Structure
 
-The Fastify backend follows a plugin-based architecture:
+The Fastify API follows a plugin-based architecture:
 
 - **Route Handlers**: Handle HTTP requests and responses, keep them thin (in `src/routes/`)
 - **Services**: Contain business logic and orchestrate data operations (in `src/services/`)
