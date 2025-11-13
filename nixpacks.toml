@@ -1,0 +1,16 @@
+# nixpacks.toml - Railway/Nixpacks configuration for monorepo deployment
+
+[phases.setup]
+nixPkgs = ['nodejs_22', 'pnpm']
+
+[phases.install]
+cmds = [
+  'pnpm install --frozen-lockfile',
+  'pnpm --filter @repo/api db:generate'
+]
+
+[phases.build]
+cmds = ['pnpm --filter @repo/api build']
+
+[start]
+cmd = 'pnpm --filter @repo/api db:migrate && pnpm --filter @repo/api start'

@@ -46,22 +46,6 @@ Railway provides the easiest deployment experience for the Fastify API with auto
    - **Build Command**: `pnpm install && pnpm --filter @repo/api db:generate && pnpm build`
    - **Start Command**: `pnpm --filter @repo/api start`
 
-**Alternative**: Use custom Railway settings:
-
-```json
-{
-  "build": {
-    "builder": "nixpacks",
-    "buildCommand": "pnpm install --frozen-lockfile && pnpm --filter @repo/api db:generate && pnpm --filter @repo/api build"
-  },
-  "deploy": {
-    "startCommand": "pnpm --filter @repo/api start",
-    "restartPolicyType": "on_failure",
-    "restartPolicyMaxRetries": 10
-  }
-}
-```
-
 ### Step 4: Set Environment Variables
 
 In Railway dashboard, add these variables to your API service:
@@ -76,12 +60,6 @@ COOKIE_SECRET=<generate-with-openssl-rand-hex-32>
 API_URL=https://your-api.railway.app
 FRONTEND_URL=https://your-frontend.vercel.app
 LOG_LEVEL=normal
-```
-
-**Generate COOKIE_SECRET:**
-
-```bash
-openssl rand -hex 32
 ```
 
 ### Step 5: Run Database Migrations
