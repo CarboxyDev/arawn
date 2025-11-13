@@ -164,11 +164,11 @@ API security middleware configured in `main.ts`:
   - Trusted origins validation via `trustedOrigins` config
   - No additional CSRF middleware needed - handled by Better Auth
 - **Session Management**: Users can view and revoke active sessions
-  - `GET /sessions` - List all active sessions with device info
-  - `DELETE /sessions/:id` - Revoke specific session
-  - `DELETE /sessions` - Sign out from all other devices
+  - `GET /api/sessions` - List all active sessions with device info
+  - `DELETE /api/sessions/:id` - Revoke specific session
+  - `DELETE /api/sessions` - Sign out from all other devices
 - **Password Security**: Password changes automatically invalidate all other sessions
-  - `POST /password/change` - Change password with current password verification
+  - `POST /api/password/change` - Change password with current password verification
   - Uses bcryptjs for password hashing
   - Prevents reuse of current password
 
@@ -480,7 +480,7 @@ import {
 const usersRoutes: FastifyPluginAsync = async (app) => {
   const server = app.withTypeProvider<ZodTypeProvider>();
 
-  // GET /users - Get paginated users with filtering
+  // GET /api/users - Get paginated users with filtering
   server.get(
     '/users',
     {
@@ -496,7 +496,7 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
     }
   );
 
-  // POST /users - Create a new user
+  // POST /api/users - Create a new user
   server.post(
     '/users',
     {
@@ -681,12 +681,14 @@ The Fastify API follows a plugin-based architecture:
 
 **Key Principles:**
 
+- All API routes prefixed with `/api` for clear separation and reverse proxy compatibility
 - Route handlers organized by feature in `routes/` (e.g., `routes/users.ts`, `routes/sessions.ts`)
 - Each route file exports a Fastify plugin with related endpoints
 - Services contain business logic and are injected via decorators
 - Infrastructure plugins in `plugins/` (database, logger, auth, swagger, schedule)
 - Common utilities in `common/` (logger service, types, utilities)
 - Zod schemas defined in `packages/types`, used directly in route schemas
+- Health check endpoint at `/health` (no prefix for monitoring tools)
 
 ### Error Handling
 

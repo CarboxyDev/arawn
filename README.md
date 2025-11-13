@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/logo.svg" alt="Arawn Logo" width="200">
   <h1>Arawn</h1>
-  <p>Production-ready TypeScript monorepo with Next.js 15, Fastify 5, Turborepo and other modern technologies. Everything you need to ship fast.</p>
+  <p>Production-ready TypeScript monorepo with Next.js, Fastify, Turborepo and other modern technologies. Everything you need to ship super fast.</p>
 </div>
 
 ---
@@ -71,8 +71,9 @@ The setup script handles everything: environment files, docker containers, datab
 **What's running:**
 
 - Frontend: [http://localhost:3000](http://localhost:3000)
-- API: [http://localhost:8080](http://localhost:8080)
+- API: [http://localhost:8080/api](http://localhost:8080/api)
 - API Docs: [http://localhost:8080/docs](http://localhost:8080/docs)
+- Health Check: [http://localhost:8080/health](http://localhost:8080/health)
 
 **Database tools:**
 

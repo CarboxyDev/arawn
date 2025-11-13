@@ -185,10 +185,15 @@ const registerRoutes = async () => {
   const { default: sessionsRoutes } = await import('@/routes/sessions.js');
   const { default: passwordRoutes } = await import('@/routes/password.js');
 
-  await app.register(exampleRoutes);
-  await app.register(usersRoutes);
-  await app.register(sessionsRoutes);
-  await app.register(passwordRoutes);
+  await app.register(
+    async (app) => {
+      await app.register(exampleRoutes);
+      await app.register(usersRoutes);
+      await app.register(sessionsRoutes);
+      await app.register(passwordRoutes);
+    },
+    { prefix: '/api' }
+  );
 };
 
 const start = async () => {
