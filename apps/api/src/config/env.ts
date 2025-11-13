@@ -15,6 +15,10 @@ const EnvSchema = z.object({
   LOG_LEVEL: z
     .enum(['minimal', 'normal', 'detailed', 'verbose'])
     .default('normal'),
+  BETTER_AUTH_SECRET: z
+    .string()
+    .min(32, 'BETTER_AUTH_SECRET must be at least 32 characters'),
+  BETTER_AUTH_URL: z.string().url(),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

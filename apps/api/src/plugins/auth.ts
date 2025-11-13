@@ -5,6 +5,8 @@ import { admin } from 'better-auth/plugins';
 import type { FastifyPluginAsync, FastifyRequest } from 'fastify';
 import fp from 'fastify-plugin';
 
+import { loadEnv } from '@/config/env.js';
+
 declare module 'fastify' {
   interface FastifyInstance {
     auth: ReturnType<typeof betterAuth>;
@@ -12,10 +14,14 @@ declare module 'fastify' {
 }
 
 const authPlugin: FastifyPluginAsync = async (app) => {
+  const env = loadEnv();
+
   const auth = betterAuth({
     database: prismaAdapter(app.prisma as unknown as PrismaClient, {
       provider: 'postgresql',
     }),
+    baseURL: env.BETTER_AUTH_URL,
+    secret: env.BETTER_AUTH_SECRET,
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
@@ -28,7 +34,15 @@ const authPlugin: FastifyPluginAsync = async (app) => {
         maxAge: 60 * 60 * 24 * 30, // 30 days
       },
     },
-    trustedOrigins: [process.env.FRONTEND_URL || 'http://localhost:3000'],
+    advanced: {
+      // CRITICAL: For cross-domain deployments (e.g., Vercel frontend + Railway API)
+      // useSecureCookies forces secure cookies even in development
+      useSecureCookies: env.NODE_ENV === 'production',
+      // Generate request ID for tracing
+      generateId: () =>
+        `auth-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    },
+    trustedOrigins: [env.FRONTEND_URL],
     socialProviders: {},
     plugins: [
       admin({
@@ -49,10 +63,44 @@ const authPlugin: FastifyPluginAsync = async (app) => {
       // Handle the request with Better Auth
       const response = await auth.handler(webRequest);
 
-      // Set status and headers
+      // Set status
       reply.status(response.status);
+
+      // Process headers and modify Set-Cookie for cross-domain
       response.headers.forEach((value, key) => {
-        reply.header(key, value);
+        if (key.toLowerCase() === 'set-cookie') {
+          // For cross-domain cookie support, we need to modify cookie attributes
+          // Better Auth sets cookies, but we need to ensure SameSite=None for cross-domain
+          const cookieValue = value;
+
+          if (env.NODE_ENV === 'production') {
+            // In production (cross-domain), modify cookie attributes
+            let modifiedCookie = cookieValue;
+
+            // Ensure Secure flag is present
+            if (!modifiedCookie.includes('Secure')) {
+              modifiedCookie += '; Secure';
+            }
+
+            // Replace SameSite=Lax with SameSite=None for cross-domain
+            if (modifiedCookie.includes('SameSite=Lax')) {
+              modifiedCookie = modifiedCookie.replace(
+                'SameSite=Lax',
+                'SameSite=None'
+              );
+            } else if (!modifiedCookie.includes('SameSite=')) {
+              // If no SameSite is set, add it
+              modifiedCookie += '; SameSite=None';
+            }
+
+            reply.header(key, modifiedCookie);
+          } else {
+            // In development (localhost), use default behavior
+            reply.header(key, cookieValue);
+          }
+        } else {
+          reply.header(key, value);
+        }
       });
 
       // Send the response body

@@ -70,12 +70,8 @@ await app.register(rateLimit, {
 });
 
 await app.register(cookie, {
-  secret: process.env.COOKIE_SECRET || 'dev-secret-change-in-production',
-  parseOptions: {
-    httpOnly: true,
-    secure: env.NODE_ENV === 'production',
-    sameSite: 'lax',
-  },
+  secret: env.COOKIE_SECRET,
+  parseOptions: {},
 });
 
 await app.register(formbody);
