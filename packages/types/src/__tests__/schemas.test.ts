@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  ApiResponseSchema,
   CreateUserSchema,
   HealthCheckSchema,
+  ListResponseSchema,
+  MessageResponseSchema,
   UserSchema,
 } from '../index';
 
@@ -64,9 +65,10 @@ describe('HealthCheckSchema', () => {
 describe('UserSchema', () => {
   it('should validate a valid user object with Date', () => {
     const validUser = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'cm1abc2def3ghi4jkl',
       email: 'test@example.com',
       name: 'John Doe',
+      role: 'user' as const,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -77,9 +79,10 @@ describe('UserSchema', () => {
 
   it('should validate a valid user object with ISO string dates', () => {
     const validUser = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'cm1abc2def3ghi4jkl',
       email: 'test@example.com',
       name: 'John Doe',
+      role: 'user' as const,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -88,11 +91,12 @@ describe('UserSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should reject invalid UUID', () => {
+  it('should reject invalid CUID', () => {
     const invalidUser = {
-      id: 'not-a-uuid',
+      id: 'not-a-cuid',
       email: 'test@example.com',
       name: 'John Doe',
+      role: 'user' as const,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -103,9 +107,10 @@ describe('UserSchema', () => {
 
   it('should reject invalid email', () => {
     const invalidUser = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'cm1abc2def3ghi4jkl',
       email: 'not-an-email',
       name: 'John Doe',
+      role: 'user' as const,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -116,9 +121,10 @@ describe('UserSchema', () => {
 
   it('should reject empty name', () => {
     const invalidUser = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'cm1abc2def3ghi4jkl',
       email: 'test@example.com',
       name: '',
+      role: 'user' as const,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -170,43 +176,68 @@ describe('CreateUserSchema', () => {
   });
 });
 
-describe('ApiResponseSchema', () => {
-  it('should validate success response with data', () => {
+describe('MessageResponseSchema', () => {
+  it('should validate message response', () => {
     const validResponse = {
-      success: true,
       message: 'Operation successful',
-      data: { id: 1, value: 'test' },
     };
 
-    const result = ApiResponseSchema.safeParse(validResponse);
+    const result = MessageResponseSchema.safeParse(validResponse);
     expect(result.success).toBe(true);
   });
 
-  it('should validate error response', () => {
-    const validResponse = {
-      success: false,
-      error: 'Something went wrong',
-    };
-
-    const result = ApiResponseSchema.safeParse(validResponse);
-    expect(result.success).toBe(true);
-  });
-
-  it('should allow minimal response with just success flag', () => {
-    const minimalResponse = {
-      success: true,
-    };
-
-    const result = ApiResponseSchema.safeParse(minimalResponse);
-    expect(result.success).toBe(true);
-  });
-
-  it('should reject response without success field', () => {
+  it('should reject response without message field', () => {
     const invalidResponse = {
-      message: 'No success field',
+      data: 'something',
     };
 
-    const result = ApiResponseSchema.safeParse(invalidResponse);
+    const result = MessageResponseSchema.safeParse(invalidResponse);
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('ListResponseSchema', () => {
+  it('should validate list response with data array', () => {
+    const validResponse = {
+      data: [
+        {
+          id: 'cm1abc2def3ghi4jkl',
+          email: 'user1@example.com',
+          name: 'User One',
+          role: 'user' as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 'cm2xyz3abc4def5ghi',
+          email: 'user2@example.com',
+          name: 'User Two',
+          role: 'admin' as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+    };
+
+    const result = ListResponseSchema(UserSchema).safeParse(validResponse);
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject response without data field', () => {
+    const invalidResponse = {
+      items: [
+        {
+          id: 'cm1abc2def3ghi4jkl',
+          email: 'user1@example.com',
+          name: 'User One',
+          role: 'user' as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+    };
+
+    const result = ListResponseSchema(UserSchema).safeParse(invalidResponse);
     expect(result.success).toBe(false);
   });
 });

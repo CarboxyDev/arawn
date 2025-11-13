@@ -12,8 +12,7 @@
         "package.json",
         "tsconfig.json",
         "tsup.config.ts",
-        "next.config.ts",
-        "nest-cli.json"
+        "next.config.ts"
       ]
     },
     "typecheck": {

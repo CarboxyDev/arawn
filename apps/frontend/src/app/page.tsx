@@ -46,7 +46,7 @@ export default async function Home() {
             </h1>
             <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
               Production-ready full-stack TypeScript monorepo with Next.js,
-              NestJS, Turborepo and other modern technologies.
+              Fastify, Turborepo and other modern technologies.
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">

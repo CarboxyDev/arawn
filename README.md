@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/logo.svg" alt="Arawn Logo" width="200">
   <h1>Arawn</h1>
-  <p>Production-ready TypeScript monorepo with Next.js 15, NestJS 11, Turborepo and other modern technologies. Everything you need to ship fast.</p>
+  <p>Production-ready TypeScript monorepo with Next.js 15, Fastify 5, Turborepo and other modern technologies. Everything you need to ship fast.</p>
 </div>
 
 ---
@@ -17,7 +17,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 - **Production-grade authentication**: Better-auth integration with email/password, session management, and OAuth ready (GitHub, Google). Protected routes and auth guards out of the box.
 - **Production-grade infrastructure**: Global exception filter with request ID tracing, automatic Zod validation on all endpoints, rate limiting, environment-aware error responses
 - **Shared validation logic**: Write your schemas once in `shared/types`, use them everywhere (frontend forms, API validation, DB queries)
-- **Real testing infrastructure**: Vitest configured for frontend, backend, and shared packages with coverage reports
+- **Real testing infrastructure**: Vitest configured for frontend, API, and shared packages with coverage reports
 - **Auto-generated API docs**: Swagger + Scalar documentation generated directly from your Zod schemas
 - **AI pair programming ready**: This template ships with a comprehensive CLAUDE.md file that means AI assistants understand your architecture instantly and can help accelerate your development process.
 
@@ -37,14 +37,14 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 - React Hook Form + Zod validation
 - Jotai for client state
 
-**Backend**
+**API**
 
-- NestJS 11
+- Fastify 5 (ultra-fast, low overhead)
 - Prisma 6 + PostgreSQL 17
 - Better-auth for authentication
-- Pino for logging infrastructure
-- Swagger + Scalar API docs
-- Helmet + rate limiting
+- Pino for logging infrastructure (native Fastify integration)
+- Scalar API docs (Zod → OpenAPI)
+- Helmet + rate limiting + CORS
 
 **Monorepo**
 
@@ -71,7 +71,7 @@ The setup script handles everything: environment files, docker containers, datab
 **What's running:**
 
 - Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend: [http://localhost:8080](http://localhost:8080)
+- API: [http://localhost:8080](http://localhost:8080)
 - API Docs: [http://localhost:8080/docs](http://localhost:8080/docs)
 
 **Database tools:**
@@ -94,8 +94,8 @@ The setup script handles everything: environment files, docker containers, datab
 arawn/
 ├── apps/
 │   ├── frontend/     # Next.js 15 app
-│   └── backend/      # NestJS API
-└── shared/
+│   └── api/          # Fastify API
+└── packages/
     ├── types/        # Zod schemas + inferred types
     └── utils/        # Shared utilities
 ```
@@ -111,7 +111,7 @@ pnpm typecheck        # Type check
 pnpm test             # Run tests
 ```
 
-**Database** (from `apps/backend`)
+**Database** (from `apps/api`)
 
 ```bash
 pnpm db:migrate       # Run migrations
@@ -119,6 +119,36 @@ pnpm db:studio        # Open Prisma Studio
 pnpm db:seed          # Seed database
 pnpm db:reset         # Fresh database
 ```
+
+**Deployment**
+
+```bash
+# Railway (recommended)
+See DEPLOYMENT.md for full guide
+
+# Docker
+docker build -f apps/api/Dockerfile -t arawn-api .
+docker run -p 8080:8080 --env-file apps/api/.env.local arawn-api
+```
+
+## Deployment
+
+**Railway (Recommended)**: The API is fully compatible with Railway's auto-deployment. See [DEPLOYMENT.md](DEPLOYMENT.md) for complete setup instructions including:
+
+- Railway deployment (Node.js + PostgreSQL)
+- Docker deployment (multi-stage build)
+- Environment variable configuration
+- Database migration strategies
+- Frontend deployment (Vercel)
+- Health checks and troubleshooting
+
+**Quick Railway Setup:**
+
+1. Connect GitHub repo to Railway
+2. Add PostgreSQL database service
+3. Configure API service with environment variables
+4. Railway auto-detects Node.js and deploys
+5. Access at `https://your-api.railway.app`
 
 ## Key Features
 

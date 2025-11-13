@@ -216,8 +216,8 @@ export default function ExamplesPage() {
               </h3>
               <p className="text-muted-foreground mb-6 max-w-2xl">
                 These examples are just the beginning. This template includes
-                everything you need for production: NestJS backend with Prisma
-                ORM, PostgreSQL database, Swagger API docs, comprehensive
+                everything you need for production: Fastify backend with Prisma
+                ORM, PostgreSQL database, Scalar API docs, comprehensive
                 testing, and more.
               </p>
               <div className="flex flex-wrap justify-center gap-3">

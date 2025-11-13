@@ -3,11 +3,11 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 **AI Assistant Context:**
-You are a Senior Full-stack Developer and an Expert in TypeScript, Next.js 15, React 19, NestJS, Prisma, PostgreSQL, TailwindCSS, and modern UI/UX frameworks like Shadcn UI. You are collaborating with a human developer on a production-ready full-stack application.
+You are a Senior Full-stack Developer and an Expert in TypeScript, Next.js 15, React 19, Fastify, Prisma, PostgreSQL, TailwindCSS, and modern UI/UX frameworks like Shadcn UI. You are collaborating with a human developer on a production-ready full-stack application.
 
 ## Project Overview
 
-Production-ready TypeScript monorepo using pnpm workspaces and Turborepo, featuring a Next.js frontend and NestJS backend with shared packages for types, utilities, and configuration.
+Production-ready TypeScript monorepo using pnpm workspaces and Turborepo, featuring a Next.js frontend and Fastify API with shared packages for types, utilities, and configuration.
 
 ## Prerequisites
 
@@ -40,7 +40,7 @@ The `pnpm init:project` command automates the entire setup process:
 
 ```bash
 pnpm init:project     # Run automated setup (first time or to fix issues)
-pnpm dev              # Start all applications in dev mode (frontend on :3000, backend on :8080)
+pnpm dev              # Start all applications in dev mode (frontend on :3000, api on :8080)
 pnpm build            # Build all packages and applications
 pnpm typecheck        # Type check all packages
 pnpm lint             # Lint all packages
@@ -56,12 +56,12 @@ pnpm dev              # Start Next.js dev server
 pnpm build            # Build production bundle
 pnpm typecheck        # Type check only
 
-# Backend (NestJS on port 8080)
-cd apps/backend
-pnpm dev              # Start NestJS with watch mode
-pnpm build            # Build production bundle
+# API (Fastify on port 8080)
+cd apps/api
+pnpm dev              # Start Fastify with hot reload (tsx watch)
+pnpm build            # Build production bundle (TypeScript → dist/)
 pnpm start            # Run production build
-# API docs available at http://localhost:8080/docs (Swagger + Scalar)
+# API docs available at http://localhost:8080/docs (Scalar UI)
 
 # Shared packages (types, utils, config)
 cd shared/{package}
@@ -83,16 +83,17 @@ All shared packages (`@repo/packages-types`, `@repo/packages-utils`) are consume
 
 ### Database (Prisma + PostgreSQL)
 
-The backend uses Prisma 6.17.1 as the ORM with PostgreSQL:
+The API uses Prisma 6.17.1 as the ORM with PostgreSQL:
 
-- **Schema**: Located in `apps/backend/prisma/schema.prisma`
-- **Client**: Generated to `apps/backend/node_modules/.prisma/client`
-- **Migrations**: Stored in `apps/backend/prisma/migrations/`
-- **PrismaService**: Global NestJS service in `apps/backend/src/database/prisma/`
-  - Extends PrismaClient with lifecycle hooks (onModuleInit)
-  - Exported globally via PrismaModule for DI
+- **Schema**: Located in `apps/api/prisma/schema.prisma`
+- **Client**: Generated to `apps/api/node_modules/.prisma/client`
+- **Migrations**: Stored in `apps/api/prisma/migrations/`
+- **Database Plugin**: Fastify plugin in `apps/api/src/plugins/database.ts`
+  - Decorates Fastify instance with `app.prisma`
+  - Lifecycle hooks (connect on start, disconnect on close)
+  - Conditional query logging based on LOG_LEVEL
 
-**Database Commands (run from `apps/backend`):**
+**Database Commands (run from `apps/api`):**
 
 ```bash
 pnpm db:generate    # Generate Prisma Client
@@ -119,25 +120,25 @@ docker-compose --profile tools up -d        # Start PostgreSQL + pgAdmin (option
 
 **Environment Variables:**
 
-- Backend uses `.env.local` for all environment variables (via dotenv-flow)
+- API uses `.env.local` for all environment variables (via dotenv-flow)
 - Prisma CLI commands are wrapped with `dotenv-cli` to read from `.env.local`
-- All database commands automatically load `.env.local` (see `apps/backend/package.json`)
-- `DATABASE_URL` must match Docker credentials: `postgresql://postgres:postgres_dev_password@localhost:5432/app_dev?sslmode=disable`
+- All database commands automatically load `.env.local` (see `apps/api/package.json`)
+- `DATABASE_URL` must match Docker credentials: `postgresql://postgres:postgres_dev_password@localhost:5432/app_dev`
 
 **Turborepo Integration:**
 
-- `pnpm dev` automatically runs `db:generate` before starting the backend
-- Ensures Prisma Client is available before NestJS starts
+- `pnpm dev` automatically runs `db:generate` before starting the API
+- Ensures Prisma Client is available before Fastify starts
 
 ### Environment Configuration
 
 Environment variables are managed per-app with Zod validation:
 
-- **Backend**: Custom env loader with `dotenv-flow` and Zod v4 validation
-  - Configuration: `apps/backend/src/config/env.ts`
-  - Required: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`, `LOG_LEVEL`
+- **API**: Custom env loader with `dotenv-flow` and Zod v4 validation
+  - Configuration: `apps/api/src/config/env.ts`
+  - Required: `NODE_ENV`, `API_URL`, `FRONTEND_URL`, `DATABASE_URL`, `PORT`, `LOG_LEVEL`, `COOKIE_SECRET`
   - Uses `loadEnv()` helper that validates env vars on startup
-  - Reads from `apps/backend/.env.local` via `dotenv-flow`
+  - Reads from `apps/api/.env.local` via `dotenv-flow`
 - **Frontend**: Next.js environment variables with Zod validation
   - Configuration: `apps/frontend/src/lib/env.ts`
   - Required: `NEXT_PUBLIC_API_URL`, `NODE_ENV`
@@ -147,12 +148,13 @@ Environment variables are managed per-app with Zod validation:
 
 ### Security
 
-Backend security middleware configured in `main.ts`:
+API security middleware configured in `main.ts`:
 
-- **Helmet**: Secure HTTP headers with dev-friendly CSP settings
-- **Rate Limiting**: 30 requests per 60 seconds per IP via @nestjs/throttler
-- **CORS**: Strict origin policy allowing only `FRONTEND_URL`
-- ThrottlerGuard is applied globally to all routes
+- **Helmet**: Secure HTTP headers with dev-friendly CSP settings via `@fastify/helmet`
+- **Rate Limiting**: 30 requests per 60 seconds per IP via `@fastify/rate-limit`
+- **CORS**: Strict origin policy allowing only `FRONTEND_URL` via `@fastify/cors`
+- **Cookies**: Secure cookie handling with `@fastify/cookie` (httpOnly, secure in prod)
+- All security plugins registered globally in main.ts
 
 **Authentication & Session Security:**
 
@@ -172,7 +174,7 @@ Backend security middleware configured in `main.ts`:
 
 ### Production Logging & Error Tracking
 
-The backend uses Pino for structured, production-ready logging with request tracing and configurable verbosity.
+The API uses Pino for structured, production-ready logging with request tracing and configurable verbosity.
 
 **Philosophy**: Single unified logging pattern throughout the codebase. No alternatives - this is the way.
 
@@ -199,16 +201,20 @@ LOG_LEVEL=normal  # minimal | normal | detailed | verbose
 **Basic Usage (95% of logs):**
 
 ```typescript
-import { Injectable } from '@nestjs/common';
+import type { PrismaClient } from '@prisma/client';
+import type { CreateUser } from '@repo/packages-types';
+
 import { LoggerService } from '@/common/logger.service';
 
-@Injectable()
 export class UsersService {
-  constructor(private readonly logger: LoggerService) {
+  constructor(
+    private readonly prisma: PrismaClient,
+    private readonly logger: LoggerService
+  ) {
     this.logger.setContext('UsersService');
   }
 
-  async createUser(data: CreateUserDto) {
+  async createUser(data: CreateUser) {
     this.logger.info('Creating user', { email: data.email });
 
     try {
@@ -272,7 +278,7 @@ this.logger.info('Processing order', { orderId: 123 });
 Request IDs enable:
 
 - Tracing a single request through logs
-- Correlating frontend errors with backend logs
+- Correlating frontend errors with API logs
 - Debugging distributed systems
 - Production issue investigation
 
@@ -319,28 +325,28 @@ for (const item of items) {
 
 #### When to Use Each Verbosity Level
 
-**In Controllers:**
+**In Route Handlers:**
 
 ```typescript
-@Controller('users')
-export class UsersController {
-  constructor(private readonly logger: LoggerService) {
-    this.logger.setContext('UsersController');
-  }
+import type { FastifyPluginAsync } from 'fastify';
 
-  @Get(':id')
-  getUser(@Param('id') id: string) {
-    // HTTP logging is automatic via middleware
+const usersRoutes: FastifyPluginAsync = async (app) => {
+  // GET /users/:id - Get user by ID
+  app.get('/users/:id', async (request, reply) => {
+    const { id } = request.params;
+
+    // HTTP logging is automatic via hooks
     // Only log business-critical events
-    this.logger.info('User data retrieved', { userId: id });
-  }
-}
+    request.logger.info('User data retrieved', { userId: id });
+
+    return app.usersService.getUserById(id);
+  });
+};
 ```
 
 **In Services:**
 
 ```typescript
-@Injectable()
 export class UsersService {
   // Normal: Business operations
   this.logger.info('User created', { userId });
@@ -356,16 +362,25 @@ export class UsersService {
 }
 ```
 
-**In Middleware/Guards:**
+**In Hooks/Middleware:**
 
 ```typescript
-@Injectable()
-export class AuthGuard {
+import type { FastifyRequest, FastifyReply } from 'fastify';
+
+export async function requireAuth(
+  request: FastifyRequest,
+  reply: FastifyReply
+): Promise<void> {
   // Use minimal() to avoid polluting logs
-  this.logger.minimal().http('Auth check passed');
+  request.logger.minimal().http('Auth check passed');
 
   // Only log auth failures (security-relevant)
-  this.logger.warn('Authentication failed', { ip, reason });
+  if (!session) {
+    request.logger.warn('Authentication failed', {
+      ip: request.ip,
+      reason: 'No session',
+    });
+  }
 }
 ```
 
@@ -421,19 +436,20 @@ The codebase emphasizes runtime and compile-time type safety with Zod v4 as the 
 - **Consistency**: All packages use Zod v4.1.12 for validation
 - **No Dual Systems**: We DO NOT use class-validator - only Zod everywhere
 
-#### API Request Validation with Zod (Backend)
+#### API Request Validation with Zod (Fastify)
 
-The backend uses `nestjs-zod` for automatic request validation via NestJS pipes:
+The API uses `fastify-type-provider-zod` for automatic request validation:
 
 **Step 1: Define Schemas in `shared/types`**
 
 ```typescript
-// shared/types/src/index.ts
+// packages/types/src/user.ts
 import { z } from 'zod';
 
 export const CreateUserSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1),
+  role: RoleSchema.default('user'),
 });
 
 export type CreateUser = z.infer<typeof CreateUserSchema>;
@@ -449,61 +465,76 @@ export const QueryUsersSchema = z.object({
 export type QueryUsers = z.infer<typeof QueryUsersSchema>;
 ```
 
-**Step 2: Create DTO Classes in Controller**
+**Step 2: Use Schemas Directly in Route Handlers**
 
 ```typescript
-// apps/backend/src/modules/users/users.controller.ts
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+// apps/api/src/routes/users.ts
+import type { FastifyPluginAsync } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import {
   CreateUserSchema,
   QueryUsersSchema,
-  type User,
+  GetUserByIdSchema,
 } from '@repo/packages-types';
-import { createZodDto } from 'nestjs-zod';
 
-import { UsersService } from '@/modules/users/users.service';
+const usersRoutes: FastifyPluginAsync = async (app) => {
+  const server = app.withTypeProvider<ZodTypeProvider>();
 
-// Create DTO classes from Zod schemas
-class CreateUserDto extends createZodDto(CreateUserSchema) {}
-class QueryUsersDto extends createZodDto(QueryUsersSchema) {}
+  // GET /users - Get paginated users with filtering
+  server.get(
+    '/users',
+    {
+      schema: {
+        querystring: QueryUsersSchema,
+        description: 'Get paginated users with filtering and sorting',
+        tags: ['Users'],
+      },
+    },
+    async (request) => {
+      // request.query is automatically validated and typed
+      return app.usersService.getUsers(request.query);
+    }
+  );
 
-@ApiTags('Users')
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  // POST /users - Create a new user
+  server.post(
+    '/users',
+    {
+      schema: {
+        body: CreateUserSchema,
+        description: 'Create a new user',
+        tags: ['Users'],
+      },
+    },
+    async (request, reply) => {
+      // request.body is automatically validated and typed
+      const user = await app.usersService.createUser(request.body);
+      return reply.status(201).send(user);
+    }
+  );
+};
 
-  @Get()
-  @ApiOperation({ summary: 'Get paginated users with filtering' })
-  @ApiResponse({ status: 200, description: 'Returns paginated users' })
-  getUsers(@Query() query: QueryUsersDto): PaginatedResponse<User> {
-    // query is automatically validated and transformed
-    return this.usersService.getUsers(query);
-  }
-
-  @Post()
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({ status: 201, description: 'User created' })
-  @ApiResponse({ status: 400, description: 'Validation failed' })
-  createUser(@Body() dto: CreateUserDto): ApiResponse<User> {
-    // dto is automatically validated
-    return this.usersService.createUser(dto);
-  }
-}
+export default usersRoutes;
 ```
 
-**Step 3: Global Validation Pipe (Already Configured)**
+**Step 3: Setup Type Provider in main.ts (Already Configured)**
 
 ```typescript
-// apps/backend/src/main.ts
-import { ZodValidationPipe } from 'nestjs-zod';
+// apps/api/src/main.ts
+import {
+  validatorCompiler,
+  serializerCompiler,
+  ZodTypeProvider,
+} from 'fastify-type-provider-zod';
 
-app.useGlobalPipes(new ZodValidationPipe());
+const app = Fastify().withTypeProvider<ZodTypeProvider>();
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 ```
 
 **Validation Features:**
 
-- ✅ **Automatic Validation**: All `@Body()`, `@Query()`, `@Param()` automatically validated
+- ✅ **Automatic Validation**: All route schemas (body, querystring, params) automatically validated
 - ✅ **Type Coercion**: Query params like `?page=1` automatically coerced to numbers
 - ✅ **Default Values**: Missing optional fields filled with defaults
 - ✅ **Detailed Errors**: Validation failures return structured error responses
@@ -543,18 +574,18 @@ import { Button } from '../../components/ui/button';
 import { api } from '../lib/api';
 ```
 
-**Backend (NestJS):**
+**API (Fastify):**
 
 ```typescript
 // ✅ CORRECT - Use @/* alias
-import { AppService } from '@/app.service';
-import { UsersService } from '@/modules/users/users.service';
-import { PrismaService } from '@/database/prisma/prisma.service';
-import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
+import { UsersService } from '@/services/users.service';
+import { LoggerService } from '@/common/logger.service';
+import { requireAuth } from '@/hooks/auth';
+import { loadEnv } from '@/config/env';
 
 // ❌ WRONG - Never use relative paths
-import { AppService } from './app.service';
-import { UsersService } from '../modules/users/users.service';
+import { UsersService } from './services/users.service';
+import { requireAuth } from '../hooks/auth';
 ```
 
 **Shared Packages:**
@@ -635,35 +666,35 @@ The frontend uses Better Auth React client for authentication with modern patter
 - Prefer `Skeleton` components for loading states instead of spinners
 - Favor named exports for components
 
-## Backend Architecture Patterns
+## API Architecture Patterns
 
-### NestJS Structure
+### Fastify Structure
 
-NestJS follows a layered architecture pattern:
+The Fastify API follows a plugin-based architecture:
 
-- **Controllers**: Handle HTTP requests and responses, keep them thin
-- **Services**: Contain business logic and orchestrate data operations
-- **DTOs (Data Transfer Objects)**: Created from Zod schemas using `createZodDto()` from `nestjs-zod`
-- **Guards**: Implement authentication and authorization logic
-- **Interceptors**: Handle cross-cutting concerns (logging, transformations, timing)
-- **Middleware**: Process requests before they reach route handlers
-- **Dependency Injection**: Use constructor injection for all services and dependencies
+- **Route Handlers**: Handle HTTP requests and responses, keep them thin (in `src/routes/`)
+- **Services**: Contain business logic and orchestrate data operations (in `src/services/`)
+- **Plugins**: Encapsulate functionality and extend Fastify (in `src/plugins/`)
+- **Hooks**: Fastify lifecycle hooks (`preHandler`, `onRequest`, `onResponse`) for auth, logging, etc. (in `src/hooks/`)
+- **Validation**: Zod schemas directly in route definitions via `fastify-type-provider-zod`
+- **Dependency Injection**: Manual DI via Fastify decorators (`app.decorate()` for services)
 
 **Key Principles:**
 
-- Feature modules go in `modules/` (e.g., `modules/users/`, `modules/auth/`)
-- Each module is self-contained with controller, service, and tests
-- Infrastructure (database, logging) stays separate from business logic
-- Common utilities grouped by type in `common/` (filters, guards, middleware, interceptors, decorators)
-- Zod schemas defined in `shared/types`, DTO classes created inline in controllers using `createZodDto()`
+- Route handlers organized by feature in `routes/` (e.g., `routes/users.ts`, `routes/sessions.ts`)
+- Each route file exports a Fastify plugin with related endpoints
+- Services contain business logic and are injected via decorators
+- Infrastructure plugins in `plugins/` (database, logger, auth, swagger, schedule)
+- Common utilities in `common/` (logger service, types, utilities)
+- Zod schemas defined in `packages/types`, used directly in route schemas
 
 ### Error Handling
 
-- Use NestJS exception filters for consistent error responses
+- Use Fastify's `setErrorHandler()` for consistent error responses
 - Return appropriate HTTP status codes (400, 401, 403, 404, 500, etc.)
 - Provide user-friendly error messages (avoid leaking implementation details)
 - Log errors server-side for debugging
-- Use built-in exceptions: `BadRequestException`, `UnauthorizedException`, `NotFoundException`, etc.
+- Validation errors automatically formatted with Zod issue details
 
 ## Important Notes
 

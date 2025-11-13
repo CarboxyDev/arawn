@@ -19,7 +19,6 @@ export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(
   dataSchema: T
 ) =>
   z.object({
-    success: z.literal(true),
     data: z.array(dataSchema),
     pagination: z.object({
       page: z.number().int().positive(),
@@ -30,7 +29,6 @@ export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(
   });
 
 export type PaginatedResponse<T> = {
-  success: true;
   data: T[];
   pagination: {
     page: number;

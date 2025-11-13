@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { RoleSchema } from './role';
 
 export const UserSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   email: z.string().email(),
   name: z.string().min(1),
   role: RoleSchema.default('user'),
@@ -30,7 +30,7 @@ export const UpdateUserSchema = UserSchema.omit({
 export type UpdateUser = z.infer<typeof UpdateUserSchema>;
 
 export const GetUserByIdSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
 });
 
 export type GetUserById = z.infer<typeof GetUserByIdSchema>;

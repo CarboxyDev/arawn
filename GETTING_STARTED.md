@@ -26,9 +26,9 @@ Default credentials: `postgres/postgres_dev_password/app_dev`
 To use different credentials:
 
 1. Update `docker-compose.yml` (POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB)
-2. Update `apps/backend/.env.local` (DATABASE_URL must match step 1)
+2. Update `apps/api/.env.local` (DATABASE_URL must match step 1)
 3. Restart Docker: `docker compose down && docker compose up -d`
-4. Run migrations: `pnpm --filter @repo/backend db:migrate`
+4. Run migrations: `pnpm --filter @repo/api db:migrate`
 
 ---
 

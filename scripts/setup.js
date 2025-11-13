@@ -34,14 +34,14 @@ const SETUP_CONFIG = {
   ports: [
     { port: 5432, service: 'PostgreSQL' },
     { port: 3000, service: 'Frontend (Next.js)' },
-    { port: 8080, service: 'Backend (NestJS)' },
+    { port: 8080, service: 'API (Fastify)' },
   ],
   envFiles: [
     {
       from: 'apps/frontend/.env.local.example',
       to: 'apps/frontend/.env.local',
     },
-    { from: 'apps/backend/.env.local.example', to: 'apps/backend/.env.local' },
+    { from: 'apps/api/.env.local.example', to: 'apps/api/.env.local' },
   ],
   requiredCommands: [
     {
@@ -475,11 +475,11 @@ ${bright}${cyan}┌────────────────────�
     log.dryRun('Would run: docker compose up -d');
 
     log.step('Step 4: Running database migrations (simulated)');
-    log.dryRun('Would run: pnpm --filter @repo/backend db:migrate');
+    log.dryRun('Would run: pnpm --filter @repo/api db:migrate');
 
     log.step('Step 5: Database seeding (simulated)');
     if (!shouldNotSeed) {
-      log.dryRun('Would run: pnpm --filter @repo/backend db:seed');
+      log.dryRun('Would run: pnpm --filter @repo/api db:seed');
     } else {
       log.dryRun('Would skip database seeding');
     }
@@ -612,14 +612,14 @@ ${yellow}Troubleshooting:${reset}
 
   try {
     const migrateStatus = execSync(
-      'pnpm --filter @repo/backend dotenv -e .env.local -- prisma migrate status',
+      'pnpm --filter @repo/api dotenv -e .env.local -- prisma migrate status',
       { cwd: ROOT_DIR, encoding: 'utf-8', stdio: 'pipe' }
     );
 
     if (migrateStatus.includes('Database schema is up to date')) {
       log.info('Database migrations already up-to-date');
     } else {
-      await runCommandWithRetry('pnpm --filter @repo/backend db:migrate', {
+      await runCommandWithRetry('pnpm --filter @repo/api db:migrate', {
         maxRetries: SETUP_CONFIG.maxRetries,
         delay: SETUP_CONFIG.retryDelay,
       });
@@ -630,7 +630,7 @@ ${yellow}Troubleshooting:${reset}
     log.error('Failed to run migrations');
     console.log(`
 ${yellow}Troubleshooting:${reset}
-  ${dim}•${reset} Check DATABASE_URL: ${cyan}cat apps/backend/.env.local${reset}
+  ${dim}•${reset} Check DATABASE_URL: ${cyan}cat apps/api/.env.local${reset}
   ${dim}•${reset} Verify PostgreSQL: ${cyan}docker compose ps postgres${reset}
   ${dim}•${reset} Check connection: ${cyan}docker exec -it ${PROJECT_NAME}-postgres-1 psql -U postgres -d app_dev -c "\\dt"${reset}
   ${dim}•${reset} Reset database: ${cyan}docker compose down -v && node scripts/setup.js${reset}
@@ -642,12 +642,10 @@ ${yellow}Troubleshooting:${reset}
 
   if (shouldNotSeed) {
     log.info('Skipping database seeding (--no-seed flag)');
-    log.dimmed(
-      'Tip: Run "pnpm --filter @repo/backend db:seed" manually if needed'
-    );
+    log.dimmed('Tip: Run "pnpm --filter @repo/api db:seed" manually if needed');
   } else {
     try {
-      await runCommandWithRetry('pnpm --filter @repo/backend db:seed', {
+      await runCommandWithRetry('pnpm --filter @repo/api db:seed', {
         maxRetries: SETUP_CONFIG.maxRetries,
         delay: SETUP_CONFIG.retryDelay,
       });
@@ -680,7 +678,7 @@ ${bright}Next steps:${reset}
 
   2. Open your browser:
      ${dim}Frontend:${reset}      http://localhost:3000
-     ${dim}Backend:${reset}       http://localhost:8080
+     ${dim}API:${reset}           http://localhost:8080
      ${dim}API Docs:${reset}      http://localhost:8080/docs
 
 ${bright}Database tools:${reset}
