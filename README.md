@@ -120,6 +120,36 @@ pnpm db:seed          # Seed database
 pnpm db:reset         # Fresh database
 ```
 
+**Deployment**
+
+```bash
+# Railway (recommended)
+See DEPLOYMENT.md for full guide
+
+# Docker
+docker build -f apps/api/Dockerfile -t arawn-api .
+docker run -p 8080:8080 --env-file apps/api/.env.local arawn-api
+```
+
+## Deployment
+
+**Railway (Recommended)**: The API is fully compatible with Railway's auto-deployment. See [DEPLOYMENT.md](DEPLOYMENT.md) for complete setup instructions including:
+
+- Railway deployment (Node.js + PostgreSQL)
+- Docker deployment (multi-stage build)
+- Environment variable configuration
+- Database migration strategies
+- Frontend deployment (Vercel)
+- Health checks and troubleshooting
+
+**Quick Railway Setup:**
+
+1. Connect GitHub repo to Railway
+2. Add PostgreSQL database service
+3. Configure API service with environment variables
+4. Railway auto-detects Node.js and deploys
+5. Access at `https://your-api.railway.app`
+
 ## Key Features
 
 **Type Safety Everywhere**

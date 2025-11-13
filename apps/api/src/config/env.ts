@@ -9,6 +9,9 @@ const EnvSchema = z.object({
   FRONTEND_URL: z.string().url(),
   DATABASE_URL: z.string().min(1),
   PORT: z.string().transform(Number).pipe(z.number().int().positive()),
+  COOKIE_SECRET: z
+    .string()
+    .min(16, 'COOKIE_SECRET must be at least 16 characters'),
   LOG_LEVEL: z
     .enum(['minimal', 'normal', 'detailed', 'verbose'])
     .default('normal'),
