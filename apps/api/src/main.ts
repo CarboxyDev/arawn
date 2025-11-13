@@ -35,6 +35,10 @@ const app = Fastify({
   disableRequestLogging: false,
   requestIdHeader: 'x-request-id',
   genReqId: () => `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+  bodyLimit: 1048576,
+  ignoreTrailingSlash: true,
+  onProtoPoisoning: 'error',
+  onConstructorPoisoning: 'error',
 }).withTypeProvider<ZodTypeProvider>();
 
 app.setValidatorCompiler(validatorCompiler);

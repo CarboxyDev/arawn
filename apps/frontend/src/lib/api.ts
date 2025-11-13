@@ -47,7 +47,7 @@ export async function fetcher<T>(
       ...init,
       signal: controller.signal,
       headers: {
-        'Content-Type': 'application/json',
+        ...(init.body ? { 'Content-Type': 'application/json' } : {}),
         ...init.headers,
       },
       credentials: 'include',
