@@ -38,13 +38,13 @@ Railway provides the easiest deployment experience for the Fastify API with auto
 3. Railway will provision a PostgreSQL database
 4. Copy the `DATABASE_URL` from the database service variables
 
-### Step 3: Configure API Service
+### Step 3: Configure API Service with Docker
 
 1. Create a new service for the API
-2. Set the root directory to `apps/api`
-3. Railway will auto-detect Node.js and use these commands:
-   - **Build Command**: `pnpm install && pnpm --filter @repo/api db:generate && pnpm build`
-   - **Start Command**: `pnpm --filter @repo/api start`
+2. In service settings, go to **Build** section
+3. Select **Builder**: "Dockerfile" (not Railpack or Nixpacks)
+4. Railway will automatically detect the `Dockerfile` at project root
+5. No need to configure build/start commands - Docker handles everything
 
 ### Step 4: Set Environment Variables
 
@@ -54,7 +54,7 @@ In Railway dashboard, add these variables to your API service:
 
 ```bash
 NODE_ENV=production
-PORT=${{PORT}}  # Railway auto-provides this
+PORT=8080
 DATABASE_URL=${{Postgres.DATABASE_URL}}  # Reference from PostgreSQL service
 COOKIE_SECRET=<generate-with-openssl-rand-hex-32>
 API_URL=https://your-api.railway.app
@@ -62,129 +62,132 @@ FRONTEND_URL=https://your-frontend.vercel.app
 LOG_LEVEL=normal
 ```
 
-### Step 5: Run Database Migrations
+**Note:** Railway will automatically map internal port 8080 to their public proxy. The Dockerfile exposes port 8080.
 
-**Option A: Using Railway CLI**
+### Step 5: Deploy
 
-```bash
-railway login
-railway link  # Link to your project
-railway run --service api pnpm --filter @repo/api db:migrate
-```
-
-**Option B: One-time deployment command**
-
-In Railway dashboard, temporarily change start command to:
-
-```bash
-pnpm --filter @repo/api db:migrate && pnpm --filter @repo/api start
-```
-
-After first deployment, revert to: `pnpm --filter @repo/api start`
-
-### Step 6: Deploy
-
-1. Push to your main branch or trigger manual deploy
-2. Railway will build and deploy automatically
+1. Push your code (including `Dockerfile`) to your main branch
+2. Railway will automatically:
+   - Build the Docker image
+   - Run database migrations (via CMD in Dockerfile)
+   - Start the API server
 3. Monitor logs in Railway dashboard
 4. Access your API at `https://your-api.railway.app`
-
-### Railway Configuration File (Optional)
-
-Create `railway.json` in project root for advanced configuration:
-
-```json
-{
-  "build": {
-    "builder": "nixpacks"
-  },
-  "deploy": {
-    "restartPolicyType": "on_failure",
-    "restartPolicyMaxRetries": 10
-  }
-}
-```
 
 ### Railway Best Practices
 
 1. **Use Service References**: `${{Postgres.DATABASE_URL}}` instead of hardcoding
-2. **Enable Auto-Deploy**: Connect GitHub for automatic deployments
-3. **Use Private Networking**: Connect services via private URLs
+2. **Enable Auto-Deploy**: Connect GitHub for automatic deployments on push
+3. **Use Private Networking**: Connect database via private URL (Railway provides both)
 4. **Monitor Logs**: Use Railway dashboard or CLI (`railway logs`)
-5. **Set Resource Limits**: Configure memory/CPU in service settings
-6. **Enable Health Checks**: Railway uses `/health` endpoint automatically
+5. **Set Resource Limits**: Configure memory/CPU in service settings (recommended: 1GB RAM)
+6. **Enable Health Checks**: Railway automatically monitors `/health` endpoint
+7. **Database Migrations**: Handled automatically in Dockerfile CMD on each deploy
+
+### Troubleshooting Railway Deployment
+
+**Build fails with "npm install" error:**
+
+- Ensure you're using **Dockerfile** builder (not Railpack/Nixpacks)
+- Railpack doesn't support pnpm workspaces properly
+
+**Database migrations fail:**
+
+- Check that `DATABASE_URL` is correctly set
+- Verify PostgreSQL service is running and healthy
+- Check migration files exist in `apps/api/prisma/migrations/`
+
+**Port binding errors:**
+
+- Ensure `PORT=8080` environment variable is set
+- Railway proxies external traffic to internal port 8080
 
 ---
 
 ## Docker Deployment
 
-For self-hosted deployments or platforms requiring Docker (Render, Fly.io, AWS ECS, etc.).
+For self-hosted deployments, local production testing, or platforms requiring Docker (Render, Fly.io, AWS ECS, DigitalOcean, etc.).
 
-### Build Docker Image
+### Local Production Testing
+
+Test your production Docker build locally before deploying:
+
+```bash
+# Start production environment with Docker Compose
+docker-compose -f docker-compose.prod.yml up --build
+
+# API will be available at http://localhost:8080
+# PostgreSQL at localhost:5433 (to avoid conflict with dev database)
+```
+
+The `docker-compose.prod.yml` file at the project root provides:
+
+- PostgreSQL 17 Alpine (production database)
+- API service built from Dockerfile
+- Automatic health checks
+- Auto-restart on failure
+- Isolated from development environment
+
+**Stopping the production environment:**
+
+```bash
+docker-compose -f docker-compose.prod.yml down
+
+# Remove volumes (wipes data)
+docker-compose -f docker-compose.prod.yml down -v
+```
+
+### Manual Docker Build
 
 ```bash
 # From project root
-docker build -f apps/api/Dockerfile -t arawn-api:latest .
-```
+docker build -t arawn-api:latest .
 
-### Run Docker Container
-
-```bash
+# Run container
 docker run -d \
   --name arawn-api \
   -p 8080:8080 \
-  --env-file apps/api/.env.local \
+  -e NODE_ENV=production \
+  -e DATABASE_URL=postgresql://user:pass@host:5432/db \
+  -e COOKIE_SECRET=your-secret \
+  -e API_URL=http://localhost:8080 \
+  -e FRONTEND_URL=http://localhost:3000 \
+  -e PORT=8080 \
+  -e LOG_LEVEL=normal \
   arawn-api:latest
+
+# View logs
+docker logs -f arawn-api
+
+# Stop container
+docker stop arawn-api && docker rm arawn-api
 ```
 
-### Docker Compose (Full Stack)
+### Docker Image Details
 
-```yaml
-version: '3.9'
+The multi-stage Dockerfile provides:
 
-services:
-  postgres:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: arawn_prod
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+**Stage 1 (deps)**: Installs dependencies
 
-  api:
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile
-    restart: unless-stopped
-    ports:
-      - '8080:8080'
-    environment:
-      NODE_ENV: production
-      PORT: 8080
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/arawn_prod
-      COOKIE_SECRET: ${COOKIE_SECRET}
-      API_URL: ${API_URL}
-      FRONTEND_URL: ${FRONTEND_URL}
-      LOG_LEVEL: normal
-    depends_on:
-      postgres:
-        condition: service_healthy
-    healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health']
-      interval: 30s
-      timeout: 3s
-      retries: 3
+- Uses pnpm 9.15.4
+- Frozen lockfile for reproducible builds
+- Installs workspace dependencies
 
-volumes:
-  postgres_data:
-```
+**Stage 2 (builder)**: Builds the application
+
+- Generates Prisma Client
+- Compiles TypeScript to JavaScript
+- Builds shared packages
+
+**Stage 3 (runner)**: Production runtime
+
+- Minimal Node.js Alpine image
+- Non-root user for security
+- Only production files included
+- Health checks configured
+- Auto-runs migrations on startup
+
+**Final image size:** ~350MB (optimized with Alpine Linux)
 
 ### Deploying to Other Platforms
 
@@ -192,22 +195,64 @@ volumes:
 
 1. Connect GitHub repo
 2. Select "Docker" as environment
-3. Set Dockerfile path: `apps/api/Dockerfile`
-4. Add environment variables
+3. Dockerfile is auto-detected at project root
+4. Add environment variables in Render dashboard
+5. Deploy
 
 **Fly.io:**
 
 ```bash
-fly launch --dockerfile apps/api/Dockerfile
-fly secrets set COOKIE_SECRET=xxx DATABASE_URL=xxx ...
+# Initialize (will detect Dockerfile automatically)
+fly launch
+
+# Set secrets
+fly secrets set \
+  NODE_ENV=production \
+  DATABASE_URL=xxx \
+  COOKIE_SECRET=xxx \
+  API_URL=https://your-app.fly.dev \
+  FRONTEND_URL=https://your-frontend.vercel.app \
+  LOG_LEVEL=normal
+
+# Deploy
 fly deploy
 ```
 
+**DigitalOcean App Platform:**
+
+1. Create new app from GitHub
+2. Select "Dockerfile" as build method
+3. Configure environment variables
+4. Deploy
+
 **AWS ECS / Fargate:**
 
-1. Push image to ECR: `docker push xxx.ecr.region.amazonaws.com/arawn-api:latest`
-2. Create ECS task definition with environment variables
-3. Deploy to Fargate service
+```bash
+# Build and tag
+docker build -t arawn-api:latest .
+docker tag arawn-api:latest 123456789.dkr.ecr.us-east-1.amazonaws.com/arawn-api:latest
+
+# Push to ECR
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789.dkr.ecr.us-east-1.amazonaws.com
+docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/arawn-api:latest
+
+# Create ECS task definition and service
+aws ecs create-service --cluster production --service-name arawn-api ...
+```
+
+**Google Cloud Run:**
+
+```bash
+# Build and push to Artifact Registry
+gcloud builds submit --tag gcr.io/PROJECT_ID/arawn-api
+
+# Deploy
+gcloud run deploy arawn-api \
+  --image gcr.io/PROJECT_ID/arawn-api \
+  --platform managed \
+  --region us-central1 \
+  --set-env-vars NODE_ENV=production,DATABASE_URL=xxx,...
+```
 
 ---
 

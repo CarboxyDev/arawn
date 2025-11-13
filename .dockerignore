@@ -1,0 +1,57 @@
+# Dependencies
+node_modules
+npm-debug.log
+pnpm-debug.log
+yarn-error.log
+
+# Build outputs
+dist
+.next
+.turbo
+*.tsbuildinfo
+
+# Testing
+coverage
+.vitest
+
+# Environment files (never include in image)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# Git
+.git
+.gitignore
+.github
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Documentation (not needed in production)
+README.md
+DEPLOYMENT.md
+CLAUDE.md
+*.md
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Misc
+.husky
+scripts

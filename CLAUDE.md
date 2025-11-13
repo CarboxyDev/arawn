@@ -63,17 +63,17 @@ pnpm build            # Build production bundle (TypeScript → dist/)
 pnpm start            # Run production build
 # API docs available at http://localhost:8080/docs (Scalar UI)
 
-# Shared packages (types, utils, config)
-cd shared/{package}
+# packages (types, utils)
+cd packages/{package}
 pnpm dev              # Watch mode with tsup
 pnpm build            # Build with tsup
 ```
 
 ## Architecture
 
-### Shared Packages
+### Packages
 
-All shared packages (`@repo/packages-types`, `@repo/packages-utils`) are consumed as workspace dependencies:
+All packages (`@repo/packages-types`, `@repo/packages-utils`) are consumed as workspace dependencies:
 
 - Export both CJS and ESM formats
 - Include TypeScript declarations
@@ -429,7 +429,7 @@ When investigating production issues:
 
 The codebase emphasizes runtime and compile-time type safety with Zod v4 as the single validation library across the entire stack:
 
-- **Schema-First Approach**: Zod v4 schemas in `shared/types` serve as single source of truth
+- **Schema-First Approach**: Zod v4 schemas in `packages/types` serve as single source of truth
 - **Type Inference**: Types are inferred from schemas using `z.infer<typeof Schema>`
 - **Runtime Validation**: All user input (API requests, env vars) validated at runtime
 - **Automatic API Documentation**: OpenAPI schemas generated from Zod schemas
@@ -440,7 +440,7 @@ The codebase emphasizes runtime and compile-time type safety with Zod v4 as the 
 
 The API uses `fastify-type-provider-zod` for automatic request validation:
 
-**Step 1: Define Schemas in `shared/types`**
+**Step 1: Define Schemas in `packages/types`**
 
 ```typescript
 // packages/types/src/user.ts
@@ -588,7 +588,7 @@ import { UsersService } from './services/users.service';
 import { requireAuth } from '../hooks/auth';
 ```
 
-**Shared Packages:**
+**Packages:**
 
 ```typescript
 // ✅ CORRECT - Use workspace package names
