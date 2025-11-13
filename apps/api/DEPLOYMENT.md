@@ -59,9 +59,17 @@ NODE_ENV=production
 PORT=8080
 DATABASE_URL=${{Postgres.DATABASE_URL}}  # Reference from PostgreSQL service
 COOKIE_SECRET=<generate-with-openssl-rand-hex-32>
+BETTER_AUTH_SECRET=<generate-with-openssl-rand-hex-32>
+BETTER_AUTH_URL=https://your-api.railway.app
 API_URL=https://your-api.railway.app
 FRONTEND_URL=https://your-frontend.vercel.app
-LOG_LEVEL=normal
+LOG_LEVEL=minimal  # Use minimal for production
+```
+
+**Generate secrets:**
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 **Note:** Railway will automatically map internal port 8080 to their public proxy. The Dockerfile exposes port 8080.
@@ -93,16 +101,31 @@ LOG_LEVEL=normal
 - Ensure you're using **Dockerfile** builder (not Railpack/Nixpacks)
 - Railpack doesn't support pnpm workspaces properly
 
+**Database connection fails on startup:**
+
+- **Symptom**: `Can't reach database server at postgres.railway.internal:5432`
+- **Cause**: Railway serverless PostgreSQL is in sleep mode (hobby tier)
+- **Solution**: The startup script ([start.sh](apps/api/start.sh)) automatically handles database wake-up with retry logic (up to 30 attempts)
+- **Verify**: Check that `DATABASE_URL=${{Postgres.DATABASE_URL}}` references your PostgreSQL service correctly
+- **Alternative**: Upgrade to Railway Pro for always-on databases
+
 **Database migrations fail:**
 
 - Check that `DATABASE_URL` is correctly set
 - Verify PostgreSQL service is running and healthy
 - Check migration files exist in `apps/api/prisma/migrations/`
+- Review startup logs for migration errors
 
 **Port binding errors:**
 
 - Ensure `PORT=8080` environment variable is set
 - Railway proxies external traffic to internal port 8080
+
+**Better Auth errors:**
+
+- **Symptom**: `You are using the default secret`
+- **Solution**: Set `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` environment variables
+- Generate secret: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 
 ---
 
@@ -479,9 +502,10 @@ readinessProbe:
 
 Before deploying to production:
 
-- [ ] All secrets generated securely (`COOKIE_SECRET`)
+- [ ] All secrets generated securely (`COOKIE_SECRET`, `BETTER_AUTH_SECRET`)
 - [ ] Environment variables not committed to git
 - [ ] `NODE_ENV=production` set
+- [ ] `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` configured
 - [ ] CORS restricted to frontend domain only
 - [ ] Rate limiting enabled (30 req/60s)
 - [ ] Helmet security headers enabled
@@ -489,5 +513,6 @@ Before deploying to production:
 - [ ] API authentication working (Better Auth)
 - [ ] HTTPS enabled (automatic on Railway/Vercel)
 - [ ] Health checks configured
-- [ ] Logging enabled with appropriate verbosity
+- [ ] Logging set to `minimal` for production
 - [ ] Database backups configured (Railway auto-backups)
+- [ ] Railway PostgreSQL not in sleep mode (or startup script handles wake-up)
