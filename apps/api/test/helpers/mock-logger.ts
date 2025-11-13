@@ -2,15 +2,12 @@ import { vi } from 'vitest';
 
 import type { LoggerService } from '@/common/logger.service';
 
-/**
- * Create a mock LoggerService for testing
- */
 export function createMockLogger(): LoggerService {
   const mockLogger = {
     setContext: vi.fn(),
     info: vi.fn(),
-    warn: vi.fn(),
     error: vi.fn(),
+    warn: vi.fn(),
     debug: vi.fn(),
     http: vi.fn(),
     child: vi.fn(),
@@ -20,12 +17,12 @@ export function createMockLogger(): LoggerService {
     verbose: vi.fn(),
   } as unknown as LoggerService;
 
-  // Chain methods should return the logger itself
-  mockLogger.minimal = vi.fn(() => mockLogger);
-  mockLogger.normal = vi.fn(() => mockLogger);
-  mockLogger.detailed = vi.fn(() => mockLogger);
-  mockLogger.verbose = vi.fn(() => mockLogger);
-  mockLogger.child = vi.fn(() => mockLogger);
+  // Make verbosity methods chainable
+  mockLogger.minimal = vi.fn().mockReturnValue(mockLogger);
+  mockLogger.normal = vi.fn().mockReturnValue(mockLogger);
+  mockLogger.detailed = vi.fn().mockReturnValue(mockLogger);
+  mockLogger.verbose = vi.fn().mockReturnValue(mockLogger);
+  mockLogger.child = vi.fn().mockReturnValue(mockLogger);
 
   return mockLogger;
 }

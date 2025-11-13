@@ -1,12 +1,10 @@
-import { beforeAll } from 'vitest';
+import { afterAll, beforeAll } from 'vitest';
 
 beforeAll(() => {
+  // Test environment setup
   process.env.NODE_ENV = 'test';
-  process.env.API_URL = 'http://localhost:8080';
-  process.env.FRONTEND_URL = 'http://localhost:3000';
-  process.env.DATABASE_URL =
-    'postgresql://test:test@localhost:5432/test_db?sslmode=disable';
-  process.env.PORT = '8080';
-  process.env.LOG_LEVEL = 'minimal';
-  process.env.COOKIE_SECRET = 'test-secret-key-for-testing-purposes-only';
+});
+
+afterAll(() => {
+  // Cleanup after all tests
 });
