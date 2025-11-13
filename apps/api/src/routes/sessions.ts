@@ -14,7 +14,6 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
       );
 
       return {
-        success: true,
         data: sessions,
       };
     }
@@ -35,7 +34,6 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
         );
 
         return {
-          success: true,
           message: 'Session revoked successfully',
         };
       } catch (error) {
@@ -64,7 +62,6 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
       );
 
       return {
-        success: true,
         message: 'All other sessions revoked successfully',
       };
     }

@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  ApiResponseSchema,
   CreateUserSchema,
   HealthCheckSchema,
+  ListResponseSchema,
+  MessageResponseSchema,
   UserSchema,
 } from '../index';
 
@@ -170,43 +171,42 @@ describe('CreateUserSchema', () => {
   });
 });
 
-describe('ApiResponseSchema', () => {
-  it('should validate success response with data', () => {
+describe('MessageResponseSchema', () => {
+  it('should validate message response', () => {
     const validResponse = {
-      success: true,
       message: 'Operation successful',
-      data: { id: 1, value: 'test' },
     };
 
-    const result = ApiResponseSchema.safeParse(validResponse);
+    const result = MessageResponseSchema.safeParse(validResponse);
     expect(result.success).toBe(true);
   });
 
-  it('should validate error response', () => {
-    const validResponse = {
-      success: false,
-      error: 'Something went wrong',
-    };
-
-    const result = ApiResponseSchema.safeParse(validResponse);
-    expect(result.success).toBe(true);
-  });
-
-  it('should allow minimal response with just success flag', () => {
-    const minimalResponse = {
-      success: true,
-    };
-
-    const result = ApiResponseSchema.safeParse(minimalResponse);
-    expect(result.success).toBe(true);
-  });
-
-  it('should reject response without success field', () => {
+  it('should reject response without message field', () => {
     const invalidResponse = {
-      message: 'No success field',
+      data: 'something',
     };
 
-    const result = ApiResponseSchema.safeParse(invalidResponse);
+    const result = MessageResponseSchema.safeParse(invalidResponse);
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('ListResponseSchema', () => {
+  it('should validate list response with data array', () => {
+    const validResponse = {
+      data: [{ id: 1 }, { id: 2 }],
+    };
+
+    const result = ListResponseSchema(UserSchema).safeParse(validResponse);
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject response without data field', () => {
+    const invalidResponse = {
+      items: [{ id: 1 }],
+    };
+
+    const result = ListResponseSchema(UserSchema).safeParse(invalidResponse);
     expect(result.success).toBe(false);
   });
 });

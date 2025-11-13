@@ -1,9 +1,4 @@
-import type {
-  ApiResponse,
-  CreateUser,
-  PaginatedResponse,
-  User,
-} from '@repo/packages-types';
+import type { CreateUser, PaginatedResponse, User } from '@repo/packages-types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -58,7 +53,6 @@ describe('useUsers API Hooks', () => {
   describe('useFetchUsers', () => {
     it('should fetch paginated users successfully', async () => {
       const mockResponse: PaginatedResponse<User> = {
-        success: true,
         data: [
           {
             id: '123',
@@ -113,16 +107,13 @@ describe('useUsers API Hooks', () => {
 
   describe('useFetchUser', () => {
     it('should fetch a single user by ID', async () => {
-      const mockUser: ApiResponse<User> = {
-        success: true,
-        data: {
-          id: '123',
-          email: 'test@example.com',
-          name: 'Test User',
-          createdAt: '2024-01-01T00:00:00Z',
-          updatedAt: '2024-01-01T00:00:00Z',
-          role: 'user',
-        },
+      const mockUser: User = {
+        id: '123',
+        email: 'test@example.com',
+        name: 'Test User',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+        role: 'user',
       };
 
       vi.spyOn(apiModule.api, 'get').mockResolvedValue(mockUser);
@@ -155,14 +146,11 @@ describe('useUsers API Hooks', () => {
         role: 'user',
       };
 
-      const mockResponse: ApiResponse<User> = {
-        success: true,
-        data: {
-          id: '456',
-          ...newUser,
-          createdAt: '2024-01-01T00:00:00Z',
-          updatedAt: '2024-01-01T00:00:00Z',
-        },
+      const mockResponse: User = {
+        id: '456',
+        ...newUser,
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
       };
 
       vi.spyOn(apiModule.api, 'post').mockResolvedValue(mockResponse);

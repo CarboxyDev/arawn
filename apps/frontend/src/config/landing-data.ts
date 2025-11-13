@@ -75,7 +75,7 @@ export const techStack = {
   backend: {
     title: 'Backend',
     items: [
-      'NestJS 11',
+      'Fastify 5',
       'TypeScript',
       'Prisma',
       'PostgreSQL',
@@ -83,7 +83,7 @@ export const techStack = {
       'Zod',
       'Scalar Docs',
       'Helmet',
-      'NestJS Throttler',
+      'Rate Limiting',
       'CORS',
     ],
   },

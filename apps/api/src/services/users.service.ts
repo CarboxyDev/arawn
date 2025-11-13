@@ -40,7 +40,6 @@ export class UsersService {
     const totalPages = Math.ceil(total / query.limit);
 
     return {
-      success: true,
       data: users as User[],
       pagination: {
         page: query.page,

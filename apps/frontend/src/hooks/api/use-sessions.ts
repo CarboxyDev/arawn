@@ -1,4 +1,4 @@
-import type { ApiResponse } from '@repo/packages-types';
+import type { ListResponse, MessageResponse } from '@repo/packages-types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetcher } from '@/lib/api';
@@ -14,9 +14,9 @@ export interface SessionInfo {
 }
 
 export function useGetSessions() {
-  return useQuery<ApiResponse<SessionInfo[]>>({
+  return useQuery<ListResponse<SessionInfo>>({
     queryKey: ['sessions'],
-    queryFn: () => fetcher<ApiResponse<SessionInfo[]>>('/sessions'),
+    queryFn: () => fetcher<ListResponse<SessionInfo>>('/sessions'),
   });
 }
 
@@ -25,7 +25,7 @@ export function useDeleteSession() {
 
   return useMutation({
     mutationFn: (sessionId: string) =>
-      fetcher<ApiResponse>(`/sessions/${sessionId}`, {
+      fetcher<MessageResponse>(`/sessions/${sessionId}`, {
         method: 'DELETE',
       }),
     onSuccess: () => {
@@ -39,7 +39,7 @@ export function useRevokeAllSessions() {
 
   return useMutation({
     mutationFn: () =>
-      fetcher<ApiResponse>('/sessions', {
+      fetcher<MessageResponse>('/sessions', {
         method: 'DELETE',
       }),
     onSuccess: () => {

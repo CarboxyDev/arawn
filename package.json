@@ -7,6 +7,7 @@
   "scripts": {
     "init:project": "node scripts/setup.js",
     "dev": "turbo run dev --output-logs=full",
+    "dev:frontend": "turbo run dev --filter @repo/frontend",
     "dev:app": "turbo run dev --filter @repo/frontend --filter @repo/api",
     "dev:app:nestjs": "turbo run dev --filter @repo/frontend --filter @repo/backend",
     "dev:packages": "turbo run dev --filter '@repo/packages-*'",

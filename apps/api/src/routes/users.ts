@@ -120,7 +120,6 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       }
 
       return reply.status(200).send({
-        success: true,
         message: 'User deleted successfully',
       });
     }

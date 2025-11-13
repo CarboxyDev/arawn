@@ -38,7 +38,6 @@ const passwordRoutes: FastifyPluginAsync = async (app) => {
         );
 
         return {
-          success: true,
           message:
             'Password changed successfully. All other sessions have been revoked.',
         };

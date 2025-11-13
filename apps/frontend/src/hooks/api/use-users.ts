@@ -1,5 +1,4 @@
 import type {
-  ApiResponse,
   CreateUser,
   PaginatedResponse,
   QueryUsers,
@@ -67,11 +66,11 @@ export function useFetchUsers(
  */
 export function useFetchUser(
   id: string,
-  options?: Omit<UseQueryOptions<ApiResponse<User>>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<User>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
     queryKey: userKeys.detail(id),
-    queryFn: () => api.get<ApiResponse<User>>(`/users/${id}`),
+    queryFn: () => api.get<User>(`/users/${id}`),
     enabled: !!id,
     ...options,
   });
@@ -93,14 +92,10 @@ export function useCreateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateUser) =>
-      api.post<ApiResponse<User>>('/users', data),
-    onSuccess: (data) => {
+    mutationFn: (data: CreateUser) => api.post<User>('/users', data),
+    onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
-
-      if (data.data) {
-        queryClient.setQueryData(userKeys.detail(data.data.id), data);
-      }
+      queryClient.setQueryData(userKeys.detail(user.id), user);
     },
   });
 }
