@@ -581,6 +581,111 @@ app.setSerializerCompiler(serializerCompiler);
 
 **IMPORTANT**: Always define Zod schemas first, then infer types - never the opposite
 
+### Testing
+
+The codebase supports both unit tests (with mocks) and integration tests (with real database).
+
+#### Test Types
+
+**Unit Tests** (`*.spec.ts`):
+
+- Use mocked dependencies (Prisma, Logger, etc.)
+- Fast execution, no external dependencies
+- Ideal for testing business logic in isolation
+- Located alongside source files: `src/**/*.spec.ts`
+
+**Integration Tests** (`*.integration.spec.ts`):
+
+- Use real PostgreSQL test database
+- Test actual database operations and transactions
+- Verify end-to-end functionality
+- Located in `test/integration/`
+
+#### Test Database Setup
+
+Integration tests automatically use a separate test database (`app_dev_test`):
+
+1. **Automatic Setup**: Test database is created and migrated automatically in `test/setup.ts`
+2. **Database URL**: Appends `_test` suffix to your `DATABASE_URL` (e.g., `app_dev` → `app_dev_test`)
+3. **Migrations**: Runs `pnpm prisma migrate deploy` before tests
+4. **Cleanup**: Database is dropped after tests (unless `KEEP_TEST_DB=true`)
+
+**Running Tests:**
+
+```bash
+# Run all tests (unit + integration)
+pnpm test
+
+# Run only unit tests
+pnpm test -- src/**/*.spec.ts
+
+# Run only integration tests
+pnpm test -- test/**/*.integration.spec.ts
+
+# Keep test database after tests (for inspection)
+KEEP_TEST_DB=true pnpm test
+
+# Generate coverage report
+pnpm test:coverage
+```
+
+#### Integration Test Example
+
+```typescript
+// test/integration/users.integration.spec.ts
+import { getTestPrisma, resetTestDatabase } from '@test/helpers/test-db';
+import { createMockLogger } from '@test/helpers/mock-logger';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { UsersService } from '@/services/users.service';
+
+describe('UsersService Integration Tests', () => {
+  let service: UsersService;
+
+  beforeEach(async () => {
+    // Reset database between tests
+    await resetTestDatabase();
+
+    // Create service with real Prisma client
+    const prisma = getTestPrisma();
+    const logger = createMockLogger();
+    service = new UsersService(prisma, logger);
+  });
+
+  it('should create and retrieve a user', async () => {
+    const user = await service.createUser({
+      email: 'test@example.com',
+      name: 'Test User',
+      role: 'user',
+    });
+
+    const retrieved = await service.getUserById(user.id);
+    expect(retrieved?.email).toBe('test@example.com');
+  });
+});
+```
+
+#### Test Utilities
+
+**Test Database Helpers** (`test/helpers/test-db.ts`):
+
+- `getTestPrisma()` - Get Prisma client for test database
+- `resetTestDatabase()` - Truncate all tables between tests
+- `setupTestDatabase()` - Initialize test database (auto-called)
+- `cleanupTestDatabase()` - Drop test database (auto-called)
+
+**Mock Helpers** (`test/helpers/mock-*.ts`):
+
+- `createMockPrisma()` - Mocked Prisma client for unit tests
+- `createMockLogger()` - Mocked logger for all tests
+
+#### Best Practices
+
+- Use **unit tests** for business logic and edge cases
+- Use **integration tests** for database operations and transactions
+- Reset database between integration tests with `resetTestDatabase()`
+- Keep test database for debugging with `KEEP_TEST_DB=true`
+- Run integration tests sequentially (already configured in `vitest.config.ts`)
+
 ## Coding Standards
 
 ### Code Style

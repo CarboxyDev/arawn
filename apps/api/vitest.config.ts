@@ -8,10 +8,18 @@ export default mergeConfig(
   defineConfig({
     test: {
       name: '@repo/api',
-      include: ['src/**/*.spec.ts', 'test/**/*.spec.ts'],
+      include: [
+        'src/**/*.spec.ts', // Unit tests (with mocks)
+        'test/**/*.spec.ts', // Unit tests
+        'test/**/*.integration.spec.ts', // Integration tests (with real DB)
+      ],
       globals: true,
       root: './',
       setupFiles: ['./test/setup.ts'],
+      // Run tests sequentially for integration tests (shared DB)
+      sequence: {
+        concurrent: false,
+      },
       coverage: {
         thresholds: {
           lines: 80,
