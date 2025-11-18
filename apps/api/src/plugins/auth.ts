@@ -35,7 +35,14 @@ const authPlugin: FastifyPluginAsync = async (app) => {
       sendOnSignUp: true,
       autoSignInAfterVerification: true,
       sendVerificationEmail: async ({ user, url }) => {
-        await app.emailService.sendVerificationEmail(user.email, url);
+        const callbackURL = env.FRONTEND_URL;
+        const urlWithCallback = url.includes('?')
+          ? `${url}&callbackURL=${callbackURL}`
+          : `${url}?callbackURL=${callbackURL}`;
+        await app.emailService.sendVerificationEmail(
+          user.email,
+          urlWithCallback
+        );
       },
     },
     session: {
