@@ -80,53 +80,6 @@
 
 ## Improvements to Existing Features
 
-### Better Auth OAuth Documentation
-
-- [ ] Add comment in `apps/api/src/config/env.ts` explaining OAuth env vars are optional
-- [ ] Add comment in Better Auth configuration explaining how to enable OAuth
-- [ ] Update `.env.local.example` with GitHub/Google OAuth variables (clearly marked as optional)
-- [ ] Document OAuth setup process in CLAUDE.md or separate guide
-
-### Test Database Setup
-
-- [ ] Configure Vitest to use separate test database
-- [ ] Add test setup file with automatic migrations
-- [ ] Document test database workflow
-
-### Environment Variable Validation
-
-- [ ] Add Zod validation for all optional environment variables
-- [ ] Ensure validation doesn't throw errors when optional vars are missing
-- [ ] Add proper defaults or conditional logic for optional features
-- [ ] Examples: `GITHUB_CLIENT_ID`, `GOOGLE_CLIENT_ID`, `S3_BUCKET`, `RESEND_API_KEY`
-
-### Documentation Updates
-
-- [ ] Update DEPLOYMENT.md to be vendor-agnostic (generic requirements first, then platform examples)
-- [ ] Create CONTRIBUTING.md with development workflow, code style, and PR guidelines
-- [ ] Add LICENSE file (MIT recommended)
-
-## Architecture Improvements
-
-### Error Handling Utilities
-
-- [ ] Create standardized error classes in `packages/utils/src/errors.ts`
-  - `ValidationError`
-  - `NotFoundError`
-  - `UnauthorizedError`
-  - `ForbiddenError`
-  - `ConflictError`
-- [ ] Add automatic HTTP status code mapping in Fastify error handler
-- [ ] Update existing code to use standardized errors
-
-### API Response Standardization
-
-- [ ] Create response wrapper utilities in `packages/types`
-- [ ] Success response format: `{ data: T, meta?: { page, total, ... } }`
-- [ ] Error response format: `{ error: { message, code, details } }` (separate from success)
-- [ ] Update all API routes to use standardized response format
-- [ ] Document response patterns in CLAUDE.md
-
 ### Validation Utilities
 
 - [ ] Add validation utilities to `packages/utils/src/validation.ts`
@@ -137,13 +90,14 @@
 - [ ] Make utilities reusable across frontend and backend
 - [ ] Add tests for validation utilities
 
-## Quick Wins
+### Improve UI
 
-- [ ] Add GitHub issue templates (bug report, feature request)
-- [ ] Add GitHub PR template
+- Improve UI for pages like login, register, forgot password, reset password, etc.
+- Show a better UI for the default dashboard
+
+## Before Release
+
 - [ ] Add VS Code workspace settings (`.vscode/settings.json`)
-- [ ] Add VS Code debug configurations (`.vscode/launch.json`)
-- [ ] Add VS Code recommended extensions (`.vscode/extensions.json`)
 - [ ] Add badges to README.md (build status, TypeScript, license)
 - [ ] Create GitHub social preview image
 
