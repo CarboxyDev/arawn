@@ -43,6 +43,20 @@ const authPlugin: FastifyPluginAsync = async (app) => {
         `auth-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
     },
     trustedOrigins: [env.FRONTEND_URL],
+    // OAuth Social Providers (Optional)
+    // To enable OAuth login, uncomment and configure the providers below
+    // Make sure to set the corresponding environment variables (GITHUB_CLIENT_ID, etc.)
+    // Example:
+    // socialProviders: {
+    //   github: {
+    //     clientId: env.GITHUB_CLIENT_ID!,
+    //     clientSecret: env.GITHUB_CLIENT_SECRET!,
+    //   },
+    //   google: {
+    //     clientId: env.GOOGLE_CLIENT_ID!,
+    //     clientSecret: env.GOOGLE_CLIENT_SECRET!,
+    //   },
+    // },
     socialProviders: {},
     plugins: [
       admin({

@@ -172,6 +172,44 @@ API security middleware configured in `main.ts`:
   - Uses bcryptjs for password hashing
   - Prevents reuse of current password
 
+**OAuth Social Login (Optional):**
+
+By default, the template uses email/password authentication. To enable OAuth providers (GitHub, Google, etc.):
+
+1. **Get OAuth Credentials:**
+   - GitHub: https://github.com/settings/developers (create OAuth App)
+   - Google: https://console.cloud.google.com/apis/credentials (create OAuth 2.0 Client)
+
+2. **Add to Environment Variables** (`apps/api/.env.local`):
+
+   ```bash
+   GITHUB_CLIENT_ID=your_github_client_id
+   GITHUB_CLIENT_SECRET=your_github_client_secret
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GOOGLE_CLIENT_SECRET=your_google_client_secret
+   ```
+
+3. **Enable in Better Auth Config** (`apps/api/src/plugins/auth.ts`):
+   Uncomment the `socialProviders` section and configure:
+
+   ```typescript
+   socialProviders: {
+     github: {
+       clientId: env.GITHUB_CLIENT_ID!,
+       clientSecret: env.GITHUB_CLIENT_SECRET!,
+     },
+     google: {
+       clientId: env.GOOGLE_CLIENT_ID!,
+       clientSecret: env.GOOGLE_CLIENT_SECRET!,
+     },
+   },
+   ```
+
+4. **Frontend Integration:**
+   Better Auth React client automatically provides OAuth sign-in methods when enabled.
+
+**Note**: OAuth credentials are optional - the app works perfectly with just email/password authentication.
+
 ### Production Logging & Error Tracking
 
 The API uses Pino for structured, production-ready logging with request tracing and configurable verbosity.
