@@ -1,3 +1,4 @@
+import { ForbiddenError, UnauthorizedError } from '@repo/packages-utils';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 export interface AuthUser {
@@ -26,11 +27,7 @@ export async function requireAuth(
     });
 
     if (!session?.user) {
-      return reply.status(401).send({
-        statusCode: 401,
-        error: 'Unauthorized',
-        message: 'Authentication required',
-      });
+      throw new UnauthorizedError('Authentication required');
     }
 
     // Better Auth admin plugin adds role to user object
@@ -51,11 +48,7 @@ export async function requireAuth(
     };
   } catch (error) {
     request.log.error(error, 'Auth hook error');
-    return reply.status(401).send({
-      statusCode: 401,
-      error: 'Unauthorized',
-      message: 'Invalid or expired session',
-    });
+    throw new UnauthorizedError('Invalid or expired session');
   }
 }
 
@@ -65,18 +58,13 @@ export function requireRole(roles: string[]) {
     reply: FastifyReply
   ): Promise<void> => {
     if (!request.user) {
-      return reply.status(401).send({
-        statusCode: 401,
-        error: 'Unauthorized',
-        message: 'Authentication required',
-      });
+      throw new UnauthorizedError('Authentication required');
     }
 
     if (!roles.includes(request.user.role)) {
-      return reply.status(403).send({
-        statusCode: 403,
-        error: 'Forbidden',
-        message: 'Insufficient permissions',
+      throw new ForbiddenError('Insufficient permissions', {
+        required: roles,
+        current: request.user.role,
       });
     }
   };

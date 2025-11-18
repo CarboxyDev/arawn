@@ -1,3 +1,4 @@
+import { message, ValidationError } from '@repo/packages-utils';
 import type { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
 
@@ -19,42 +20,24 @@ const passwordRoutes: FastifyPluginAsync = async (app) => {
         body: ChangePasswordSchema,
       },
     },
-    async (request, reply) => {
+    async (request) => {
       const { currentPassword, newPassword } = request.body;
 
       if (currentPassword === newPassword) {
-        return reply.status(400).send({
-          statusCode: 400,
-          error: 'Bad Request',
-          message: 'New password must be different from current password',
-        });
-      }
-
-      try {
-        await app.passwordService.changePassword(
-          request.user!.id,
-          currentPassword,
-          newPassword
+        throw new ValidationError(
+          'New password must be different from current password'
         );
-
-        return {
-          message:
-            'Password changed successfully. All other sessions have been revoked.',
-        };
-      } catch (error) {
-        if (
-          error instanceof Error &&
-          (error.message === 'Current password is incorrect' ||
-            error.message === 'Password authentication not available')
-        ) {
-          return reply.status(400).send({
-            statusCode: 400,
-            error: 'Bad Request',
-            message: error.message,
-          });
-        }
-        throw error;
       }
+
+      await app.passwordService.changePassword(
+        request.user!.id,
+        currentPassword,
+        newPassword
+      );
+
+      return message(
+        'Password changed successfully. All other sessions have been revoked.'
+      );
     }
   );
 };

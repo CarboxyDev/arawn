@@ -12,5 +12,5 @@ export {
   ValidationError,
 } from './errors';
 export { clamp, formatBytes } from './number';
-export { error, paginated, success } from './response';
+export { error, message, paginated, success } from './response';
 export { slugify, truncate } from './string';

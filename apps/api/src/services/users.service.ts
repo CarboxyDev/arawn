@@ -6,6 +6,7 @@ import type {
   UpdateUser,
   User,
 } from '@repo/packages-types';
+import { NotFoundError } from '@repo/packages-utils';
 
 import type { LoggerService } from '@/common/logger.service';
 
@@ -50,14 +51,14 @@ export class UsersService {
     };
   }
 
-  async getUserById(id: string): Promise<User | null> {
+  async getUserById(id: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
 
     if (!user) {
       this.logger.warn('User not found', { userId: id });
-      return null;
+      throw new NotFoundError('User not found', { userId: id });
     }
 
     return user as User;
@@ -77,7 +78,7 @@ export class UsersService {
     return user as User;
   }
 
-  async updateUser(id: string, updateUser: UpdateUser): Promise<User | null> {
+  async updateUser(id: string, updateUser: UpdateUser): Promise<User> {
     this.logger.info('Updating user', { userId: id });
 
     const user = await this.prisma.user.findUnique({
@@ -86,7 +87,7 @@ export class UsersService {
 
     if (!user) {
       this.logger.warn('User not found for update', { userId: id });
-      return null;
+      throw new NotFoundError('User not found', { userId: id });
     }
 
     const updatedUser = await this.prisma.user.update({
@@ -98,7 +99,7 @@ export class UsersService {
     return updatedUser as User;
   }
 
-  async deleteUser(id: string): Promise<boolean> {
+  async deleteUser(id: string): Promise<void> {
     this.logger.info('Deleting user', { userId: id });
 
     const user = await this.prisma.user.findUnique({
@@ -107,7 +108,7 @@ export class UsersService {
 
     if (!user) {
       this.logger.warn('User not found for deletion', { userId: id });
-      return false;
+      throw new NotFoundError('User not found', { userId: id });
     }
 
     await this.prisma.user.delete({
@@ -115,6 +116,5 @@ export class UsersService {
     });
 
     this.logger.info('User deleted successfully', { userId: id });
-    return true;
   }
 }

@@ -4,6 +4,7 @@ import {
   QueryUsersSchema,
   UpdateUserSchema,
 } from '@repo/packages-types';
+import { message, success } from '@repo/packages-utils';
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
@@ -37,18 +38,9 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
         tags: ['Users'],
       },
     },
-    async (request, reply) => {
+    async (request) => {
       const user = await app.usersService.getUserById(request.params.id);
-
-      if (!user) {
-        return reply.status(404).send({
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'User not found',
-        });
-      }
-
-      return user;
+      return success(user);
     }
   );
 
@@ -64,7 +56,7 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
     },
     async (request, reply) => {
       const user = await app.usersService.createUser(request.body);
-      return reply.status(201).send(user);
+      return reply.status(201).send(success(user));
     }
   );
 
@@ -79,21 +71,12 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
         tags: ['Users'],
       },
     },
-    async (request, reply) => {
+    async (request) => {
       const user = await app.usersService.updateUser(
         request.params.id,
         request.body
       );
-
-      if (!user) {
-        return reply.status(404).send({
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'User not found',
-        });
-      }
-
-      return user;
+      return success(user);
     }
   );
 
@@ -108,20 +91,9 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
         tags: ['Users'],
       },
     },
-    async (request, reply) => {
-      const deleted = await app.usersService.deleteUser(request.params.id);
-
-      if (!deleted) {
-        return reply.status(404).send({
-          statusCode: 404,
-          error: 'Not Found',
-          message: 'User not found',
-        });
-      }
-
-      return reply.status(200).send({
-        message: 'User deleted successfully',
-      });
+    async (request) => {
+      await app.usersService.deleteUser(request.params.id);
+      return message('User deleted successfully');
     }
   );
 };
