@@ -25,10 +25,20 @@
       "import": "./dist/date.mjs",
       "require": "./dist/date.js"
     },
+    "./errors": {
+      "types": "./dist/errors.d.ts",
+      "import": "./dist/errors.mjs",
+      "require": "./dist/errors.js"
+    },
     "./number": {
       "types": "./dist/number.d.ts",
       "import": "./dist/number.mjs",
       "require": "./dist/number.js"
+    },
+    "./response": {
+      "types": "./dist/response.d.ts",
+      "import": "./dist/response.mjs",
+      "require": "./dist/response.js"
     },
     "./string": {
       "types": "./dist/string.d.ts",

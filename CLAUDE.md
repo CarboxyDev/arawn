@@ -694,7 +694,7 @@ describe('UsersService Integration Tests', () => {
 - **Type Definitions**: Prefer `interface` for public-facing types and object shapes, `type` for unions, intersections, and computed types
 - Use descriptive variable names with auxiliary verbs (`isLoading`, `hasError`, `canSubmit`)
 - Favor iteration and modularization over code duplication
-- **IMPORTANT**: Avoid writing comments in code unless absolutely necessary for non-obvious edge cases - code should be self-documenting
+- **IMPORTANT**: Avoid writing comments in code unless absolutely necessary for non-obvious edge cases - code should be self-documenting.
 - Use functional components with TypeScript interfaces
 - Follow atomic design principles for UI components
 - Prefer composition over inheritance
@@ -852,3 +852,4 @@ The Fastify API follows a plugin-based architecture:
 - Do not be afraid of hurting the user's feelings or making them feel bad about their skills.
 - Never create markdown files unless the user explicitly asks for it.
 - Always give a brief and compact summary of all the changes done.
+- Avoid writing comments in code unless absolutely necessary for non-obvious edge cases - code should be self-documenting.

@@ -21,6 +21,7 @@ export {
   type PaginatedResponse,
   PaginatedResponseSchema,
   type Pagination,
+  type PaginationMeta,
   PaginationSchema,
   type QueryUsers,
   QueryUsersSchema,
