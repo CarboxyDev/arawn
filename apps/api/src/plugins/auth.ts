@@ -25,6 +25,18 @@ const authPlugin: FastifyPluginAsync = async (app) => {
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
+      sendEmailVerificationOnSignUp: true,
+      autoSignInAfterVerification: true,
+      sendResetPassword: async ({ user, url }) => {
+        await app.emailService.sendVerificationEmail(user.email, url);
+      },
+    },
+    emailVerification: {
+      sendOnSignUp: true,
+      autoSignInAfterVerification: true,
+      sendVerificationEmail: async ({ user, url }) => {
+        await app.emailService.sendVerificationEmail(user.email, url);
+      },
     },
     session: {
       expiresIn: 60 * 60 * 24 * 7, // 7 days

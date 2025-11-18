@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { EmailVerificationBanner } from '@/components/auth/email-verification-banner';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth';
@@ -20,6 +21,9 @@ export default function DashboardPage() {
     <ProtectedRoute redirectTo="/login">
       {session && (
         <div className="container mx-auto max-w-4xl p-8">
+          <div className="mb-4">
+            <EmailVerificationBanner />
+          </div>
           <div className="bg-card rounded-lg border p-6 shadow-sm">
             <div className="mb-6">
               <h1 className="text-2xl font-semibold">Dashboard</h1>

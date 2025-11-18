@@ -4,15 +4,7 @@
 
 ### Email Verification with Resend
 
-- [ ] Install and configure Resend
-- [ ] Create email service abstraction (`apps/api/src/services/email.service.ts`)
-- [ ] Add email verification flow (send verification email on signup)
-- [ ] Add password reset via email flow
-- [ ] Create email templates (verification, password reset)
-- [ ] Add `EMAIL_ENABLED` environment variable (default: `false` in dev)
-- [ ] Update `.env.local.example` with Resend configuration (optional vars)
-- [ ] Document how to enable/disable email in development
-- [ ] Ensure graceful degradation when email is disabled (log to console instead)
+- Done
 
 ### Integration Tests
 

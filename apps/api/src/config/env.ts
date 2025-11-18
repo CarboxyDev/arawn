@@ -29,18 +29,13 @@ const EnvSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().optional(),
 
   // Email Service Configuration (Optional)
-  // Required for email verification, password reset, etc.
-  // Set EMAIL_ENABLED=true to enable email features
-  EMAIL_ENABLED: z
-    .string()
-    .optional()
-    .default('false')
-    .transform((val) => val === 'true'),
+  // If RESEND_API_KEY is not provided, emails will be logged to console (dev mode)
+  // EMAIL_FROM: The sender email address (e.g., 'noreply@yourdomain.com')
+  // Note: You MUST verify your domain in Resend dashboard before sending emails
   RESEND_API_KEY: z.string().optional(),
-  EMAIL_FROM: z.string().optional().default('noreply@example.com'),
+  EMAIL_FROM: z.string().email().optional(),
 
   // File Storage Configuration (Optional)
-  // Defaults to local storage if not configured
   STORAGE_TYPE: z.enum(['local', 's3', 'r2']).optional().default('local'),
   S3_BUCKET: z.string().optional(),
   S3_REGION: z.string().optional(),

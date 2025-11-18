@@ -37,7 +37,9 @@ const app = Fastify({
   requestIdHeader: 'x-request-id',
   genReqId: () => `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
   bodyLimit: 1048576,
-  ignoreTrailingSlash: true,
+  routerOptions: {
+    ignoreTrailingSlash: true,
+  },
   onProtoPoisoning: 'error',
   onConstructorPoisoning: 'error',
 }).withTypeProvider<ZodTypeProvider>();
@@ -198,6 +200,9 @@ const registerRoutes = async () => {
   const { default: usersRoutes } = await import('@/routes/users.js');
   const { default: sessionsRoutes } = await import('@/routes/sessions.js');
   const { default: passwordRoutes } = await import('@/routes/password.js');
+  const { default: verificationRoutes } = await import(
+    '@/routes/verification.js'
+  );
 
   await app.register(
     async (app) => {
@@ -205,6 +210,7 @@ const registerRoutes = async () => {
       await app.register(usersRoutes);
       await app.register(sessionsRoutes);
       await app.register(passwordRoutes);
+      await app.register(verificationRoutes);
     },
     { prefix: '/api' }
   );

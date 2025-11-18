@@ -210,6 +210,33 @@ By default, the template uses email/password authentication. To enable OAuth pro
 
 **Note**: OAuth credentials are optional - the app works perfectly with just email/password authentication.
 
+**Email Verification:**
+
+Email verification is **enabled by default** using Better Auth's built-in verification system. Users must verify their email address after signup, but can still log in while unverified (with appropriate warnings in the UI).
+
+**How it works:**
+
+1. **Development Mode (No Resend API Key)**:
+   - Emails are **logged to console** instead of being sent
+   - Verification links appear in server logs for easy testing
+   - No configuration needed - works out of the box
+
+2. **Production Mode (With Resend API Key)**:
+   - Emails sent via Resend (https://resend.com)
+   - Get your API key: https://resend.com/api-keys
+   - Add to `.env.local`:
+     ```bash
+     RESEND_API_KEY=re_xxxxxxxxxxxx
+     EMAIL_FROM=noreply@yourdomain.com
+     ```
+
+**Email Templates:**
+
+Email templates use React Email for beautiful, type-safe emails
+
+- Preview server: `pnpm email:dev` (runs on port 3001)
+- Linked with Better Auth.
+
 ### Production Logging & Error Tracking
 
 The API uses Pino for structured, production-ready logging with request tracing and configurable verbosity.
