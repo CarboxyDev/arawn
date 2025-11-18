@@ -1,168 +1,167 @@
 # Deployment Guide
 
-This guide covers deploying the Arawn monorepo to production, with a focus on Railway deployment for the Fastify API backend.
+This guide covers deploying the Arawn monorepo to production. The API can be deployed to any platform that supports Docker or Node.js, while the Next.js frontend works with any static hosting or serverless platform.
 
 ## Table of Contents
 
-- [Railway Deployment (Recommended)](#railway-deployment-recommended)
-- [Docker Deployment](#docker-deployment)
+- [Prerequisites](#prerequisites)
 - [Environment Variables](#environment-variables)
 - [Database Setup](#database-setup)
-- [Frontend Deployment (Vercel)](#frontend-deployment-vercel)
+- [Deployment Methods](#deployment-methods)
+  - [Docker Deployment](#docker-deployment)
+  - [Node.js Deployment](#nodejs-deployment)
+- [Platform-Specific Guides](#platform-specific-guides)
+  - [Railway (Recommended)](#railway-recommended)
+  - [Render](#render)
+  - [Fly.io](#flyio)
+  - [AWS](#aws)
+  - [Google Cloud](#google-cloud)
+  - [DigitalOcean](#digitalocean)
+- [Frontend Deployment](#frontend-deployment)
 - [Health Checks](#health-checks)
+- [Security Checklist](#security-checklist)
 - [Troubleshooting](#troubleshooting)
 
 ---
 
-## Railway Deployment (Recommended)
+## Prerequisites
 
-Railway provides the easiest deployment experience for the Fastify API with automatic scaling, built-in PostgreSQL, and seamless GitHub integration.
+Before deploying to production, ensure you have:
 
-### Prerequisites
+- **PostgreSQL Database**: Version 14+ (managed or self-hosted)
+- **Node.js**: Version 20.0.0 or higher
+- **pnpm**: Version 9.0.0 or higher (for non-Docker deployments)
+- **Git Repository**: Code hosted on GitHub, GitLab, or Bitbucket
+- **Domain** (optional): For custom URLs
 
-- Railway account ([railway.app](https://railway.app))
-- GitHub repository connected to Railway
-- Railway CLI (optional): `npm install -g @railway/cli`
+### Required Services
 
-### Step 1: Create Railway Project
-
-1. Go to [railway.app/new](https://railway.app/new)
-2. Select "Deploy from GitHub repo"
-3. Choose your repository (`arawn`)
-4. Railway will auto-detect the monorepo structure
-
-### Step 2: Setup PostgreSQL Database
-
-1. In your Railway project, click "New Service"
-2. Select "Database" → "PostgreSQL"
-3. Railway will provision a PostgreSQL database
-4. Copy the `DATABASE_URL` from the database service variables
-
-### Step 3: Configure API Service with Docker
-
-1. Create a new service for the API
-2. In service settings, go to **Build** section
-3. Select **Builder**: "Dockerfile" (not Railpack or Nixpacks)
-4. **Important**: Leave **Root Directory** empty (or set to `/`)
-5. Set **Dockerfile Path**: `Dockerfile`
-6. Railway will build using the Dockerfile at project root
-7. No need to configure build/start commands - Docker handles everything
-
-### Step 4: Set Environment Variables
-
-In Railway dashboard, add these variables to your API service:
-
-**Required Variables:**
-
-```bash
-NODE_ENV=production
-PORT=8080
-DATABASE_URL=${{Postgres.DATABASE_URL}}  # Reference from PostgreSQL service
-COOKIE_SECRET=<generate-with-openssl-rand-hex-32>
-BETTER_AUTH_SECRET=<generate-with-openssl-rand-hex-32>
-BETTER_AUTH_URL=https://your-api.railway.app
-API_URL=https://your-api.railway.app
-FRONTEND_URL=https://your-frontend.vercel.app
-LOG_LEVEL=minimal  # Use minimal for production
-```
-
-**Generate secrets:**
-
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
-
-**Note:** Railway will automatically map internal port 8080 to their public proxy. The Dockerfile exposes port 8080.
-
-### Step 5: Deploy
-
-1. Push your code (including `Dockerfile`) to your main branch
-2. Railway will automatically:
-   - Build the Docker image
-   - Run database migrations (via CMD in Dockerfile)
-   - Start the API server
-3. Monitor logs in Railway dashboard
-4. Access your API at `https://your-api.railway.app`
-
-### Railway Best Practices
-
-1. **Use Service References**: `${{Postgres.DATABASE_URL}}` instead of hardcoding
-2. **Enable Auto-Deploy**: Connect GitHub for automatic deployments on push
-3. **Use Private Networking**: Connect database via private URL (Railway provides both)
-4. **Monitor Logs**: Use Railway dashboard or CLI (`railway logs`)
-5. **Set Resource Limits**: Configure memory/CPU in service settings (recommended: 1GB RAM)
-6. **Enable Health Checks**: Railway automatically monitors `/health` endpoint
-7. **Database Migrations**: Handled automatically in Dockerfile CMD on each deploy
-
-### Troubleshooting Railway Deployment
-
-**Build fails with "npm install" error:**
-
-- Ensure you're using **Dockerfile** builder (not Railpack/Nixpacks)
-- Railpack doesn't support pnpm workspaces properly
-
-**Database connection fails on startup:**
-
-- **Symptom**: `Can't reach database server at postgres.railway.internal:5432`
-- **Cause**: Railway serverless PostgreSQL is in sleep mode (hobby tier)
-- **Solution**: The startup script ([start.sh](apps/api/start.sh)) automatically handles database wake-up with retry logic (up to 30 attempts)
-- **Verify**: Check that `DATABASE_URL=${{Postgres.DATABASE_URL}}` references your PostgreSQL service correctly
-- **Alternative**: Upgrade to Railway Pro for always-on databases
-
-**Database migrations fail:**
-
-- Check that `DATABASE_URL` is correctly set
-- Verify PostgreSQL service is running and healthy
-- Check migration files exist in `apps/api/prisma/migrations/`
-- Review startup logs for migration errors
-
-**Port binding errors:**
-
-- Ensure `PORT=8080` environment variable is set
-- Railway proxies external traffic to internal port 8080
-
-**Better Auth errors:**
-
-- **Symptom**: `You are using the default secret`
-- **Solution**: Set `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` environment variables
-- Generate secret: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+1. **Database**: PostgreSQL (Railway, Supabase, Neon, AWS RDS, etc.)
+2. **API Hosting**: Docker-compatible platform or Node.js hosting
+3. **Frontend Hosting**: Vercel, Netlify, Cloudflare Pages, or any static host
 
 ---
 
-## Docker Deployment
+## Environment Variables
 
-For self-hosted deployments, local production testing, or platforms requiring Docker (Render, Fly.io, AWS ECS, DigitalOcean, etc.).
+### Required Variables (API)
 
-### Local Production Testing
-
-Test your production Docker build locally before deploying:
+These must be set in your production environment:
 
 ```bash
-# Start production environment with Docker Compose
+# Application Environment
+NODE_ENV=production
+PORT=8080
+
+# API & Frontend URLs
+API_URL=https://api.yourdomain.com
+FRONTEND_URL=https://yourdomain.com
+
+# Database
+DATABASE_URL=postgresql://user:password@host:5432/database
+
+# Security Secrets
+COOKIE_SECRET=<32+ character random string>
+BETTER_AUTH_SECRET=<32+ character random string>
+BETTER_AUTH_URL=https://api.yourdomain.com
+
+# Logging
+LOG_LEVEL=minimal  # Use minimal for production
+```
+
+### Optional Variables
+
+```bash
+# OAuth Providers (if enabled)
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_secret
+
+# Email Service (if enabled)
+EMAIL_ENABLED=true
+RESEND_API_KEY=your_resend_api_key
+EMAIL_FROM=noreply@yourdomain.com
+
+# File Storage (if using S3/R2)
+STORAGE_TYPE=s3  # or 'r2' or 'local'
+S3_BUCKET=your-bucket-name
+S3_REGION=us-east-1
+S3_ACCESS_KEY_ID=your_access_key
+S3_SECRET_ACCESS_KEY=your_secret_key
+S3_ENDPOINT=https://endpoint-url  # For R2/MinIO
+```
+
+### Generate Secure Secrets
+
+```bash
+# Generate COOKIE_SECRET and BETTER_AUTH_SECRET
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+### Frontend Environment Variables
+
+```bash
+# Required
+NODE_ENV=production
+NEXT_PUBLIC_API_URL=https://api.yourdomain.com
+```
+
+---
+
+## Database Setup
+
+### Initial Setup
+
+1. **Create PostgreSQL Database**: Use your hosting provider's dashboard or CLI
+2. **Get Connection String**: Format: `postgresql://user:password@host:5432/database`
+3. **Set DATABASE_URL**: Add to your environment variables
+
+### Database Migrations
+
+Migrations run automatically on deployment when using Docker. For manual migrations:
+
+```bash
+# Via pnpm (requires DATABASE_URL in environment)
+pnpm --filter @repo/api db:migrate
+
+# Via Docker exec (if container is running)
+docker exec <container-name> pnpm --filter @repo/api db:migrate
+
+# Locally with production DB (be careful!)
+DATABASE_URL=<prod-url> pnpm --filter @repo/api db:migrate
+```
+
+### Database Seeding (Optional)
+
+```bash
+# Only run once on initial deployment
+pnpm --filter @repo/api db:seed
+```
+
+**Note**: Seeding creates default users. Review `apps/api/prisma/seed.ts` before running in production.
+
+---
+
+## Deployment Methods
+
+### Docker Deployment
+
+**Best for**: Platform independence, consistent environments, self-hosting
+
+The monorepo includes a production-ready Dockerfile at the project root.
+
+#### Local Production Testing
+
+```bash
+# Test production build locally
 docker-compose -f docker-compose.prod.yml up --build
 
-# API will be available at http://localhost:8080
-# PostgreSQL at localhost:5433 (to avoid conflict with dev database)
+# API available at http://localhost:8080
+# PostgreSQL at localhost:5433
 ```
 
-The `docker-compose.prod.yml` file at the project root provides:
-
-- PostgreSQL 17 Alpine (production database)
-- API service built from Dockerfile
-- Automatic health checks
-- Auto-restart on failure
-- Isolated from development environment
-
-**Stopping the production environment:**
-
-```bash
-docker-compose -f docker-compose.prod.yml down
-
-# Remove volumes (wipes data)
-docker-compose -f docker-compose.prod.yml down -v
-```
-
-### Manual Docker Build
+#### Manual Docker Build
 
 ```bash
 # From project root
@@ -175,82 +174,162 @@ docker run -d \
   -e NODE_ENV=production \
   -e DATABASE_URL=postgresql://user:pass@host:5432/db \
   -e COOKIE_SECRET=your-secret \
+  -e BETTER_AUTH_SECRET=your-secret \
+  -e BETTER_AUTH_URL=http://localhost:8080 \
   -e API_URL=http://localhost:8080 \
   -e FRONTEND_URL=http://localhost:3000 \
   -e PORT=8080 \
-  -e LOG_LEVEL=normal \
+  -e LOG_LEVEL=minimal \
   arawn-api:latest
 
 # View logs
 docker logs -f arawn-api
-
-# Stop container
-docker stop arawn-api && docker rm arawn-api
 ```
 
-### Docker Image Details
+#### Docker Image Details
 
-The multi-stage Dockerfile provides:
+The multi-stage Dockerfile:
 
-**Stage 1 (deps)**: Installs dependencies
+- **Stage 1 (deps)**: Installs dependencies with pnpm
+- **Stage 2 (builder)**: Builds TypeScript, generates Prisma Client
+- **Stage 3 (runner)**: Minimal Alpine runtime (~350MB final image)
 
-- Uses pnpm 9.15.4
-- Frozen lockfile for reproducible builds
-- Installs workspace dependencies
+**Features:**
 
-**Stage 2 (builder)**: Builds the application
-
-- Generates Prisma Client
-- Compiles TypeScript to JavaScript
-- Builds shared packages
-
-**Stage 3 (runner)**: Production runtime
-
-- Minimal Node.js Alpine image
 - Non-root user for security
-- Only production files included
-- Health checks configured
-- Auto-runs migrations on startup
+- Automatic database migrations on startup
+- Built-in health checks
+- Handles serverless database wake-up (Railway-compatible)
 
-**Final image size:** ~350MB (optimized with Alpine Linux)
+---
 
-### Deploying to Other Platforms
+### Node.js Deployment
 
-**Render:**
-
-1. Connect GitHub repo
-2. Select "Docker" as environment
-3. Dockerfile is auto-detected at project root
-4. Add environment variables in Render dashboard
-5. Deploy
-
-**Fly.io:**
+**Best for**: Platforms without Docker support
 
 ```bash
-# Initialize (will detect Dockerfile automatically)
+# Install dependencies
+pnpm install --frozen-lockfile
+
+# Build all packages
+pnpm build
+
+# Generate Prisma Client
+pnpm --filter @repo/api db:generate
+
+# Run database migrations
+pnpm --filter @repo/api db:migrate
+
+# Start production server
+cd apps/api
+NODE_ENV=production node dist/src/main.js
+```
+
+**Requirements:**
+
+- Node.js 20+
+- pnpm 9+
+- All environment variables set
+- PostgreSQL accessible
+
+---
+
+## Platform-Specific Guides
+
+### Railway (Recommended)
+
+Railway provides the easiest deployment with managed PostgreSQL, automatic scaling, and GitHub integration.
+
+#### Quick Start
+
+1. **Sign up**: [railway.app](https://railway.app)
+2. **Create Project**: Deploy from GitHub repo
+3. **Add PostgreSQL**: Click "New Service" → "Database" → "PostgreSQL"
+4. **Configure API Service**:
+   - Builder: **Dockerfile**
+   - Root Directory: `/` (project root)
+   - Dockerfile Path: `Dockerfile`
+5. **Set Environment Variables**: See [Environment Variables](#environment-variables)
+   - Use `${{Postgres.DATABASE_URL}}` to reference database
+6. **Deploy**: Push to main branch
+
+#### Railway-Specific Configuration
+
+```bash
+# Reference PostgreSQL database
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+
+# Railway provides automatic HTTPS
+API_URL=https://your-api.railway.app
+BETTER_AUTH_URL=https://your-api.railway.app
+```
+
+#### Troubleshooting Railway
+
+**Database Connection Issues:**
+
+- **Symptom**: `Can't reach database server`
+- **Cause**: Serverless PostgreSQL in sleep mode (hobby tier)
+- **Solution**: Startup script ([start.sh](apps/api/start.sh)) handles automatic wake-up with retries
+- **Alternative**: Upgrade to Railway Pro for always-on databases
+
+**Build Fails:**
+
+- Ensure using "Dockerfile" builder (not Railpack/Nixpacks)
+- Railpack doesn't support pnpm workspaces
+
+---
+
+### Render
+
+[render.com](https://render.com)
+
+1. **Create Web Service**: Connect GitHub repo
+2. **Environment**: Docker
+3. **Dockerfile Path**: `Dockerfile` (auto-detected)
+4. **Root Directory**: Leave empty
+5. **Set Environment Variables**: See required vars above
+6. **Create PostgreSQL**: Add managed PostgreSQL service
+7. **Deploy**: Render builds and deploys automatically
+
+---
+
+### Fly.io
+
+[fly.io](https://fly.io)
+
+```bash
+# Install Fly CLI
+curl -L https://fly.io/install.sh | sh
+
+# Initialize (auto-detects Dockerfile)
 fly launch
 
 # Set secrets
 fly secrets set \
   NODE_ENV=production \
-  DATABASE_URL=xxx \
-  COOKIE_SECRET=xxx \
+  DATABASE_URL=<your-postgres-url> \
+  COOKIE_SECRET=<secret> \
+  BETTER_AUTH_SECRET=<secret> \
+  BETTER_AUTH_URL=https://your-app.fly.dev \
   API_URL=https://your-app.fly.dev \
-  FRONTEND_URL=https://your-frontend.vercel.app \
-  LOG_LEVEL=normal
+  FRONTEND_URL=https://your-frontend.com \
+  LOG_LEVEL=minimal
 
 # Deploy
 fly deploy
 ```
 
-**DigitalOcean App Platform:**
+**Database Options:**
 
-1. Create new app from GitHub
-2. Select "Dockerfile" as build method
-3. Configure environment variables
-4. Deploy
+- Fly Postgres (managed)
+- External provider (Supabase, Neon, etc.)
 
-**AWS ECS / Fargate:**
+---
+
+### AWS
+
+#### ECS / Fargate
 
 ```bash
 # Build and tag
@@ -261,11 +340,17 @@ docker tag arawn-api:latest 123456789.dkr.ecr.us-east-1.amazonaws.com/arawn-api:
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789.dkr.ecr.us-east-1.amazonaws.com
 docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/arawn-api:latest
 
-# Create ECS task definition and service
-aws ecs create-service --cluster production --service-name arawn-api ...
+# Create ECS task definition with environment variables
+# Deploy as ECS service
 ```
 
-**Google Cloud Run:**
+**Database**: Use AWS RDS PostgreSQL
+
+---
+
+### Google Cloud
+
+#### Cloud Run
 
 ```bash
 # Build and push to Artifact Registry
@@ -276,99 +361,65 @@ gcloud run deploy arawn-api \
   --image gcr.io/PROJECT_ID/arawn-api \
   --platform managed \
   --region us-central1 \
-  --set-env-vars NODE_ENV=production,DATABASE_URL=xxx,...
+  --set-env-vars NODE_ENV=production,DATABASE_URL=<url>,COOKIE_SECRET=<secret>,...
 ```
+
+**Database**: Use Cloud SQL PostgreSQL
 
 ---
 
----
+### DigitalOcean
 
-## Database Setup
+#### App Platform
 
-### Automated Migration (Railway)
-
-Railway automatically runs migrations on deploy if you include `db:migrate` in build/start command.
-
-**Recommended approach:**
-
-1. Include migration in build command (first deploy)
-2. Remove from subsequent deploys (or use separate migration job)
-
-### Manual Migration
-
-```bash
-# Via Railway CLI
-railway run --service api pnpm --filter @repo/api db:migrate
-
-# Via Docker
-docker exec arawn-api pnpm --filter @repo/api db:migrate
-
-# Locally with production DB
-DATABASE_URL=<prod-url> pnpm --filter @repo/api db:migrate
-```
-
-### Database Seeding (Optional)
-
-```bash
-pnpm --filter @repo/api db:seed
-```
-
-### Database Reset (DANGEROUS)
-
-```bash
-# Only for development/staging
-pnpm --filter @repo/api db:reset
-```
+1. **Create App**: Deploy from GitHub
+2. **Build Method**: Dockerfile
+3. **Environment Variables**: Add via dashboard
+4. **Database**: Add managed PostgreSQL database
 
 ---
 
-## Frontend Deployment (Vercel)
+## Frontend Deployment
 
-The Next.js frontend deploys seamlessly to Vercel.
+The Next.js frontend deploys to any static/serverless hosting platform.
 
-### Step 1: Create Vercel Project
+### Vercel (Recommended)
 
-1. Go to [vercel.com/new](https://vercel.com/new)
-2. Import your GitHub repository
-3. Vercel auto-detects Next.js
+1. **Import Project**: [vercel.com/new](https://vercel.com/new)
+2. **Root Directory**: `apps/frontend`
+3. **Build Command**: `pnpm build` (auto-detected)
+4. **Environment Variables**:
+   ```bash
+   NODE_ENV=production
+   NEXT_PUBLIC_API_URL=https://api.yourdomain.com
+   ```
+5. **Deploy**: Push to main branch
 
-### Step 2: Configure Build Settings
+### Other Platforms
 
-- **Root Directory**: `apps/frontend`
-- **Build Command**: `pnpm build` (auto-detected)
-- **Output Directory**: `.next` (auto-detected)
-- **Install Command**: `pnpm install`
+- **Netlify**: Same as Vercel, set build directory to `apps/frontend`
+- **Cloudflare Pages**: Connect GitHub, configure build settings
+- **AWS Amplify**: Connect repository, set build settings
 
-### Step 3: Environment Variables
+### Connecting Frontend to API
 
-Add these in Vercel dashboard:
-
-```bash
-NODE_ENV=production
-NEXT_PUBLIC_API_URL=https://your-api.railway.app
-```
-
-### Step 4: Deploy
-
-Push to main branch or trigger manual deploy. Vercel will build and deploy automatically.
-
-### Vercel + Railway Integration
-
-1. Deploy API to Railway first
-2. Copy API URL from Railway
-3. Set `NEXT_PUBLIC_API_URL` in Vercel with Railway API URL
-4. Deploy frontend to Vercel
-5. Update `FRONTEND_URL` in Railway with Vercel URL
+1. Deploy API first, get URL
+2. Set `NEXT_PUBLIC_API_URL` in frontend to API URL
+3. Deploy frontend, get URL
+4. Update `FRONTEND_URL` in API to frontend URL
+5. Redeploy API (for CORS to work correctly)
 
 ---
 
 ## Health Checks
 
-### API Health Endpoint
+The API exposes a health check endpoint for monitoring.
 
-**Endpoint**: `GET /health`
+### Endpoint
 
-**Successful Response (200 OK):**
+**URL**: `GET /health`
+
+**Success Response (200 OK):**
 
 ```json
 {
@@ -378,7 +429,7 @@ Push to main branch or trigger manual deploy. Vercel will build and deploy autom
 }
 ```
 
-**Failed Response (503 Service Unavailable):**
+**Error Response (503 Service Unavailable):**
 
 ```json
 {
@@ -388,9 +439,9 @@ Push to main branch or trigger manual deploy. Vercel will build and deploy autom
 }
 ```
 
-### Platform-Specific Health Checks
+### Platform Health Check Configuration
 
-**Railway**: Automatically monitors `/health` endpoint
+**Railway**: Automatic monitoring via `/health`
 
 **Docker**: Health check included in Dockerfile
 
@@ -414,78 +465,123 @@ readinessProbe:
 
 ---
 
+## Security Checklist
+
+Before deploying to production:
+
+- [ ] All secrets generated securely (use `crypto.randomBytes(32)`)
+- [ ] Environment variables not committed to git
+- [ ] `.env.local` files in `.gitignore`
+- [ ] `NODE_ENV=production` set
+- [ ] `BETTER_AUTH_SECRET` ≥ 32 characters
+- [ ] `COOKIE_SECRET` ≥ 16 characters
+- [ ] CORS restricted to frontend domain only
+- [ ] Rate limiting enabled (30 req/60s default)
+- [ ] Helmet security headers enabled (automatic)
+- [ ] Database credentials secure and not exposed
+- [ ] API authentication working (test login/signup)
+- [ ] HTTPS enabled (automatic on most platforms)
+- [ ] Health checks configured
+- [ ] Logging set to `minimal` for production
+- [ ] Database backups configured
+- [ ] Secrets rotated regularly (every 90 days)
+
+---
+
 ## Troubleshooting
 
-### API fails to start
+### API Fails to Start
 
-**Check logs for:**
+**1. Environment Variable Errors**
 
-1. **Environment variable validation errors**:
+```
+Error: Invalid environment variables
+```
 
-   ```
-   Error: Environment validation failed
-   ```
+**Solution**: Verify all required environment variables are set. See [Environment Variables](#environment-variables).
 
-   → Ensure all required variables are set (see [Environment Variables](#environment-variables))
+**2. Database Connection Errors**
 
-2. **Database connection errors**:
+```
+Error: Can't reach database server
+```
 
-   ```
-   Error: Can't reach database server
-   ```
+**Solutions**:
 
-   → Verify `DATABASE_URL` is correct and database is accessible
+- Verify `DATABASE_URL` is correct
+- Ensure database is accessible from your deployment platform
+- Check database firewall rules
+- For Railway: Wait for database to wake up from sleep mode
 
-3. **Port binding errors**:
-   ```
-   Error: Address already in use
-   ```
-   → Ensure `PORT` environment variable is set correctly
+**3. Port Binding Errors**
 
-### Database migrations fail
+```
+Error: Address already in use
+```
 
-1. **Check database accessibility**: Test connection string
-2. **Run migrations manually**: See [Database Setup](#database-setup)
-3. **Check migration files**: Ensure `apps/api/prisma/migrations/` exists
+**Solution**: Ensure `PORT` environment variable is set (default: 8080)
 
-### CORS errors in frontend
+---
 
-1. **Verify `FRONTEND_URL`**: Must match exact origin (including protocol)
-2. **Check API logs**: Look for CORS-related errors
-3. **Test with curl**:
+### Database Migrations Fail
+
+1. **Check database accessibility**: Test connection string locally
+2. **Verify migration files exist**: Check `apps/api/prisma/migrations/`
+3. **Run migrations manually**: See [Database Setup](#database-setup)
+4. **Check Prisma logs**: Set `LOG_LEVEL=detailed` temporarily
+
+---
+
+### CORS Errors in Frontend
+
+**Symptoms**:
+
+- API requests fail in browser
+- Console shows CORS errors
+
+**Solutions**:
+
+1. Verify `FRONTEND_URL` matches exact origin (including protocol and port)
+2. Ensure no trailing slashes in URLs
+3. Test with curl:
    ```bash
-   curl -H "Origin: https://your-frontend.vercel.app" \
+   curl -H "Origin: https://your-frontend.com" \
         -H "Access-Control-Request-Method: GET" \
         -X OPTIONS \
-        https://your-api.railway.app/health
+        https://your-api.com/health
    ```
+4. Check API logs for CORS errors
 
-### Docker build fails
+---
 
-1. **Check Docker context**: Build from project root
-2. **Verify Dockerfile path**: `apps/api/Dockerfile`
-3. **Check dependencies**: Ensure pnpm-lock.yaml is committed
-4. **Use build args**:
+### Docker Build Fails
+
+1. **Build from project root**: Dockerfile expects root context
+2. **Verify dependencies**: Ensure `pnpm-lock.yaml` is committed
+3. **Clear Docker cache**: `docker build --no-cache`
+4. **Check Docker version**: Requires Docker 20.10+
+
+---
+
+### High Memory Usage
+
+1. **Set log level to minimal**: `LOG_LEVEL=minimal`
+2. **Monitor with platform metrics**: Check memory usage over time
+3. **Increase memory limit**: Configure in platform settings (recommended: 1GB)
+4. **Enable Node.js GC tuning**:
    ```bash
-   docker build --build-arg NODE_ENV=production -f apps/api/Dockerfile .
+   NODE_OPTIONS="--max-old-space-size=512"
    ```
 
-### High memory usage
+---
 
-1. **Enable production logging**: Set `LOG_LEVEL=minimal`
-2. **Check for memory leaks**: Monitor with Railway metrics
-3. **Increase memory limit**: Adjust in Railway service settings
-4. **Enable Node.js garbage collection**:
-   ```bash
-   NODE_OPTIONS="--max-old-space-size=512" node dist/src/main.js
-   ```
+### Slow API Responses
 
-### Slow API responses
-
-1. **Check database query performance**: Use Prisma query logs
-2. **Enable query optimization**: Add database indexes
-3. **Monitor request logs**: Look for slow endpoints
-4. **Use Fastify benchmarking**: `autocannon http://localhost:8080/health`
+1. **Check database query performance**: Enable Prisma query logs (`LOG_LEVEL=detailed`)
+2. **Add database indexes**: Review slow queries
+3. **Monitor request logs**: Identify slow endpoints
+4. **Check network latency**: Database should be in same region as API
+5. **Use connection pooling**: Already configured in Prisma
 
 ---
 
@@ -495,24 +591,14 @@ readinessProbe:
 - **Fastify Deployment**: [fastify.dev/docs/latest/Guides/Deployment](https://fastify.dev/docs/latest/Guides/Deployment)
 - **Prisma Deployment**: [prisma.io/docs/guides/deployment](https://prisma.io/docs/guides/deployment)
 - **Next.js Deployment**: [nextjs.org/docs/deployment](https://nextjs.org/docs/deployment)
+- **Docker Best Practices**: [docs.docker.com/develop/dev-best-practices](https://docs.docker.com/develop/dev-best-practices)
 
 ---
 
-## Security Checklist
+## Support
 
-Before deploying to production:
+For issues specific to this template:
 
-- [ ] All secrets generated securely (`COOKIE_SECRET`, `BETTER_AUTH_SECRET`)
-- [ ] Environment variables not committed to git
-- [ ] `NODE_ENV=production` set
-- [ ] `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` configured
-- [ ] CORS restricted to frontend domain only
-- [ ] Rate limiting enabled (30 req/60s)
-- [ ] Helmet security headers enabled
-- [ ] Database credentials secure and rotated
-- [ ] API authentication working (Better Auth)
-- [ ] HTTPS enabled (automatic on Railway/Vercel)
-- [ ] Health checks configured
-- [ ] Logging set to `minimal` for production
-- [ ] Database backups configured (Railway auto-backups)
-- [ ] Railway PostgreSQL not in sleep mode (or startup script handles wake-up)
+- **GitHub Issues**: [github.com/yourusername/arawn/issues](https://github.com/yourusername/arawn/issues)
+- **Documentation**: See `CLAUDE.md` for detailed architecture info
+- **Examples**: Check `apps/api/src/routes/` for API patterns

@@ -27,6 +27,26 @@ const EnvSchema = z.object({
   GITHUB_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
+
+  // Email Service Configuration (Optional)
+  // Required for email verification, password reset, etc.
+  // Set EMAIL_ENABLED=true to enable email features
+  EMAIL_ENABLED: z
+    .string()
+    .optional()
+    .default('false')
+    .transform((val) => val === 'true'),
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional().default('noreply@example.com'),
+
+  // File Storage Configuration (Optional)
+  // Defaults to local storage if not configured
+  STORAGE_TYPE: z.enum(['local', 's3', 'r2']).optional().default('local'),
+  S3_BUCKET: z.string().optional(),
+  S3_REGION: z.string().optional(),
+  S3_ACCESS_KEY_ID: z.string().optional(),
+  S3_SECRET_ACCESS_KEY: z.string().optional(),
+  S3_ENDPOINT: z.string().url().optional(), // For R2/MinIO compatibility
 });
 
 export type Env = z.infer<typeof EnvSchema>;
