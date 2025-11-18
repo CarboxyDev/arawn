@@ -27,6 +27,21 @@ const EnvSchema = z.object({
   GITHUB_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
+
+  // Email Service Configuration (Optional)
+  // If RESEND_API_KEY is not provided, emails will be logged to console (dev mode)
+  // EMAIL_FROM: The sender email address (e.g., 'noreply@yourdomain.com')
+  // Note: You MUST verify your domain in Resend dashboard before sending emails
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().email().optional(),
+
+  // File Storage Configuration (Optional)
+  STORAGE_TYPE: z.enum(['local', 's3', 'r2']).optional().default('local'),
+  S3_BUCKET: z.string().optional(),
+  S3_REGION: z.string().optional(),
+  S3_ACCESS_KEY_ID: z.string().optional(),
+  S3_SECRET_ACCESS_KEY: z.string().optional(),
+  S3_ENDPOINT: z.string().url().optional(), // For R2/MinIO compatibility
 });
 
 export type Env = z.infer<typeof EnvSchema>;

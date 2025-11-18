@@ -66,11 +66,33 @@ export async function fetcher<T>(
     }
 
     if (!response.ok) {
-      throw new ApiError(
-        (data as { message?: string })?.message || `HTTP ${response.status}`,
-        response.status,
-        data
-      );
+      const errorData = data as {
+        error?: { message?: string; code?: string; details?: unknown };
+        message?: string;
+      };
+
+      const errorMessage =
+        errorData.error?.message ||
+        errorData.message ||
+        `HTTP ${response.status}`;
+
+      throw new ApiError(errorMessage, response.status, data);
+    }
+
+    // Unwrap { data: T } or { message: string } wrappers from backend
+    const wrappedData = data as
+      | { data: T }
+      | { message: string }
+      | T
+      | undefined;
+
+    if (wrappedData && typeof wrappedData === 'object') {
+      if ('data' in wrappedData) {
+        return wrappedData.data as T;
+      }
+      if ('message' in wrappedData) {
+        return wrappedData as T;
+      }
     }
 
     return data as T;

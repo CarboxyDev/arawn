@@ -1,3 +1,4 @@
+import { message, success } from '@repo/packages-utils';
 import type { FastifyPluginAsync } from 'fastify';
 
 import { requireAuth } from '@/hooks/auth';
@@ -12,10 +13,7 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
       const sessions = await app.sessionsService.getUserSessions(
         request.user!.id
       );
-
-      return {
-        data: sessions,
-      };
+      return success(sessions);
     }
   );
 
@@ -26,26 +24,12 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
     {
       preHandler: requireAuth,
     },
-    async (request, reply) => {
-      try {
-        await app.sessionsService.revokeSession(
-          request.user!.id,
-          request.params.sessionId
-        );
-
-        return {
-          message: 'Session revoked successfully',
-        };
-      } catch (error) {
-        if (error instanceof Error && error.message === 'Session not found') {
-          return reply.status(404).send({
-            statusCode: 404,
-            error: 'Not Found',
-            message: 'Session not found',
-          });
-        }
-        throw error;
-      }
+    async (request) => {
+      await app.sessionsService.revokeSession(
+        request.user!.id,
+        request.params.sessionId
+      );
+      return message('Session revoked successfully');
     }
   );
 
@@ -60,10 +44,7 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
         request.user!.id,
         currentSessionId
       );
-
-      return {
-        message: 'All other sessions revoked successfully',
-      };
+      return message('All other sessions revoked successfully');
     }
   );
 };

@@ -15,11 +15,12 @@
     "incremental": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "jsx": "react",
     "paths": {
       "@/*": ["src/*"],
       "@test/*": ["test/*"]
     }
   },
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "test/**/*", "emails/**/*"],
   "exclude": ["node_modules", "dist"]
 }

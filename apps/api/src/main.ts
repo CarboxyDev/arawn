@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import formbody from '@fastify/formbody';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
+import { AppError } from '@repo/packages-utils';
 import closeWithGrace from 'close-with-grace';
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import Fastify from 'fastify';
@@ -36,7 +37,9 @@ const app = Fastify({
   requestIdHeader: 'x-request-id',
   genReqId: () => `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
   bodyLimit: 1048576,
-  ignoreTrailingSlash: true,
+  routerOptions: {
+    ignoreTrailingSlash: true,
+  },
   onProtoPoisoning: 'error',
   onConstructorPoisoning: 'error',
 }).withTypeProvider<ZodTypeProvider>();
@@ -106,10 +109,6 @@ const errorHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const statusCode = error.statusCode || 500;
-  const message = error.message || 'An error occurred';
-  const validation = error.validation;
-
   request.log.error(
     {
       err: error,
@@ -120,20 +119,37 @@ const errorHandler = async (
     'Request error'
   );
 
-  if (validation) {
+  if (error instanceof AppError) {
+    return reply.status(error.statusCode).send({
+      error: {
+        message: error.message,
+        code: error.code,
+        ...(error.details && { details: error.details }),
+      },
+    });
+  }
+
+  if (error.validation) {
     return reply.status(400).send({
-      statusCode: 400,
-      error: 'Validation Error',
-      message: 'Request validation failed',
-      issues: validation,
+      error: {
+        message: 'Validation failed',
+        code: 'VALIDATION_ERROR',
+        details: error.validation,
+      },
     });
   }
 
   const isProduction = env.NODE_ENV === 'production';
+  const statusCode = error.statusCode || 500;
+
   return reply.status(statusCode).send({
-    statusCode,
-    error: error.name || 'Internal Server Error',
-    message: isProduction && statusCode === 500 ? 'An error occurred' : message,
+    error: {
+      message:
+        isProduction && statusCode === 500
+          ? 'Internal server error'
+          : error.message || 'An error occurred',
+      code: 'INTERNAL_ERROR',
+    },
   });
 };
 
@@ -184,6 +200,9 @@ const registerRoutes = async () => {
   const { default: usersRoutes } = await import('@/routes/users.js');
   const { default: sessionsRoutes } = await import('@/routes/sessions.js');
   const { default: passwordRoutes } = await import('@/routes/password.js');
+  const { default: verificationRoutes } = await import(
+    '@/routes/verification.js'
+  );
 
   await app.register(
     async (app) => {
@@ -191,6 +210,7 @@ const registerRoutes = async () => {
       await app.register(usersRoutes);
       await app.register(sessionsRoutes);
       await app.register(passwordRoutes);
+      await app.register(verificationRoutes);
     },
     { prefix: '/api' }
   );

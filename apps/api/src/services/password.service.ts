@@ -1,4 +1,5 @@
 import type { PrismaClient } from '@prisma/client';
+import { UnauthorizedError, ValidationError } from '@repo/packages-utils';
 import * as bcrypt from 'bcryptjs';
 
 import { SessionsService } from '@/services/sessions.service';
@@ -22,7 +23,9 @@ export class PasswordService {
     });
 
     if (!account || !account.password) {
-      throw new Error('Password authentication not available');
+      throw new ValidationError('Password authentication not available', {
+        userId,
+      });
     }
 
     const isValidPassword = await bcrypt.compare(
@@ -31,7 +34,7 @@ export class PasswordService {
     );
 
     if (!isValidPassword) {
-      throw new Error('Current password is incorrect');
+      throw new UnauthorizedError('Current password is incorrect');
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

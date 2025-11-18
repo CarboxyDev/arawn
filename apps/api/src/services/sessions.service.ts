@@ -1,4 +1,5 @@
 import type { PrismaClient } from '@prisma/client';
+import { NotFoundError } from '@repo/packages-utils';
 
 export interface SessionInfo {
   id: string;
@@ -46,7 +47,10 @@ export class SessionsService {
     });
 
     if (!session) {
-      throw new Error('Session not found');
+      throw new NotFoundError('Session not found', {
+        sessionId,
+        userId,
+      });
     }
 
     await this.prisma.session.delete({

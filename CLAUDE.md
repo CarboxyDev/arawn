@@ -210,6 +210,33 @@ By default, the template uses email/password authentication. To enable OAuth pro
 
 **Note**: OAuth credentials are optional - the app works perfectly with just email/password authentication.
 
+**Email Verification:**
+
+Email verification is **enabled by default** using Better Auth's built-in verification system. Users must verify their email address after signup, but can still log in while unverified (with appropriate warnings in the UI).
+
+**How it works:**
+
+1. **Development Mode (No Resend API Key)**:
+   - Emails are **logged to console** instead of being sent
+   - Verification links appear in server logs for easy testing
+   - No configuration needed - works out of the box
+
+2. **Production Mode (With Resend API Key)**:
+   - Emails sent via Resend (https://resend.com)
+   - Get your API key: https://resend.com/api-keys
+   - Add to `.env.local`:
+     ```bash
+     RESEND_API_KEY=re_xxxxxxxxxxxx
+     EMAIL_FROM=noreply@yourdomain.com
+     ```
+
+**Email Templates:**
+
+Email templates use React Email for beautiful, type-safe emails
+
+- Preview server: `pnpm email:dev` (runs on port 3001)
+- Linked with Better Auth.
+
 ### Production Logging & Error Tracking
 
 The API uses Pino for structured, production-ready logging with request tracing and configurable verbosity.
@@ -581,6 +608,111 @@ app.setSerializerCompiler(serializerCompiler);
 
 **IMPORTANT**: Always define Zod schemas first, then infer types - never the opposite
 
+### Testing
+
+The codebase supports both unit tests (with mocks) and integration tests (with real database).
+
+#### Test Types
+
+**Unit Tests** (`*.spec.ts`):
+
+- Use mocked dependencies (Prisma, Logger, etc.)
+- Fast execution, no external dependencies
+- Ideal for testing business logic in isolation
+- Located alongside source files: `src/**/*.spec.ts`
+
+**Integration Tests** (`*.integration.spec.ts`):
+
+- Use real PostgreSQL test database
+- Test actual database operations and transactions
+- Verify end-to-end functionality
+- Located in `test/integration/`
+
+#### Test Database Setup
+
+Integration tests automatically use a separate test database (`app_dev_test`):
+
+1. **Automatic Setup**: Test database is created and migrated automatically in `test/setup.ts`
+2. **Database URL**: Appends `_test` suffix to your `DATABASE_URL` (e.g., `app_dev` → `app_dev_test`)
+3. **Migrations**: Runs `pnpm prisma migrate deploy` before tests
+4. **Cleanup**: Database is dropped after tests (unless `KEEP_TEST_DB=true`)
+
+**Running Tests:**
+
+```bash
+# Run all tests (unit + integration)
+pnpm test
+
+# Run only unit tests
+pnpm test -- src/**/*.spec.ts
+
+# Run only integration tests
+pnpm test -- test/**/*.integration.spec.ts
+
+# Keep test database after tests (for inspection)
+KEEP_TEST_DB=true pnpm test
+
+# Generate coverage report
+pnpm test:coverage
+```
+
+#### Integration Test Example
+
+```typescript
+// test/integration/users.integration.spec.ts
+import { getTestPrisma, resetTestDatabase } from '@test/helpers/test-db';
+import { createMockLogger } from '@test/helpers/mock-logger';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { UsersService } from '@/services/users.service';
+
+describe('UsersService Integration Tests', () => {
+  let service: UsersService;
+
+  beforeEach(async () => {
+    // Reset database between tests
+    await resetTestDatabase();
+
+    // Create service with real Prisma client
+    const prisma = getTestPrisma();
+    const logger = createMockLogger();
+    service = new UsersService(prisma, logger);
+  });
+
+  it('should create and retrieve a user', async () => {
+    const user = await service.createUser({
+      email: 'test@example.com',
+      name: 'Test User',
+      role: 'user',
+    });
+
+    const retrieved = await service.getUserById(user.id);
+    expect(retrieved?.email).toBe('test@example.com');
+  });
+});
+```
+
+#### Test Utilities
+
+**Test Database Helpers** (`test/helpers/test-db.ts`):
+
+- `getTestPrisma()` - Get Prisma client for test database
+- `resetTestDatabase()` - Truncate all tables between tests
+- `setupTestDatabase()` - Initialize test database (auto-called)
+- `cleanupTestDatabase()` - Drop test database (auto-called)
+
+**Mock Helpers** (`test/helpers/mock-*.ts`):
+
+- `createMockPrisma()` - Mocked Prisma client for unit tests
+- `createMockLogger()` - Mocked logger for all tests
+
+#### Best Practices
+
+- Use **unit tests** for business logic and edge cases
+- Use **integration tests** for database operations and transactions
+- Reset database between integration tests with `resetTestDatabase()`
+- Keep test database for debugging with `KEEP_TEST_DB=true`
+- Run integration tests sequentially (already configured in `vitest.config.ts`)
+
 ## Coding Standards
 
 ### Code Style
@@ -589,7 +721,7 @@ app.setSerializerCompiler(serializerCompiler);
 - **Type Definitions**: Prefer `interface` for public-facing types and object shapes, `type` for unions, intersections, and computed types
 - Use descriptive variable names with auxiliary verbs (`isLoading`, `hasError`, `canSubmit`)
 - Favor iteration and modularization over code duplication
-- **IMPORTANT**: Avoid writing comments in code unless absolutely necessary for non-obvious edge cases - code should be self-documenting
+- **IMPORTANT**: Avoid writing comments in code unless absolutely necessary for non-obvious edge cases - code should be self-documenting.
 - Use functional components with TypeScript interfaces
 - Follow atomic design principles for UI components
 - Prefer composition over inheritance
@@ -747,3 +879,4 @@ The Fastify API follows a plugin-based architecture:
 - Do not be afraid of hurting the user's feelings or making them feel bad about their skills.
 - Never create markdown files unless the user explicitly asks for it.
 - Always give a brief and compact summary of all the changes done.
+- Avoid writing comments in code unless absolutely necessary for non-obvious edge cases - code should be self-documenting.
