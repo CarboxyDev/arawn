@@ -27,8 +27,10 @@ const authPlugin: FastifyPluginAsync = async (app) => {
       requireEmailVerification: false,
       sendEmailVerificationOnSignUp: true,
       autoSignInAfterVerification: true,
-      sendResetPassword: async ({ user, url }) => {
-        await app.emailService.sendVerificationEmail(user.email, url);
+      resetPasswordTokenExpiresIn: 3600,
+      sendResetPassword: async ({ user, token }) => {
+        const resetUrl = `${env.FRONTEND_URL}/reset-password?token=${token}`;
+        await app.emailService.sendPasswordResetEmail(user.email, resetUrl);
       },
     },
     emailVerification: {

@@ -102,14 +102,22 @@ export default function LoginPage() {
               </p>
             )}
           </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="rememberMe" {...register('rememberMe')} />
-            <Label
-              htmlFor="rememberMe"
-              className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Checkbox id="rememberMe" {...register('rememberMe')} />
+              <Label
+                htmlFor="rememberMe"
+                className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Remember me for 30 days
+              </Label>
+            </div>
+            <Link
+              href="/forgot-password"
+              className="text-primary text-sm hover:underline"
             >
-              Remember me for 30 days
-            </Label>
+              Forgot password?
+            </Link>
           </div>
           <div className="flex flex-col space-y-4 pt-2">
             <Button type="submit" className="w-full" disabled={isLoading}>

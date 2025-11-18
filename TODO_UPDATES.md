@@ -6,6 +6,19 @@
 
 - Done
 
+### Reset & Password Functionality
+
+- [ ] Add reset password functionality
+- [ ] Add reset password form component
+- [ ] Add reset password API route
+- [ ] Add reset password service
+- [ ] Add reset password email support
+
+- [ ] Add change password functionality
+- [ ] Add change password form component
+- [ ] Add change password API route
+- [ ] Add change password service
+
 ### Integration Tests
 
 - [ ] Set up test database configuration in Vitest
