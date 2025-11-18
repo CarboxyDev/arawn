@@ -8,11 +8,11 @@
 
 ### Reset & Password Functionality
 
-- [ ] Add reset password functionality
-- [ ] Add reset password form component
-- [ ] Add reset password API route
-- [ ] Add reset password service
-- [ ] Add reset password email support
+- [x] Add reset password functionality
+- [x] Add reset password form component
+- [x] Add reset password API route
+- [x] Add reset password service
+- [x] Add reset password email support
 
 - [ ] Add change password functionality
 - [ ] Add change password form component
