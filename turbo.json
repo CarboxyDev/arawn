@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "ui": "tui",
+  "ui": "stream",
   "globalDependencies": ["tsconfig.json", "turbo.json"],
   "tasks": {
     "build": {
@@ -21,10 +21,9 @@
       "inputs": ["src/**", "tsconfig.json", "package.json"]
     },
     "dev": {
-      "dependsOn": ["^build", "db:generate"],
+      "dependsOn": ["db:generate"],
       "cache": false,
-      "persistent": true,
-      "outputLogs": "hash-only"
+      "persistent": true
     },
     "db:generate": {
       "cache": false

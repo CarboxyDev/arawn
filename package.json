@@ -6,7 +6,9 @@
   "description": "Production-ready TypeScript monorepo with Next.js and Fastify",
   "scripts": {
     "init:project": "node scripts/setup.js",
-    "dev": "turbo run dev --output-logs=full",
+    "dev": "turbo run dev",
+    "dev:tui": "turbo run dev --ui=tui",
+    "dev:debug": "turbo run dev --verbose",
     "dev:frontend": "turbo run dev --filter @repo/frontend",
     "dev:app": "turbo run dev --filter @repo/frontend --filter @repo/api",
     "dev:packages": "turbo run dev --filter '@repo/packages-*'",

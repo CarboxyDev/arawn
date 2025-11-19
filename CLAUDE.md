@@ -40,12 +40,20 @@ The `pnpm init:project` command automates the entire setup process:
 
 ```bash
 pnpm init:project     # Run automated setup (first time or to fix issues)
-pnpm dev              # Start all applications in dev mode (frontend on :3000, api on :8080)
+pnpm dev              # Start all applications (stream mode - default)
+pnpm dev:tui          # Start with TUI dashboard (tabbed interface)
+pnpm dev:debug        # Start with verbose logging
 pnpm build            # Build all packages and applications
 pnpm typecheck        # Type check all packages
 pnpm lint             # Lint all packages
 pnpm lint:fix         # Lint and auto-fix all packages
 ```
+
+**Logging Modes:**
+
+- **Stream** (default): All logs flow in one terminal with package prefixes. Easy to search, copy, and never clears.
+- **TUI**: Tabbed interface with visual organization. Good for monitoring multiple tasks.
+- **Debug**: Verbose output with task execution details.
 
 ### Individual Package Commands
 
@@ -77,8 +85,8 @@ All packages (`@repo/packages-types`, `@repo/packages-utils`) are consumed as wo
 
 - Export both CJS and ESM formats
 - Include TypeScript declarations
-- Must be built before apps can run in dev mode
-- Frontend's `next.config.ts` transpiles these packages
+- Run in watch mode during development (no pre-build needed)
+- Frontend's `next.config.ts` transpiles these packages on-the-fly
 - Both use Zod v4.1.12 for validation
 
 ### Database (Prisma + PostgreSQL)
