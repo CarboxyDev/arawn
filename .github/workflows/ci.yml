@@ -107,11 +107,6 @@ jobs:
       - name: Generate Prisma Client
         run: cd apps/api && npx prisma generate
 
-      - name: Verify PostgreSQL connection
-        run: |
-          echo "Attempting to connect to PostgreSQL..."
-          PGPASSWORD=postgres psql -h localhost -U postgres -d app_dev_test -c "SELECT version();"
-
       - name: Run tests
         run: pnpm run test
 
