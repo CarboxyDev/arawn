@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/logo.svg" alt="Arawn Logo" width="200">
   <h1>Arawn</h1>
-  <p>Production-ready TypeScript monorepo with Next.js, Fastify, Turborepo and other modern technologies. Everything you need to ship super fast.</p>
+  <p>Full-stack TypeScript monorepo with Next.js, Fastify, and Turborepo. From zero to production in minutes.</p>
 </div>
 
 ---
@@ -12,18 +12,26 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 **This is not your average starter template. It's a production foundation.**
 
-- **Full-stack type safety**: Zod schemas define your API contracts. Types flow from database to UI automatically without any hassle.
-- **Zero-config setup**: One command creates env files, spins up docker, runs migrations, and gets you ready to ship in a fraction of the time.
-- **Production-grade authentication**: Better-auth integration with email/password, session management, and OAuth ready (GitHub, Google). Protected routes and auth guards out of the box.
-- **Production-grade infrastructure**: Global exception filter with request ID tracing, automatic Zod validation on all endpoints, rate limiting, environment-aware error responses
-- **Shared validation logic**: Write your schemas once in `packages/types`, use them everywhere (frontend forms, API validation, DB queries)
-- **Real testing infrastructure**: Vitest configured for frontend, API, and shared packages with coverage reports
-- **Auto-generated API docs**: Swagger + Scalar documentation generated directly from your Zod schemas
-- **AI pair programming ready**: This template ships with a comprehensive CLAUDE.md file that means AI assistants understand your architecture instantly and can help accelerate your development process.
+- **Zero-config setup**: Run one command and you're ready to code. Environment files, Docker containers, database migrations—all handled automatically.
 
-**Arawn is built for teams shipping real products, not toy demos.**
+- **Full-stack type safety**: Zod schemas define your API contracts once in `packages/types`, then flow automatically to frontend forms, API validation, and database queries. No duplicate validation logic.
+
+- **Production-grade infrastructure**: Better-auth with session management and OAuth ready. Request ID tracing, automatic validation, rate limiting, structured logging, and environment-aware error responses out of the box.
+
+- **AI pair programming ready**: Comprehensive CLAUDE.md file means AI assistants understand your architecture instantly and can accelerate your development.
 
 ## Tech Stack
+
+**Frontend:** Next.js, React, TanStack Query, Tailwind CSS
+
+**Backend:** Fastify, Prisma, PostgreSQL
+
+**Monorepo:** Turborepo, pnpm workspaces
+
+<details>
+<summary>Full stack details</summary>
+
+<p>
 
 **Frontend**
 
@@ -38,8 +46,8 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 - Fastify 5
 - Prisma 6 + PostgreSQL 17
 - Better-auth for authentication
-- Pino for logging infrastructure
-- Scalar API docs (Zod → OpenAPI)
+- Pino for logging
+- Scalar API docs
 - Helmet + rate limiting
 
 **Monorepo**
@@ -48,6 +56,8 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 - Shared packages for types, utils, config in `packages/`
 - Vitest for testing
 - Husky + lint-staged for pre-commit hooks
+</p>
+</details>
 
 ## Quick Start
 
