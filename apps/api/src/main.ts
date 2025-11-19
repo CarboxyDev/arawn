@@ -14,6 +14,8 @@ import {
 } from 'fastify-type-provider-zod';
 
 import { loadEnv } from '@/config/env.js';
+import type { RateLimitRole } from '@/config/rate-limit.js';
+import { RATE_LIMIT_CONFIG } from '@/config/rate-limit.js';
 
 const env = loadEnv();
 
@@ -66,10 +68,52 @@ await app.register(cors, {
   exposedHeaders: ['X-Request-ID'],
 });
 
+// @ts-expect-error - Known issue with @fastify/rate-limit type definitions
 await app.register(rateLimit, {
-  max: 30,
+  global: true,
+  max: async (request: FastifyRequest) => {
+    const session = await request.server.auth.api
+      .getSession({
+        headers: request.headers as unknown as Headers,
+      })
+      .catch(() => null);
+
+    if (!session?.user) {
+      return RATE_LIMIT_CONFIG.anonymous.max;
+    }
+
+    const userWithRole = session.user as typeof session.user & {
+      role?: string;
+    };
+    const role = (userWithRole.role || 'user') as RateLimitRole;
+
+    return RATE_LIMIT_CONFIG[role]?.max || RATE_LIMIT_CONFIG.user.max;
+  },
   timeWindow: 60 * 1000,
-  errorResponseBuilder: () => ({
+  keyGenerator: async (request: FastifyRequest) => {
+    const session = await request.server.auth.api
+      .getSession({
+        headers: request.headers as unknown as Headers,
+      })
+      .catch(() => null);
+
+    if (session?.user?.id) {
+      return `user:${session.user.id}`;
+    }
+
+    return `ip:${request.ip}`;
+  },
+  addHeadersOnExceeding: {
+    'X-RateLimit-Limit': true,
+    'X-RateLimit-Remaining': true,
+    'X-RateLimit-Reset': true,
+  },
+  addHeaders: {
+    'X-RateLimit-Limit': true,
+    'X-RateLimit-Remaining': true,
+    'X-RateLimit-Reset': true,
+  },
+  errorResponseBuilder: (request: FastifyRequest) => ({
     statusCode: 429,
     error: 'Too Many Requests',
     message: 'Rate limit exceeded. Please try again later.',
@@ -82,6 +126,9 @@ await app.register(cookie, {
 });
 
 await app.register(formbody);
+
+const { default: multipartPlugin } = await import('@/plugins/multipart.js');
+await app.register(multipartPlugin);
 
 const { default: loggerPlugin } = await import('@/plugins/logger.js');
 await app.register(loggerPlugin);
@@ -202,6 +249,13 @@ const registerRoutes = async () => {
   const { default: verificationRoutes } = await import(
     '@/routes/verification.js'
   );
+  const { default: uploadsRoutes } = await import('@/routes/uploads.js');
+  const { default: uploadsServeRoutes } = await import(
+    '@/routes/uploads-serve.js'
+  );
+
+  // Register file serving (conditional on storage type)
+  await app.register(uploadsServeRoutes);
 
   await app.register(
     async (app) => {
@@ -209,6 +263,7 @@ const registerRoutes = async () => {
       await app.register(sessionsRoutes);
       await app.register(passwordRoutes);
       await app.register(verificationRoutes);
+      await app.register(uploadsRoutes);
     },
     { prefix: '/api' }
   );

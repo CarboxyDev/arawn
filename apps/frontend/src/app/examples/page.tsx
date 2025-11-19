@@ -1,19 +1,22 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Code2, Database, Flame } from 'lucide-react';
+import { ArrowRight, Code2, Database, Flame, Table2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { ExampleDataTable } from '@/components/examples/example-data-table';
 import { ExampleForm } from '@/components/examples/example-form';
 import { ExampleJotai } from '@/components/examples/example-jotai';
 import { ExampleQuery } from '@/components/examples/example-query';
 import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
+import { authClient } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
-type Tab = 'forms' | 'data' | 'state';
+type Tab = 'forms' | 'data' | 'state' | 'tables';
 
 const tabs = [
   {
@@ -21,23 +24,44 @@ const tabs = [
     label: 'Forms & Validation',
     shortLabel: 'Forms',
     icon: Code2,
+    requiresAuth: false,
   },
   {
     id: 'data' as const,
     label: 'Data Fetching',
     shortLabel: 'Data',
     icon: Database,
+    requiresAuth: false,
   },
   {
     id: 'state' as const,
     label: 'State Management',
     shortLabel: 'State',
     icon: Flame,
+    requiresAuth: false,
+  },
+  {
+    id: 'tables' as const,
+    label: 'Data Tables',
+    shortLabel: 'Tables',
+    icon: Table2,
+    requiresAuth: true,
   },
 ];
 
 export default function ExamplesPage() {
   const [activeTab, setActiveTab] = useState<Tab>('forms');
+  const { data: session } = authClient.useSession();
+  const router = useRouter();
+
+  const handleTabChange = (tabId: Tab) => {
+    const tab = tabs.find((t) => t.id === tabId);
+    if (tab?.requiresAuth && !session?.user) {
+      router.push('/login?redirect=/examples');
+      return;
+    }
+    setActiveTab(tabId);
+  };
 
   return (
     <div className="bg-background relative min-h-screen">
@@ -75,7 +99,7 @@ export default function ExamplesPage() {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
+                    onClick={() => handleTabChange(tab.id)}
                     className={cn(
                       'relative flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all duration-200',
                       isActive
@@ -205,6 +229,84 @@ export default function ExamplesPage() {
                 <div className="border-border bg-card rounded-lg border p-8">
                   <ExampleJotai />
                 </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'tables' && (
+              <motion.div
+                key="tables"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-4"
+              >
+                <div className="space-y-2">
+                  <h2 className="text-foreground text-2xl font-semibold">
+                    TanStack Table with Server-Side Pagination
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Production-ready data table with TanStack Table. Features
+                    server-side pagination, sorting, filtering, column
+                    visibility controls, and skeleton loading states.
+                  </p>
+                  <div className="bg-muted/50 rounded-md border p-4">
+                    <p className="text-sm font-medium">Key Features:</p>
+                    <ul className="text-muted-foreground mt-2 space-y-1 text-sm">
+                      <li>✓ Server-side pagination for large datasets</li>
+                      <li>✓ Sortable columns with visual indicators</li>
+                      <li>✓ Search and filtering with debouncing</li>
+                      <li>✓ Column visibility toggles</li>
+                      <li>✓ Fully type-safe with Zod schemas</li>
+                      <li>✓ Loading and error states</li>
+                    </ul>
+                  </div>
+                  <div className="mt-3 rounded-md border border-blue-500/20 bg-blue-500/10 p-3">
+                    <p className="text-sm text-blue-600 dark:text-blue-400">
+                      🔒 <strong>Authentication Required:</strong> This example
+                      requires login to demonstrate protected data access
+                      patterns.
+                      {!session?.user && (
+                        <>
+                          {' '}
+                          <Link
+                            href="/login?redirect=/examples"
+                            className="underline underline-offset-2 hover:no-underline"
+                          >
+                            Sign in
+                          </Link>{' '}
+                          to view the data table.
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                {session?.user ? (
+                  <div className="border-border bg-card rounded-lg border p-8">
+                    <ExampleDataTable />
+                  </div>
+                ) : (
+                  <div className="border-border bg-card rounded-lg border p-16 text-center">
+                    <div className="mx-auto max-w-sm space-y-4">
+                      <div className="bg-muted/50 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+                        <Table2 className="text-muted-foreground h-8 w-8" />
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-foreground text-lg font-semibold">
+                          Authentication Required
+                        </h3>
+                        <p className="text-muted-foreground text-sm">
+                          Please sign in to view this example. The data table
+                          demonstrates how to handle protected data with
+                          pagination and filtering.
+                        </p>
+                      </div>
+                      <Button asChild>
+                        <Link href="/login?redirect=/examples">Sign In</Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             )}
           </div>

@@ -24,64 +24,44 @@
 - [x] Add transaction and rollback pattern tests
 - [x] Document testing patterns in CLAUDE.md concisely
 
-### Data Table Component
+### DONE: Data Table Component
 
-- [ ] Install TanStack Table (if not already present)
-- [ ] Create reusable DataTable component with shadcn/ui
-- [ ] Implement server-side pagination example
-- [ ] Add sorting functionality
-- [ ] Add filtering/search functionality
-- [ ] Add loading and error states
-- [ ] Create example using existing users API
-- [ ] Add comprehensive example page in frontend
+- [x] Install TanStack Table
+- [x] Create reusable DataTable component with shadcn/ui
+- [x] Implement server-side pagination example
+- [x] Add sorting functionality
+- [x] Add filtering/search functionality
+- [x] Add loading and error states
+- [x] Create example using existing users API
+- [x] Add comprehensive example page in frontend
+- [x] Add admin-only protection to users API endpoints
+- [x] Fix Better Auth password hashing in seed script
+- [x] Add production safety check to seed script
 
-### File Upload Handling
+### DONE: File Upload Handling
 
-- [ ] Add multipart form handling in Fastify (`@fastify/multipart`)
-- [ ] Create file upload service (S3/R2 compatible with local fallback)
-- [ ] Add file validation (size, type, extension)
-- [ ] Install and configure `sharp` for image optimization
-- [ ] Add upload progress tracking on frontend
-- [ ] Create file upload form example component
-- [ ] Add `STORAGE_TYPE` env var (local/s3) with validation
-- [ ] Add S3/R2 config as optional env vars (don't throw if missing when using local storage)
-- [ ] Document file upload patterns in CLAUDE.md
+- [x] Add multipart form handling in Fastify (`@fastify/multipart`)
+- [x] Create file upload service (S3/R2 compatible with local fallback)
+- [x] Add file validation (size, type, extension)
+- [x] Install and configure `sharp` for image optimization
+- [x] Add upload progress tracking on frontend
+- [x] Create file upload form example component
+- [x] Add `STORAGE_TYPE` env var (local/s3) with validation
+- [x] Add S3/R2 config as optional env vars (don't throw if missing when using local storage)
+- [x] Document in CLAUDE.md
 
-### Rate Limiting Per User
+### DONE: Rate Limiting Per User
 
-- [ ] Extend existing rate limiting to support user-based limits (not just IP)
-- [ ] Add API key rate limiting pattern
-- [ ] Implement different rate limits per role (admin vs user)
-- [ ] Add rate limit headers to responses (X-RateLimit-Limit, X-RateLimit-Remaining)
+- [x] Extend existing rate limiting to support user-based limits (not just IP)
+- [x] Implement different rate limits per role (admin vs user)
+- [x] Add rate limit headers to responses (X-RateLimit-Limit, X-RateLimit-Remaining)
 
-### WebSocket Pattern
+### Google OAuth Updates
 
-- [ ] Install and configure `@fastify/websocket`
-- [ ] Create WebSocket plugin for Fastify
-- [ ] Add simple real-time example (notifications or chat)
-- [ ] Create frontend hook for WebSocket subscriptions
-- [ ] Add reconnection logic
-
-### Background Jobs & Cron
-
-- [ ] Choose and install job queue library (BullMQ or pg-boss)
-- [ ] Create jobs plugin for Fastify
-- [ ] Set up worker process configuration
-- [ ] Add scheduled jobs (cron) example
-- [ ] Integrate email sending as background job
-- [ ] Add job monitoring/retry logic
+- [ ] Add Google OAuth button and functionality to the login page
+- [ ] Add Google OAuth button and functionality to the sign-up page
 
 ## Improvements to Existing Features
-
-### Validation Utilities
-
-- [ ] Add validation utilities to `packages/utils/src/validation.ts`
-  - `isValidEmail()`
-  - `isStrongPassword()`
-  - `sanitizeInput()`
-  - Common regex patterns
-- [ ] Make utilities reusable across frontend and backend
-- [ ] Add tests for validation utilities
 
 ### Improve UI
 

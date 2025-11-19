@@ -13,13 +13,15 @@ import { requireAuth, requireRole } from '@/hooks/auth';
 const usersRoutes: FastifyPluginAsync = async (app) => {
   const server = app.withTypeProvider<ZodTypeProvider>();
 
-  // GET /users - Get paginated users with filtering and sorting
+  // GET /users - Get paginated users with filtering and sorting (Admin only)
   server.get(
     '/users',
     {
+      preHandler: [requireAuth, requireRole(['admin', 'super_admin'])],
       schema: {
         querystring: QueryUsersSchema,
-        description: 'Get paginated users with filtering and sorting',
+        description:
+          'Get paginated users with filtering and sorting (Admin only)',
         tags: ['Users'],
       },
     },
@@ -28,13 +30,14 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
     }
   );
 
-  // GET /users/:id - Get user by ID
+  // GET /users/:id - Get user by ID (Admin only)
   server.get(
     '/users/:id',
     {
+      preHandler: [requireAuth, requireRole(['admin', 'super_admin'])],
       schema: {
         params: GetUserByIdSchema,
-        description: 'Get user by ID',
+        description: 'Get user by ID (Admin only)',
         tags: ['Users'],
       },
     },
@@ -44,13 +47,14 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
     }
   );
 
-  // POST /users - Create a new user
+  // POST /users - Create a new user (Admin only)
   server.post(
     '/users',
     {
+      preHandler: [requireAuth, requireRole(['admin', 'super_admin'])],
       schema: {
         body: CreateUserSchema,
-        description: 'Create a new user',
+        description: 'Create a new user (Admin only)',
         tags: ['Users'],
       },
     },
@@ -60,14 +64,15 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
     }
   );
 
-  // PATCH /users/:id - Update user by ID
+  // PATCH /users/:id - Update user by ID (Admin only)
   server.patch(
     '/users/:id',
     {
+      preHandler: [requireAuth, requireRole(['admin', 'super_admin'])],
       schema: {
         params: GetUserByIdSchema,
         body: UpdateUserSchema,
-        description: 'Update user by ID',
+        description: 'Update user by ID (Admin only)',
         tags: ['Users'],
       },
     },
