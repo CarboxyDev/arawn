@@ -23,10 +23,6 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 **Arawn is built for teams shipping real products, not toy demos.**
 
-## Getting Started
-
-**New to Arawn?** Check out [GETTING_STARTED.md](GETTING_STARTED.md) for a streamlined setup guide. The template works out of the box - customiziation is optional!
-
 ## Tech Stack
 
 **Frontend**
@@ -39,12 +35,12 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 **API**
 
-- Fastify 5 (ultra-fast, low overhead)
+- Fastify 5
 - Prisma 6 + PostgreSQL 17
 - Better-auth for authentication
-- Pino for logging infrastructure (native Fastify integration)
+- Pino for logging infrastructure
 - Scalar API docs (Zod → OpenAPI)
-- Helmet + rate limiting + CORS
+- Helmet + rate limiting
 
 **Monorepo**
 
@@ -101,56 +97,6 @@ arawn/
     └── utils/        # Shared utilities
 ```
 
-## Essential Commands
-
-**Development**
-
-```bash
-pnpm dev              # Start all apps
-pnpm build            # Build everything
-pnpm typecheck        # Type check
-pnpm test             # Run tests
-```
-
-**Database** (from `apps/api`)
-
-```bash
-pnpm db:migrate       # Run migrations
-pnpm db:studio        # Open Prisma Studio
-pnpm db:seed          # Seed database
-pnpm db:reset         # Fresh database
-```
-
-**Deployment**
-
-```bash
-# Railway (recommended)
-See DEPLOYMENT.md for full guide
-
-# Docker
-docker build -f apps/api/Dockerfile -t arawn-api .
-docker run -p 8080:8080 --env-file apps/api/.env.local arawn-api
-```
-
-## Deployment
-
-**Railway (Recommended)**: The API is fully compatible with Railway's auto-deployment. See [DEPLOYMENT.md](DEPLOYMENT.md) for complete setup instructions including:
-
-- Railway deployment (Node.js + PostgreSQL)
-- Docker deployment (multi-stage build)
-- Environment variable configuration
-- Database migration strategies
-- Frontend deployment (Vercel)
-- Health checks and troubleshooting
-
-**Quick Railway Setup:**
-
-1. Connect GitHub repo to Railway
-2. Add PostgreSQL database service
-3. Configure API service with environment variables
-4. Railway auto-detects Node.js and deploys
-5. Access at `https://your-api.railway.app`
-
 ## Key Features
 
 **Type Safety Everywhere**
@@ -186,14 +132,3 @@ docker run -p 8080:8080 --env-file apps/api/.env.local arawn-api
 - Vitest for fast, modern testing
 - API docs auto-generated from Zod schemas
 - CLAUDE.md for AI pair programming context
-
----
-
-## Design Principles
-
-This template makes specific choices to optimize for production use:
-
-1. **Workspace dependencies over npm packages** - Real monorepo benefits, not just code co-location
-2. **Zod as validation layer** - One schema definition for runtime + compile-time safety
-3. **Opinionated tooling** - Prettier, ESLint, Husky pre-configured so you can focus on features
-4. **Documentation for AI** - Structured context files help AI assistants understand your codebase
