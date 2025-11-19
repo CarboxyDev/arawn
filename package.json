@@ -47,7 +47,7 @@
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tsx": "^4.20.0",
-    "turbo": "^2.3.4",
+    "turbo": "^2.6.1",
     "typescript": "^5.7.2",
     "vitest": "^3.2.4"
   },
