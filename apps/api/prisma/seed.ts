@@ -25,6 +25,20 @@ const auth = betterAuth({
 async function main() {
   console.log('🌱 Seeding database...');
 
+  // SAFETY: Block seeding in production
+  if (process.env.NODE_ENV === 'production') {
+    console.error('❌ SAFETY ERROR: Seed script is blocked in production!');
+    console.error(
+      '   Test accounts with weak passwords should NEVER be created in production.'
+    );
+    console.error(
+      '   If you need to seed production data, create a separate seed-prod.ts file.'
+    );
+    process.exit(1);
+  }
+
+  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+
   // Delete all existing test accounts first
   await prisma.account.deleteMany({
     where: {
