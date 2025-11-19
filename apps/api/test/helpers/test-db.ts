@@ -36,7 +36,7 @@ export async function setupTestDatabase(): Promise<void> {
   try {
     // Run migrations on test database
     console.log('⏳ Running test database migrations...');
-    execSync('pnpm prisma migrate deploy', {
+    execSync('npx prisma migrate deploy', {
       stdio: 'inherit',
       env: { ...process.env, DATABASE_URL: testDatabaseUrl },
     });
