@@ -10,7 +10,7 @@
 
 Stop wasting days bootstrapping your next project. Most templates hand you a skeleton and leave you to figure out database migrations, API documentation, logging infrastructure, and much more. Arawn ships with all of it configured and working. You just need to run a single script to get started with a production-ready full-stack application.
 
-**This is not your average starter template. It's a production foundation.**
+**Ship your next project faster with battle-tested infrastructure already wired up.**
 
 - **Zero-config setup**: Run one command and you're ready to code. Environment files, Docker containers, database migrations—all handled automatically.
 
@@ -74,6 +74,8 @@ pnpm dev
 
 The setup script handles everything: environment files, docker containers, database migrations, and optional seeding. Safe to run multiple times.
 
+You must have docker installed and running on your machine.
+
 **What's running:**
 
 - Frontend: [http://localhost:3000](http://localhost:3000)
@@ -84,16 +86,15 @@ The setup script handles everything: environment files, docker containers, datab
 **Database tools:**
 
 - Prisma Studio: Run `pnpm db:studio` to open [http://localhost:5555](http://localhost:5555) (recommended for data inspection)
-- pgAdmin (optional): Run `docker-compose --profile tools up -d` for [http://localhost:5050](http://localhost:5050) (admin@example.com / admin123)
 
 **Built-in pages:**
 
+- `/examples` - Component examples
+- `/dashboard` - Protected user dashboard
 - `/login` - Sign in page
 - `/signup` - Create new account
-- `/dashboard` - Protected user dashboard
-- `/examples` - Component examples
-
-**Requirements:** Node.js ≥20, pnpm ≥9, docker
+- `/forgot-password` - Forgot password page
+- `/reset-password` - Reset password page
 
 ## Project Structure
 
