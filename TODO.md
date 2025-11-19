@@ -53,7 +53,6 @@
 - [ ] Add API key rate limiting pattern
 - [ ] Implement different rate limits per role (admin vs user)
 - [ ] Add rate limit headers to responses (X-RateLimit-Limit, X-RateLimit-Remaining)
-- [ ] Document rate limiting strategy in CLAUDE.md
 
 ### WebSocket Pattern
 
@@ -62,7 +61,6 @@
 - [ ] Add simple real-time example (notifications or chat)
 - [ ] Create frontend hook for WebSocket subscriptions
 - [ ] Add reconnection logic
-- [ ] Document WebSocket patterns in CLAUDE.md
 
 ### Background Jobs & Cron
 
@@ -72,7 +70,6 @@
 - [ ] Add scheduled jobs (cron) example
 - [ ] Integrate email sending as background job
 - [ ] Add job monitoring/retry logic
-- [ ] Document background job patterns in CLAUDE.md
 
 ## Improvements to Existing Features
 
