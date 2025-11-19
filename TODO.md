@@ -24,16 +24,19 @@
 - [x] Add transaction and rollback pattern tests
 - [x] Document testing patterns in CLAUDE.md concisely
 
-### Data Table Component
+### DONE: Data Table Component
 
-- [ ] Install TanStack Table
-- [ ] Create reusable DataTable component with shadcn/ui
-- [ ] Implement server-side pagination example
-- [ ] Add sorting functionality
-- [ ] Add filtering/search functionality
-- [ ] Add loading and error states
-- [ ] Create example using existing users API
-- [ ] Add comprehensive example page in frontend
+- [x] Install TanStack Table
+- [x] Create reusable DataTable component with shadcn/ui
+- [x] Implement server-side pagination example
+- [x] Add sorting functionality
+- [x] Add filtering/search functionality
+- [x] Add loading and error states
+- [x] Create example using existing users API
+- [x] Add comprehensive example page in frontend
+- [x] Add admin-only protection to users API endpoints
+- [x] Fix Better Auth password hashing in seed script
+- [x] Add production safety check to seed script
 
 ### DONE: File Upload Handling
 
@@ -47,12 +50,11 @@
 - [x] Add S3/R2 config as optional env vars (don't throw if missing when using local storage)
 - [x] Document in CLAUDE.md
 
-### Rate Limiting Per User
+### DONE: Rate Limiting Per User
 
-- [ ] Extend existing rate limiting to support user-based limits (not just IP)
-- [ ] Add API key rate limiting pattern
-- [ ] Implement different rate limits per role (admin vs user)
-- [ ] Add rate limit headers to responses (X-RateLimit-Limit, X-RateLimit-Remaining)
+- [x] Extend existing rate limiting to support user-based limits (not just IP)
+- [x] Implement different rate limits per role (admin vs user)
+- [x] Add rate limit headers to responses (X-RateLimit-Limit, X-RateLimit-Remaining)
 
 ### Google OAuth Updates
 

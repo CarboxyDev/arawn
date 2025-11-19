@@ -159,7 +159,12 @@ Environment variables are managed per-app with Zod validation:
 API security middleware configured in `main.ts`:
 
 - **Helmet**: Secure HTTP headers with dev-friendly CSP settings via `@fastify/helmet`
-- **Rate Limiting**: 30 requests per 60 seconds per IP via `@fastify/rate-limit`
+- **Rate Limiting**: User-based rate limiting with role-aware limits via `@fastify/rate-limit`
+  - Configuration: `apps/api/src/config/rate-limit.ts`
+  - Admin: 200 req/min, User: 60 req/min, Anonymous: 30 req/min
+  - Route-specific overrides: Auth endpoints (10 req/min), Uploads (20 req/min)
+  - Rate limit headers: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+  - Authenticated users: limited by user ID, Anonymous: limited by IP
 - **CORS**: Strict origin policy allowing only `FRONTEND_URL` via `@fastify/cors`
 - **Cookies**: Secure cookie handling with `@fastify/cookie` (httpOnly, secure in prod)
 - All security plugins registered globally in main.ts

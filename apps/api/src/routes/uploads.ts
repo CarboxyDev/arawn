@@ -10,6 +10,7 @@ import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
+import { RATE_LIMIT_CONFIG } from '@/config/rate-limit.js';
 import { requireAuth } from '@/hooks/auth';
 
 const uploadsRoutes: FastifyPluginAsync = async (app) => {
@@ -20,6 +21,12 @@ const uploadsRoutes: FastifyPluginAsync = async (app) => {
     '/uploads',
     {
       onRequest: requireAuth,
+      config: {
+        rateLimit: {
+          max: RATE_LIMIT_CONFIG.routes.uploads.max,
+          timeWindow: RATE_LIMIT_CONFIG.routes.uploads.timeWindow,
+        },
+      },
       schema: {
         description: 'Upload a file',
         tags: ['Uploads'],
