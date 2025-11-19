@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/logo.svg" alt="Arawn Logo" width="200">
   <h1>Arawn</h1>
-  <p>Production-ready TypeScript monorepo with Next.js, Fastify, Turborepo and other modern technologies. Everything you need to ship super fast.</p>
+  <p>Full-stack TypeScript monorepo with Next.js, Fastify, and Turborepo. From zero to production in minutes.</p>
 </div>
 
 ---
@@ -12,22 +12,26 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 **This is not your average starter template. It's a production foundation.**
 
-- **Full-stack type safety**: Zod schemas define your API contracts. Types flow from database to UI automatically without any hassle.
-- **Zero-config setup**: One command creates env files, spins up docker, runs migrations, and gets you ready to ship in a fraction of the time.
-- **Production-grade authentication**: Better-auth integration with email/password, session management, and OAuth ready (GitHub, Google). Protected routes and auth guards out of the box.
-- **Production-grade infrastructure**: Global exception filter with request ID tracing, automatic Zod validation on all endpoints, rate limiting, environment-aware error responses
-- **Shared validation logic**: Write your schemas once in `packages/types`, use them everywhere (frontend forms, API validation, DB queries)
-- **Real testing infrastructure**: Vitest configured for frontend, API, and shared packages with coverage reports
-- **Auto-generated API docs**: Swagger + Scalar documentation generated directly from your Zod schemas
-- **AI pair programming ready**: This template ships with a comprehensive CLAUDE.md file that means AI assistants understand your architecture instantly and can help accelerate your development process.
+- **Zero-config setup**: Run one command and you're ready to code. Environment files, Docker containers, database migrations—all handled automatically.
 
-**Arawn is built for teams shipping real products, not toy demos.**
+- **Full-stack type safety**: Zod schemas define your API contracts once in `packages/types`, then flow automatically to frontend forms, API validation, and database queries. No duplicate validation logic.
 
-## Getting Started
+- **Production-grade infrastructure**: Better-auth with session management and OAuth ready. Request ID tracing, automatic validation, rate limiting, structured logging, and environment-aware error responses out of the box.
 
-**New to Arawn?** Check out [GETTING_STARTED.md](GETTING_STARTED.md) for a streamlined setup guide. The template works out of the box - customiziation is optional!
+- **AI pair programming ready**: Comprehensive CLAUDE.md file means AI assistants understand your architecture instantly and can accelerate your development.
 
 ## Tech Stack
+
+**Frontend:** Next.js, React, TanStack Query, Tailwind CSS
+
+**Backend:** Fastify, Prisma, PostgreSQL
+
+**Monorepo:** Turborepo, pnpm workspaces
+
+<details>
+<summary>Full stack details</summary>
+
+<p>
 
 **Frontend**
 
@@ -39,12 +43,12 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 **API**
 
-- Fastify 5 (ultra-fast, low overhead)
+- Fastify 5
 - Prisma 6 + PostgreSQL 17
 - Better-auth for authentication
-- Pino for logging infrastructure (native Fastify integration)
-- Scalar API docs (Zod → OpenAPI)
-- Helmet + rate limiting + CORS
+- Pino for logging
+- Scalar API docs
+- Helmet + rate limiting
 
 **Monorepo**
 
@@ -52,6 +56,8 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 - Shared packages for types, utils, config in `packages/`
 - Vitest for testing
 - Husky + lint-staged for pre-commit hooks
+</p>
+</details>
 
 ## Quick Start
 
@@ -100,100 +106,3 @@ arawn/
     ├── types/        # Zod schemas + inferred types
     └── utils/        # Shared utilities
 ```
-
-## Essential Commands
-
-**Development**
-
-```bash
-pnpm dev              # Start all apps
-pnpm build            # Build everything
-pnpm typecheck        # Type check
-pnpm test             # Run tests
-```
-
-**Database** (from `apps/api`)
-
-```bash
-pnpm db:migrate       # Run migrations
-pnpm db:studio        # Open Prisma Studio
-pnpm db:seed          # Seed database
-pnpm db:reset         # Fresh database
-```
-
-**Deployment**
-
-```bash
-# Railway (recommended)
-See DEPLOYMENT.md for full guide
-
-# Docker
-docker build -f apps/api/Dockerfile -t arawn-api .
-docker run -p 8080:8080 --env-file apps/api/.env.local arawn-api
-```
-
-## Deployment
-
-**Railway (Recommended)**: The API is fully compatible with Railway's auto-deployment. See [DEPLOYMENT.md](DEPLOYMENT.md) for complete setup instructions including:
-
-- Railway deployment (Node.js + PostgreSQL)
-- Docker deployment (multi-stage build)
-- Environment variable configuration
-- Database migration strategies
-- Frontend deployment (Vercel)
-- Health checks and troubleshooting
-
-**Quick Railway Setup:**
-
-1. Connect GitHub repo to Railway
-2. Add PostgreSQL database service
-3. Configure API service with environment variables
-4. Railway auto-detects Node.js and deploys
-5. Access at `https://your-api.railway.app`
-
-## Key Features
-
-**Type Safety Everywhere**
-
-- Zod schemas in `packages/types` serve as single source of truth
-- Types inferred from schemas (`z.infer<typeof Schema>`)
-- Runtime validation on API requests and environment variables
-- TypeScript strict mode across all packages
-
-**Smart Build Pipeline**
-
-- Turborepo orchestrates dependencies automatically
-- Packages rebuild before apps consume them
-- Intelligent caching speeds up subsequent builds
-- Parallel execution where possible
-
-**Authentication & Security**
-
-- Better-auth with email/password authentication
-- Session-based auth with 7-day expiration
-- Protected routes with auth guards
-- OAuth ready for GitHub and Google
-- Helmet for secure HTTP headers
-- Rate limiting (default 30 req/min per IP)
-- CORS configured for frontend origin only
-- Structured logging with Pino (request IDs, configurable verbosity)
-- Environment validation on startup
-
-**Developer Experience**
-
-- One command setup with `pnpm init:project`
-- Pre-commit hooks format and lint automatically
-- Vitest for fast, modern testing
-- API docs auto-generated from Zod schemas
-- CLAUDE.md for AI pair programming context
-
----
-
-## Design Principles
-
-This template makes specific choices to optimize for production use:
-
-1. **Workspace dependencies over npm packages** - Real monorepo benefits, not just code co-location
-2. **Zod as validation layer** - One schema definition for runtime + compile-time safety
-3. **Opinionated tooling** - Prettier, ESLint, Husky pre-configured so you can focus on features
-4. **Documentation for AI** - Structured context files help AI assistants understand your codebase
