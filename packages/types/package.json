@@ -30,6 +30,11 @@
       "import": "./dist/role.mjs",
       "require": "./dist/role.js"
     },
+    "./upload": {
+      "types": "./dist/upload.d.ts",
+      "import": "./dist/upload.mjs",
+      "require": "./dist/upload.js"
+    },
     "./user": {
       "types": "./dist/user.d.ts",
       "import": "./dist/user.mjs",

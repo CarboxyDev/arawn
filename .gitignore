@@ -11,6 +11,9 @@ coverage
 .DS_Store
 .temp
 
+# File uploads (local storage)
+apps/api/public/uploads/
+
 # Turborepo analysis files
 graph.html
 dev-graph.html

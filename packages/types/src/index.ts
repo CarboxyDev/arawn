@@ -20,6 +20,18 @@ export {
 } from './pagination';
 export { type Role, RoleSchema } from './role';
 export {
+  type DeleteUploadParams,
+  DeleteUploadParamsSchema,
+  type GetUploadsQuery,
+  GetUploadsQuerySchema,
+  type Upload,
+  type UploadResponse,
+  UploadResponseSchema,
+  UploadSchema,
+  type UploadStats,
+  UploadStatsSchema,
+} from './upload';
+export {
   type CreateUser,
   CreateUserSchema,
   type GetUserById,

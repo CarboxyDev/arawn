@@ -245,6 +245,47 @@ Email templates use React Email for beautiful, type-safe emails
 - Preview server: `pnpm email:dev` (runs on port 3001)
 - Linked with Better Auth.
 
+### File Upload Handling
+
+File upload system with local storage (default) and optional S3/MinIO support. Zero configuration needed - works out of the box.
+
+**Features:**
+
+- Multipart file uploads via `@fastify/multipart`
+- Image optimization with `sharp` (auto-resize, compress)
+- Multiple file types: images (JPEG, PNG, GIF, WebP, SVG), documents (PDF, DOC, DOCX, XLS, XLSX, TXT, CSV)
+- 10MB file size limit (configurable)
+- User isolation (users only see/delete their own files)
+- Drag-and-drop UI component with preview
+
+**Storage Options:**
+
+- **Local** (default): Files stored in `apps/api/public/uploads/`, served at `/uploads/files/:filename`. No configuration needed.
+- **S3/MinIO** (optional): Set `STORAGE_TYPE=s3` or `s3` and provide S3 credentials. Automatically detects and uses S3 when configured.
+
+**Environment Variables** (all optional for S3/MinIO):
+
+```bash
+STORAGE_TYPE=local  # or 's3', 'r2'
+S3_BUCKET=my-bucket
+S3_REGION=us-east-1
+S3_ACCESS_KEY_ID=xxx
+S3_SECRET_ACCESS_KEY=xxx
+S3_ENDPOINT=https://minio.railway.app  # for MinIO/R2
+```
+
+**Backend:**
+
+- Service: `FileStorageService` (local + S3 abstraction), `UploadsService` (business logic)
+- Routes: `POST /api/uploads`, `GET /api/uploads`, `GET /api/uploads/stats`, `DELETE /api/uploads/:id`
+- Database: `Upload` model tracks metadata (filename, size, URL, user)
+
+**Frontend:**
+
+- Hooks: `useUploadFile()`, `useFetchUploads()`, `useDeleteUpload()`, `useFetchUploadStats()`
+- Component: `<FileUploadInput />` with drag-and-drop
+- Example: `/examples/file-upload`
+
 ### Production Logging & Error Tracking
 
 The API uses Pino for structured, production-ready logging with request tracing and configurable verbosity.

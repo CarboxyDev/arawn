@@ -26,7 +26,7 @@
 
 ### Data Table Component
 
-- [ ] Install TanStack Table (if not already present)
+- [ ] Install TanStack Table
 - [ ] Create reusable DataTable component with shadcn/ui
 - [ ] Implement server-side pagination example
 - [ ] Add sorting functionality
@@ -35,17 +35,17 @@
 - [ ] Create example using existing users API
 - [ ] Add comprehensive example page in frontend
 
-### File Upload Handling
+### DONE: File Upload Handling
 
-- [ ] Add multipart form handling in Fastify (`@fastify/multipart`)
-- [ ] Create file upload service (S3/R2 compatible with local fallback)
-- [ ] Add file validation (size, type, extension)
-- [ ] Install and configure `sharp` for image optimization
-- [ ] Add upload progress tracking on frontend
-- [ ] Create file upload form example component
-- [ ] Add `STORAGE_TYPE` env var (local/s3) with validation
-- [ ] Add S3/R2 config as optional env vars (don't throw if missing when using local storage)
-- [ ] Document file upload patterns in CLAUDE.md
+- [x] Add multipart form handling in Fastify (`@fastify/multipart`)
+- [x] Create file upload service (S3/R2 compatible with local fallback)
+- [x] Add file validation (size, type, extension)
+- [x] Install and configure `sharp` for image optimization
+- [x] Add upload progress tracking on frontend
+- [x] Create file upload form example component
+- [x] Add `STORAGE_TYPE` env var (local/s3) with validation
+- [x] Add S3/R2 config as optional env vars (don't throw if missing when using local storage)
+- [x] Document in CLAUDE.md
 
 ### Rate Limiting Per User
 

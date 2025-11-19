@@ -83,6 +83,9 @@ await app.register(cookie, {
 
 await app.register(formbody);
 
+const { default: multipartPlugin } = await import('@/plugins/multipart.js');
+await app.register(multipartPlugin);
+
 const { default: loggerPlugin } = await import('@/plugins/logger.js');
 await app.register(loggerPlugin);
 
@@ -202,6 +205,13 @@ const registerRoutes = async () => {
   const { default: verificationRoutes } = await import(
     '@/routes/verification.js'
   );
+  const { default: uploadsRoutes } = await import('@/routes/uploads.js');
+  const { default: uploadsServeRoutes } = await import(
+    '@/routes/uploads-serve.js'
+  );
+
+  // Register file serving (conditional on storage type)
+  await app.register(uploadsServeRoutes);
 
   await app.register(
     async (app) => {
@@ -209,6 +219,7 @@ const registerRoutes = async () => {
       await app.register(sessionsRoutes);
       await app.register(passwordRoutes);
       await app.register(verificationRoutes);
+      await app.register(uploadsRoutes);
     },
     { prefix: '/api' }
   );
