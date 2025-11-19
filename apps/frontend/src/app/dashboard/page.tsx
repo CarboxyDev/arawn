@@ -69,9 +69,12 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Link href="/dashboard/sessions">
                   <Button variant="secondary">Manage Sessions</Button>
+                </Link>
+                <Link href="/dashboard/change-password">
+                  <Button variant="secondary">Change Password</Button>
                 </Link>
                 <Button onClick={handleSignOut} variant="outline">
                   Sign Out

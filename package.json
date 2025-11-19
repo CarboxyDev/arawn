@@ -6,7 +6,9 @@
   "description": "Production-ready TypeScript monorepo with Next.js and Fastify",
   "scripts": {
     "init:project": "node scripts/setup.js",
-    "dev": "turbo run dev --output-logs=full",
+    "dev": "turbo run dev",
+    "dev:tui": "turbo run dev --ui=tui",
+    "dev:debug": "turbo run dev --verbose",
     "dev:frontend": "turbo run dev --filter @repo/frontend",
     "dev:app": "turbo run dev --filter @repo/frontend --filter @repo/api",
     "dev:packages": "turbo run dev --filter '@repo/packages-*'",
@@ -16,6 +18,7 @@
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
     "test:unit": "turbo run test:unit",
+    "test:integration": "turbo run test:integration",
     "test:watch": "turbo run test:watch",
     "test:coverage": "turbo run test:coverage",
     "test:parallel": "turbo run test --concurrency=3",
@@ -45,7 +48,7 @@
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tsx": "^4.20.0",
-    "turbo": "^2.3.4",
+    "turbo": "^2.6.1",
     "typescript": "^5.7.2",
     "vitest": "^3.2.4"
   },

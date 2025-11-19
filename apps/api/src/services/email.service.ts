@@ -5,6 +5,7 @@ import { Resend } from 'resend';
 import type { LoggerService } from '@/common/logger.service';
 import type { Env } from '@/config/env';
 
+import PasswordResetEmail from '../../emails/password-reset-email';
 import VerificationEmail from '../../emails/verification-email';
 
 export class EmailService {
@@ -59,6 +60,41 @@ export class EmailService {
     } catch (error) {
       this.logger.error(
         'Failed to send verification email - user can resend later',
+        error instanceof Error ? error : new Error(String(error)),
+        { to: email }
+      );
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  async sendPasswordResetEmail(
+    email: string,
+    resetUrl: string
+  ): Promise<{ success: boolean; error?: string }> {
+    const subject = 'Reset your password';
+
+    try {
+      const html = await render(
+        PasswordResetEmail({
+          resetUrl,
+          userEmail: email,
+        })
+      );
+
+      await this.sendEmail({
+        to: email,
+        subject,
+        html,
+      });
+
+      this.logger.info('Password reset email sent', { to: email });
+      return { success: true };
+    } catch (error) {
+      this.logger.error(
+        'Failed to send password reset email',
         error instanceof Error ? error : new Error(String(error)),
         { to: email }
       );

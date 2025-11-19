@@ -196,7 +196,6 @@ app.get('/health', async (request, reply) => {
 });
 
 const registerRoutes = async () => {
-  const { default: exampleRoutes } = await import('@/routes/example.js');
   const { default: usersRoutes } = await import('@/routes/users.js');
   const { default: sessionsRoutes } = await import('@/routes/sessions.js');
   const { default: passwordRoutes } = await import('@/routes/password.js');
@@ -206,7 +205,6 @@ const registerRoutes = async () => {
 
   await app.register(
     async (app) => {
-      await app.register(exampleRoutes);
       await app.register(usersRoutes);
       await app.register(sessionsRoutes);
       await app.register(passwordRoutes);

@@ -11,6 +11,7 @@
     "lint:fix": "next lint --fix",
     "test": "vitest run",
     "test:unit": "vitest run",
+    "test:integration": "echo 'No integration tests for frontend'",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "vercel-build": "cd ../.. && turbo build --filter=@repo/frontend",

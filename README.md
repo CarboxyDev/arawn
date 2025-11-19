@@ -16,7 +16,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 - **Zero-config setup**: One command creates env files, spins up docker, runs migrations, and gets you ready to ship in a fraction of the time.
 - **Production-grade authentication**: Better-auth integration with email/password, session management, and OAuth ready (GitHub, Google). Protected routes and auth guards out of the box.
 - **Production-grade infrastructure**: Global exception filter with request ID tracing, automatic Zod validation on all endpoints, rate limiting, environment-aware error responses
-- **Shared validation logic**: Write your schemas once in `shared/types`, use them everywhere (frontend forms, API validation, DB queries)
+- **Shared validation logic**: Write your schemas once in `packages/types`, use them everywhere (frontend forms, API validation, DB queries)
 - **Real testing infrastructure**: Vitest configured for frontend, API, and shared packages with coverage reports
 - **Auto-generated API docs**: Swagger + Scalar documentation generated directly from your Zod schemas
 - **AI pair programming ready**: This template ships with a comprehensive CLAUDE.md file that means AI assistants understand your architecture instantly and can help accelerate your development process.
@@ -49,7 +49,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 **Monorepo**
 
 - pnpm workspaces + Turborepo
-- Shared packages for types, utils, config
+- Shared packages for types, utils, config in `packages/`
 - Vitest for testing
 - Husky + lint-staged for pre-commit hooks
 
@@ -155,7 +155,7 @@ docker run -p 8080:8080 --env-file apps/api/.env.local arawn-api
 
 **Type Safety Everywhere**
 
-- Zod schemas in `shared/types` serve as single source of truth
+- Zod schemas in `packages/types` serve as single source of truth
 - Types inferred from schemas (`z.infer<typeof Schema>`)
 - Runtime validation on API requests and environment variables
 - TypeScript strict mode across all packages
@@ -163,7 +163,7 @@ docker run -p 8080:8080 --env-file apps/api/.env.local arawn-api
 **Smart Build Pipeline**
 
 - Turborepo orchestrates dependencies automatically
-- Shared packages rebuild before apps consume them
+- Packages rebuild before apps consume them
 - Intelligent caching speeds up subsequent builds
 - Parallel execution where possible
 

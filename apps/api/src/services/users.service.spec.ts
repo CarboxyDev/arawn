@@ -126,12 +126,12 @@ describe('UsersService', () => {
       expect(user?.id).toBe('1');
     });
 
-    it('should return null when user not found', async () => {
+    it('should throw NotFoundError when user not found', async () => {
       vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
 
-      const user = await service.getUserById('non-existent-id');
-
-      expect(user).toBeNull();
+      await expect(service.getUserById('non-existent-id')).rejects.toThrow(
+        'User not found'
+      );
     });
   });
 
@@ -195,14 +195,14 @@ describe('UsersService', () => {
       expect(user?.id).toBe('1');
     });
 
-    it('should return null when user not found', async () => {
+    it('should throw NotFoundError when user not found', async () => {
       vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
 
-      const user = await service.updateUser('non-existent-id', {
-        name: 'New Name',
-      });
-
-      expect(user).toBeNull();
+      await expect(
+        service.updateUser('non-existent-id', {
+          name: 'New Name',
+        })
+      ).rejects.toThrow('User not found');
     });
   });
 
@@ -225,20 +225,19 @@ describe('UsersService', () => {
       vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser);
       vi.mocked(prisma.user.delete).mockResolvedValue(mockUser);
 
-      const result = await service.deleteUser('1');
+      await service.deleteUser('1');
 
-      expect(result).toBe(true);
       expect(prisma.user.delete).toHaveBeenCalledWith({
         where: { id: '1' },
       });
     });
 
-    it('should return false when user not found', async () => {
+    it('should throw NotFoundError when user not found', async () => {
       vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
 
-      const result = await service.deleteUser('non-existent-id');
-
-      expect(result).toBe(false);
+      await expect(service.deleteUser('non-existent-id')).rejects.toThrow(
+        'User not found'
+      );
     });
   });
 });

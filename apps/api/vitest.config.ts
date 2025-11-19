@@ -17,8 +17,9 @@ export default mergeConfig(
       root: './',
       setupFiles: ['./test/setup.ts'],
       // Run tests sequentially for integration tests (shared DB)
+      fileParallelism: false, // Disable file-level parallelism
       sequence: {
-        concurrent: false,
+        concurrent: false, // Disable test-level parallelism
       },
       coverage: {
         thresholds: {
