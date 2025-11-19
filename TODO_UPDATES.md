@@ -2,11 +2,9 @@
 
 ## Core Features
 
-### Email Verification with Resend
+### DONE: Email Verification with Resend
 
-- Done
-
-### Reset & Password Functionality
+### DONE: Reset & Password Functionality
 
 - [x] Add reset password functionality
 - [x] Add reset password form component
@@ -14,10 +12,10 @@
 - [x] Add reset password service
 - [x] Add reset password email support
 
-- [ ] Add change password functionality
-- [ ] Add change password form component
-- [ ] Add change password API route
-- [ ] Add change password service
+- [x] Add change password functionality
+- [x] Add change password form component
+- [x] Add change password API route
+- [x] Add change password service
 
 ### Integration Tests
 
