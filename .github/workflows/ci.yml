@@ -60,6 +60,23 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: [lint, typecheck]
+
+    # PostgreSQL service for integration tests
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app_dev
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - uses: actions/checkout@v4
 
@@ -80,6 +97,8 @@ jobs:
 
       - name: Run tests
         run: pnpm run test
+        env:
+          DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/app_dev'
 
   build:
     runs-on: ubuntu-latest
