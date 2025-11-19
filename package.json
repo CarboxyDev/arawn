@@ -18,6 +18,7 @@
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
     "test:unit": "turbo run test:unit",
+    "test:integration": "turbo run test:integration",
     "test:watch": "turbo run test:watch",
     "test:coverage": "turbo run test:coverage",
     "test:parallel": "turbo run test --concurrency=3",

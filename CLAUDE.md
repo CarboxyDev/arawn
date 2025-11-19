@@ -652,16 +652,34 @@ Integration tests automatically use a separate test database (`app_dev_test`):
 pnpm test
 
 # Run only unit tests
-pnpm test -- src/**/*.spec.ts
+pnpm test:unit
 
 # Run only integration tests
-pnpm test -- test/**/*.integration.spec.ts
+pnpm test:integration
 
 # Keep test database after tests (for inspection)
-KEEP_TEST_DB=true pnpm test
+KEEP_TEST_DB=true pnpm test:integration
+
+# Watch mode (auto-rerun on changes)
+pnpm test:watch
 
 # Generate coverage report
 pnpm test:coverage
+```
+
+**From API directory** (`apps/api/`):
+
+```bash
+pnpm test              # All tests
+pnpm test:unit         # Unit tests only
+pnpm test:integration  # Integration tests only
+```
+
+**From root directory:**
+
+```bash
+pnpm test              # All tests across all packages
+pnpm test:integration  # Integration tests only (runs API tests)
 ```
 
 #### Integration Test Example
@@ -720,6 +738,66 @@ describe('UsersService Integration Tests', () => {
 - Reset database between integration tests with `resetTestDatabase()`
 - Keep test database for debugging with `KEEP_TEST_DB=true`
 - Run integration tests sequentially (already configured in `vitest.config.ts`)
+
+#### Integration Test Patterns
+
+**Authentication Flow Tests** ([auth-flow.integration.spec.ts](apps/api/test/integration/auth-flow.integration.spec.ts)):
+
+- Signup and login workflows
+- Session creation and management
+- Email verification flow
+- Password reset flow
+- User role management
+
+**Service Integration Tests** ([sessions.integration.spec.ts](apps/api/test/integration/sessions.integration.spec.ts), [password.integration.spec.ts](apps/api/test/integration/password.integration.spec.ts)):
+
+- Test services with real database
+- Verify foreign key constraints and cascades
+- Test concurrent operations and race conditions
+- Validate error handling (NotFoundError, ValidationError, etc.)
+
+**Database Constraints Testing:**
+
+```typescript
+// Test unique constraints
+it('should enforce unique email constraint', async () => {
+  await service.createUser({ email: 'test@example.com', name: 'User 1' });
+
+  await expect(
+    service.createUser({ email: 'test@example.com', name: 'User 2' })
+  ).rejects.toThrow();
+});
+
+// Test foreign key constraints
+it('should cascade delete sessions when user is deleted', async () => {
+  const user = await prisma.user.create({
+    data: { email: 'test@example.com' },
+  });
+  await prisma.session.create({
+    data: { userId: user.id, token: 'abc', expiresAt: new Date() },
+  });
+
+  await prisma.user.delete({ where: { id: user.id } });
+
+  const sessions = await prisma.session.findMany({
+    where: { userId: user.id },
+  });
+  expect(sessions).toHaveLength(0);
+});
+```
+
+**Test Isolation:**
+
+- Each test file has a global `beforeEach` that resets the database
+- Nested describe blocks can have additional setup in their own `beforeEach`
+- `resetTestDatabase()` truncates all tables efficiently using `TRUNCATE ... CASCADE`
+- Tests run sequentially (`fileParallelism: false`) to avoid database conflicts
+
+**Better Auth Integration:**
+
+- When creating test users with password auth, set `accountId` to the user's email (not user.id)
+- Better Auth uses `providerId: 'credential'` for email/password accounts
+- Session tokens must be unique across the database
 
 ## Coding Standards
 

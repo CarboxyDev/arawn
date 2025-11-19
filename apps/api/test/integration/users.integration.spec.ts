@@ -81,25 +81,26 @@ describe('UsersService Integration Tests', () => {
       });
 
       // Delete user
-      const result = await service.deleteUser(user.id);
-      expect(result).toBe(true);
+      await service.deleteUser(user.id);
 
-      // Verify user is deleted
-      const deletedUser = await service.getUserById(user.id);
-      expect(deletedUser).toBeNull();
+      // Verify user is deleted (should throw NotFoundError)
+      await expect(service.getUserById(user.id)).rejects.toThrow(
+        'User not found'
+      );
     });
 
-    it('should return null when updating non-existent user', async () => {
-      const result = await service.updateUser('non-existent-id', {
-        name: 'New Name',
-      });
-
-      expect(result).toBeNull();
+    it('should throw NotFoundError when updating non-existent user', async () => {
+      await expect(
+        service.updateUser('non-existent-id', {
+          name: 'New Name',
+        })
+      ).rejects.toThrow('User not found');
     });
 
-    it('should return false when deleting non-existent user', async () => {
-      const result = await service.deleteUser('non-existent-id');
-      expect(result).toBe(false);
+    it('should throw NotFoundError when deleting non-existent user', async () => {
+      await expect(service.deleteUser('non-existent-id')).rejects.toThrow(
+        'User not found'
+      );
     });
   });
 

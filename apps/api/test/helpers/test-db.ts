@@ -113,16 +113,9 @@ export function getTestPrisma(): PrismaClient {
 export async function resetTestDatabase(): Promise<void> {
   const client = getTestPrisma();
 
-  // Get all table names
-  const tables = await client.$queryRaw<Array<{ tablename: string }>>`
-    SELECT tablename FROM pg_tables
-    WHERE schemaname = 'public'
+  // Disable foreign key checks and truncate all tables at once
+  // This is more efficient and avoids deadlocks
+  await client.$executeRaw`
+    TRUNCATE TABLE "verifications", "sessions", "accounts", "users" RESTART IDENTITY CASCADE;
   `;
-
-  // Truncate all tables (except _prisma_migrations)
-  for (const { tablename } of tables) {
-    if (tablename !== '_prisma_migrations') {
-      await client.$executeRawUnsafe(`TRUNCATE TABLE "${tablename}" CASCADE;`);
-    }
-  }
 }

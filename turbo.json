@@ -60,6 +60,17 @@
       ],
       "outputs": ["coverage/**"]
     },
+    "test:integration": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**",
+        "test/**",
+        "**/*.integration.spec.ts",
+        "vitest.config.ts",
+        "package.json"
+      ],
+      "outputs": ["coverage/**"]
+    },
     "test:watch": {
       "dependsOn": ["^build"],
       "cache": false,
