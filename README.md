@@ -106,39 +106,3 @@ arawn/
     ├── types/        # Zod schemas + inferred types
     └── utils/        # Shared utilities
 ```
-
-## Key Features
-
-**Type Safety Everywhere**
-
-- Zod schemas in `packages/types` serve as single source of truth
-- Types inferred from schemas (`z.infer<typeof Schema>`)
-- Runtime validation on API requests and environment variables
-- TypeScript strict mode across all packages
-
-**Smart Build Pipeline**
-
-- Turborepo orchestrates dependencies automatically
-- Packages rebuild before apps consume them
-- Intelligent caching speeds up subsequent builds
-- Parallel execution where possible
-
-**Authentication & Security**
-
-- Better-auth with email/password authentication
-- Session-based auth with 7-day expiration
-- Protected routes with auth guards
-- OAuth ready for GitHub and Google
-- Helmet for secure HTTP headers
-- Rate limiting (default 30 req/min per IP)
-- CORS configured for frontend origin only
-- Structured logging with Pino (request IDs, configurable verbosity)
-- Environment validation on startup
-
-**Developer Experience**
-
-- One command setup with `pnpm init:project`
-- Pre-commit hooks format and lint automatically
-- Vitest for fast, modern testing
-- API docs auto-generated from Zod schemas
-- CLAUDE.md for AI pair programming context
