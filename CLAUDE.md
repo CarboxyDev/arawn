@@ -935,6 +935,8 @@ The frontend uses a hybrid state management approach:
 - Handle loading states and errors gracefully
 - Always define TypeScript types for API payloads and responses
 
+**API Response Unwrapping:** The `api.ts` fetcher unwraps `{ data: T }` to `T` but preserves `{ data: T[], pagination: {...} }` responses intact.
+
 ### Authentication & Protected Routes
 
 The frontend uses Better Auth React client for authentication with modern patterns:

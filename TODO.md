@@ -54,34 +54,12 @@
 - [ ] Implement different rate limits per role (admin vs user)
 - [ ] Add rate limit headers to responses (X-RateLimit-Limit, X-RateLimit-Remaining)
 
-### WebSocket Pattern
+### Google OAuth Updates
 
-- [ ] Install and configure `@fastify/websocket`
-- [ ] Create WebSocket plugin for Fastify
-- [ ] Add simple real-time example (notifications or chat)
-- [ ] Create frontend hook for WebSocket subscriptions
-- [ ] Add reconnection logic
-
-### Background Jobs & Cron
-
-- [ ] Choose and install job queue library (BullMQ or pg-boss)
-- [ ] Create jobs plugin for Fastify
-- [ ] Set up worker process configuration
-- [ ] Add scheduled jobs (cron) example
-- [ ] Integrate email sending as background job
-- [ ] Add job monitoring/retry logic
+- [ ] Add Google OAuth button and functionality to the login page
+- [ ] Add Google OAuth button and functionality to the sign-up page
 
 ## Improvements to Existing Features
-
-### Validation Utilities
-
-- [ ] Add validation utilities to `packages/utils/src/validation.ts`
-  - `isValidEmail()`
-  - `isStrongPassword()`
-  - `sanitizeInput()`
-  - Common regex patterns
-- [ ] Make utilities reusable across frontend and backend
-- [ ] Add tests for validation utilities
 
 ### Improve UI
 

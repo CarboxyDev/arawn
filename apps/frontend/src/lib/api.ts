@@ -80,13 +80,19 @@ export async function fetcher<T>(
     }
 
     // Unwrap { data: T } or { message: string } wrappers from backend
+    // BUT preserve pagination responses ({ data: T[], pagination: {...} })
     const wrappedData = data as
-      | { data: T }
+      | { data: T; pagination?: unknown }
       | { message: string }
       | T
       | undefined;
 
     if (wrappedData && typeof wrappedData === 'object') {
+      // Don't unwrap if it has pagination metadata (paginated responses)
+      if ('data' in wrappedData && 'pagination' in wrappedData) {
+        return wrappedData as T;
+      }
+      // Unwrap single data responses
       if ('data' in wrappedData) {
         return wrappedData.data as T;
       }
