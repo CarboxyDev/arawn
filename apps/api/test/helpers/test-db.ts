@@ -77,14 +77,23 @@ export async function cleanupTestDatabase(): Promise<void> {
       const url = new URL(testDatabaseUrl);
       const dbName = url.pathname.slice(1);
 
-      // Construct connection string without database name
+      // Construct connection string to postgres database
       url.pathname = '/postgres';
       const adminUrl = url.toString();
 
       console.log('⏳ Cleaning up test database...');
-      execSync(`psql "${adminUrl}" -c "DROP DATABASE IF EXISTS ${dbName};"`, {
-        stdio: 'inherit',
+
+      // Use Prisma to drop the database with FORCE to terminate connections
+      const adminPrisma = new PrismaClient({
+        datasources: { db: { url: adminUrl } },
       });
+
+      await adminPrisma.$connect();
+      await adminPrisma.$executeRawUnsafe(
+        `DROP DATABASE IF EXISTS "${dbName}" WITH (FORCE);`
+      );
+      await adminPrisma.$disconnect();
+
       console.log('✅ Test database cleaned up');
     } catch (error) {
       // Ignore cleanup errors (database might not exist)
