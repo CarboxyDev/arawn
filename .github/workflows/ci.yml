@@ -106,6 +106,18 @@ jobs:
       - name: Generate Prisma Client
         run: cd apps/api && npx prisma generate
 
+      - name: Debug - Check PostgreSQL service
+        run: |
+          echo "Checking if PostgreSQL is accessible..."
+          nc -zv localhost 5432 || echo "Port 5432 not accessible"
+          echo "DATABASE_URL: $DATABASE_URL"
+
+      - name: Debug - Test database connection
+        run: |
+          echo "Testing Prisma connection..."
+          cd apps/api
+          npx prisma db push --skip-generate --accept-data-loss
+
       - name: Run tests
         run: pnpm run test
 
