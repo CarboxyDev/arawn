@@ -2,6 +2,8 @@ import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
+import { requireAuth } from '@/hooks/auth';
+
 const accountsRoutes: FastifyPluginAsync = async (app) => {
   const server = app.withTypeProvider<ZodTypeProvider>();
 
@@ -26,10 +28,10 @@ const accountsRoutes: FastifyPluginAsync = async (app) => {
           }),
         },
       },
-      preHandler: app.requireAuth,
+      preHandler: requireAuth,
     },
     async (request) => {
-      const userId = request.userId!;
+      const userId = request.user!.id;
       return app.accountsService.getUserAccounts(userId);
     }
   );
@@ -49,10 +51,10 @@ const accountsRoutes: FastifyPluginAsync = async (app) => {
           }),
         },
       },
-      preHandler: app.requireAuth,
+      preHandler: requireAuth,
     },
     async (request) => {
-      const userId = request.userId!;
+      const userId = request.user!.id;
       const { providerId } = request.params;
       return app.accountsService.unlinkAccount(userId, providerId);
     }
@@ -71,10 +73,10 @@ const accountsRoutes: FastifyPluginAsync = async (app) => {
           }),
         },
       },
-      preHandler: app.requireAuth,
+      preHandler: requireAuth,
     },
     async (request) => {
-      const userId = request.userId!;
+      const userId = request.user!.id;
       const canChange = await app.accountsService.canChangePassword(userId);
       return { canChangePassword: canChange };
     }
