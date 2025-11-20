@@ -2,6 +2,7 @@ import { message, success } from '@repo/packages-utils';
 import type { FastifyPluginAsync } from 'fastify';
 
 import { requireAuth } from '@/hooks/auth';
+import { logAudit } from '@/utils/audit-logger';
 
 const sessionsRoutes: FastifyPluginAsync = async (app) => {
   app.get(
@@ -29,6 +30,15 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
         request.user!.id,
         request.params.sessionId
       );
+
+      await logAudit(app.auditService, {
+        userId: request.user!.id,
+        action: 'session.revoked',
+        resourceType: 'session',
+        resourceId: request.params.sessionId,
+        request,
+      });
+
       return message('Session revoked successfully');
     }
   );
@@ -44,6 +54,14 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
         request.user!.id,
         currentSessionId
       );
+
+      await logAudit(app.auditService, {
+        userId: request.user!.id,
+        action: 'session.revoked_all',
+        resourceType: 'session',
+        request,
+      });
+
       return message('All other sessions revoked successfully');
     }
   );

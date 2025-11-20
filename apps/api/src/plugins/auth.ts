@@ -1,12 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { createAuthMiddleware } from 'better-auth/api';
 import { admin } from 'better-auth/plugins';
 import type { FastifyPluginAsync, FastifyRequest } from 'fastify';
 import fp from 'fastify-plugin';
 
 import { loadEnv } from '@/config/env.js';
 import { RATE_LIMIT_CONFIG } from '@/config/rate-limit.js';
+import { logAudit } from '@/utils/audit-logger.js';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -96,6 +98,98 @@ const authPlugin: FastifyPluginAsync = async (app) => {
         adminRoles: ['admin', 'super_admin'],
       }),
     ],
+    hooks: {
+      after: createAuthMiddleware(async (ctx) => {
+        try {
+          const newSession = ctx.context.newSession;
+          const headers = ctx.headers;
+          const ipAddress = headers
+            ? (headers.get('x-forwarded-for')?.split(',')[0] ?? null) ||
+              (headers.get('x-real-ip') ?? null)
+            : null;
+          const userAgent = headers
+            ? (headers.get('user-agent') ?? null)
+            : null;
+
+          if (ctx.path === '/sign-in/email' && newSession) {
+            await logAudit(app.auditService, {
+              userId: newSession.user.id,
+              action: 'user.login',
+              resourceType: 'user',
+              resourceId: newSession.user.id,
+              ipAddress,
+              userAgent,
+            });
+          }
+
+          if (ctx.path.startsWith('/sign-up') && newSession) {
+            await logAudit(app.auditService, {
+              userId: newSession.user.id,
+              action: 'user.created',
+              resourceType: 'user',
+              resourceId: newSession.user.id,
+              ipAddress,
+              userAgent,
+            });
+          }
+
+          if (ctx.path === '/verify-email') {
+            const returned = ctx.context.returned as
+              | { user?: { id: string } }
+              | undefined;
+            if (returned?.user) {
+              await logAudit(app.auditService, {
+                userId: returned.user.id,
+                action: 'email.verified',
+                resourceType: 'email',
+                resourceId: returned.user.id,
+                ipAddress,
+                userAgent,
+              });
+            }
+          }
+
+          if (ctx.path === '/link-social') {
+            const returned = ctx.context.returned as
+              | {
+                  user?: { id: string };
+                  account?: { id: string; providerId: string };
+                }
+              | undefined;
+            if (returned?.user && returned?.account) {
+              await logAudit(app.auditService, {
+                userId: returned.user.id,
+                action: 'account.linked',
+                resourceType: 'account',
+                resourceId: returned.account.id,
+                changes: { providerId: returned.account.providerId },
+                ipAddress,
+                userAgent,
+              });
+            }
+          }
+
+          if (ctx.path === '/sign-out') {
+            const session = ctx.context.session as
+              | { user: { id: string } }
+              | undefined;
+            const userId = session?.user?.id;
+            if (userId) {
+              await logAudit(app.auditService, {
+                userId,
+                action: 'user.logout',
+                resourceType: 'user',
+                resourceId: userId,
+                ipAddress,
+                userAgent,
+              });
+            }
+          }
+        } catch (error) {
+          app.log.error(error, 'Failed to log audit event in after hook');
+        }
+      }),
+    },
   });
 
   app.decorate('auth', auth);
