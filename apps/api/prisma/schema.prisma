@@ -58,18 +58,23 @@ model Session {
 }
 
 // Account model for OAuth providers
+// IMPORTANT: This schema MUST match Better Auth's expected fields exactly
+// Do NOT modify field names without checking Better Auth documentation
+// https://www.better-auth.com/docs/concepts/database#account-model
 model Account {
-  id                String   @id @default(cuid())
-  userId            String
-  accountId         String
-  providerId        String
-  accessToken       String?
-  refreshToken      String?
-  idToken           String?
-  expiresAt         DateTime?
-  password          String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                     String    @id @default(cuid())
+  userId                 String
+  accountId              String
+  providerId             String
+  accessToken            String?
+  refreshToken           String?
+  idToken                String?
+  accessTokenExpiresAt   DateTime? // OAuth access token expiration
+  refreshTokenExpiresAt  DateTime? // OAuth refresh token expiration
+  scope                  String?   // OAuth scopes granted
+  password               String?   // For credential provider (email/password)
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

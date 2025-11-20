@@ -17,6 +17,27 @@ declare module 'fastify' {
 const authPlugin: FastifyPluginAsync = async (app) => {
   const env = loadEnv();
 
+  const socialProviders: Record<string, unknown> = {};
+
+  if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
+    socialProviders.google = {
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+    };
+  }
+
+  if (env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET) {
+    socialProviders.github = {
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
+    };
+  }
+
+  app.log.info({
+    providers: Object.keys(socialProviders),
+    message: 'OAuth providers configured',
+  });
+
   const auth = betterAuth({
     database: prismaAdapter(app.prisma as unknown as PrismaClient, {
       provider: 'postgresql',
@@ -58,26 +79,19 @@ const authPlugin: FastifyPluginAsync = async (app) => {
       // CRITICAL: For cross-domain deployments (e.g., Vercel frontend + Railway API)
       // useSecureCookies forces secure cookies even in development
       useSecureCookies: env.NODE_ENV === 'production',
-      // Generate request ID for tracing
-      generateId: () =>
-        `auth-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      database: {
+        // Generate request ID for tracing
+        generateId: () =>
+          `auth-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      },
+      // Redirect to frontend URL instead of backend on errors
+      redirectURLs: {
+        onError: env.FRONTEND_URL,
+        afterSignIn: env.FRONTEND_URL,
+      },
     },
     trustedOrigins: [env.FRONTEND_URL],
-    // OAuth Social Providers (Optional)
-    // To enable OAuth login, uncomment and configure the providers below
-    // Make sure to set the corresponding environment variables (GITHUB_CLIENT_ID, etc.)
-    // Example:
-    // socialProviders: {
-    //   github: {
-    //     clientId: env.GITHUB_CLIENT_ID!,
-    //     clientSecret: env.GITHUB_CLIENT_SECRET!,
-    //   },
-    //   google: {
-    //     clientId: env.GOOGLE_CLIENT_ID!,
-    //     clientSecret: env.GOOGLE_CLIENT_SECRET!,
-    //   },
-    // },
-    socialProviders: {},
+    socialProviders,
     plugins: [
       admin({
         defaultRole: 'user',
