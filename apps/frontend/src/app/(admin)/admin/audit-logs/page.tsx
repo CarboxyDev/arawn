@@ -9,7 +9,6 @@ import { format } from 'date-fns';
 import { Calendar, Search, User } from 'lucide-react';
 import { useState } from 'react';
 
-import { ProtectedRoute } from '@/components/auth/protected-route';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -268,13 +267,5 @@ function AuditLogsContent() {
 }
 
 export default function AuditLogsPage() {
-  return (
-    <ProtectedRoute
-      requiredRole="admin"
-      redirectTo="/dashboard"
-      loadingMessage="Loading audit logs..."
-    >
-      <AuditLogsContent />
-    </ProtectedRoute>
-  );
+  return <AuditLogsContent />;
 }

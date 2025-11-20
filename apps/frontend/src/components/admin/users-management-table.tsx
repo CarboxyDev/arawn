@@ -105,7 +105,7 @@ const columns: ColumnDef<User>[] = [
   },
 ];
 
-export function ExampleDataTable() {
+export function UsersManagementTable() {
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,

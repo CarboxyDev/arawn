@@ -18,9 +18,10 @@
 ## Feature Additions
 
 - [ ] User Management Admin UI (full CRUD, bulk actions, search/filter, admin-only routes)
+- [x] Admin Audit Logging (Postgres-based, track user actions, admin view, no external services)
+- [x] Admin Dashboard with all of the admin related pages
 - [ ] Better Error Pages (custom 404, 500, 403, error boundaries with recovery)
 - [ ] SEO Optimization (og:image, Twitter cards, sitemap, robots.txt, JSON-LD)
-- [x] Audit Logging (Postgres-based, track user actions, admin view, no external services)
 
 ## Research & Considerations
 
