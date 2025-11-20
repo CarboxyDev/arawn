@@ -8,6 +8,18 @@ export {
   type SuccessResponse,
   SuccessResponseSchema,
 } from './api-response';
+export {
+  type AuditAction,
+  AuditActionSchema,
+  type AuditLog,
+  AuditLogSchema,
+  type AuditLogStats,
+  AuditLogStatsSchema,
+  type AuditResourceType,
+  AuditResourceTypeSchema,
+  type QueryAuditLogs,
+  QueryAuditLogsSchema,
+} from './audit-log';
 export { type HealthCheck, HealthCheckSchema } from './health-check';
 export {
   type PaginatedResponse,

@@ -291,11 +291,35 @@ S3_ENDPOINT=https://minio.railway.app  # for MinIO/R2
 - Component: `<FileUploadInput />` with drag-and-drop
 - Example: `/examples/file-upload`
 
+### Audit Logging
+
+PostgreSQL-based audit trail for tracking critical user actions throughout the application. Admin-only access with comprehensive filtering.
+
+**Actions Tracked:**
+
+- User operations: `user.created`, `user.updated`, `user.deleted`, `user.role_changed`
+- Session management: `session.revoked`, `session.revoked_all`
+- Security events: `password.changed`, `account.linked`, `account.unlinked`
+- Verification: `email.verified`, `email.verification_sent`
+
+**Features:**
+
+- Automatic capture of IP address and user agent
+- Before/after state tracking for updates
+- Paginated API with filters (user, action, resource type, date range)
+- Admin dashboard with statistics (total logs, logs by action/resource, recent activity)
+
+**Backend:**
+
+- Model: `AuditLog` with indexes on `userId`, `action`, `createdAt`, `resourceType`
+- Service: `AuditService` with `createLog()`, `getAuditLogs()`, `getAuditLogStats()`
+- Routes: `GET /api/audit` (list), `GET /api/audit/stats` (admin-only)
+- Utility: `logAudit()` helper in `apps/api/src/utils/audit-logger.ts`
+
 ### Production Logging & Error Tracking
 
-The API uses Pino for structured, production-ready logging with request tracing and configurable verbosity.
-
-**Philosophy**: Single unified logging pattern throughout the codebase. No alternatives - this is the way.
+- The API uses Pino for structured logging with request tracing and configurable verbosity.
+- Single unified logging pattern throughout the codebase.
 
 #### Environment Configuration
 

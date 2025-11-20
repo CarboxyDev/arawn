@@ -254,6 +254,7 @@ const registerRoutes = async () => {
     '@/routes/uploads-serve.js'
   );
   const { default: accountsRoutes } = await import('@/routes/accounts.js');
+  const { default: auditRoutes } = await import('@/routes/audit.js');
 
   // Register file serving (conditional on storage type)
   await app.register(uploadsServeRoutes);
@@ -266,6 +267,7 @@ const registerRoutes = async () => {
       await app.register(verificationRoutes);
       await app.register(uploadsRoutes);
       await app.register(accountsRoutes);
+      await app.register(auditRoutes);
     },
     { prefix: '/api' }
   );

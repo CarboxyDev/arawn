@@ -15,6 +15,11 @@
       "import": "./dist/api-response.mjs",
       "require": "./dist/api-response.js"
     },
+    "./audit-log": {
+      "types": "./dist/audit-log.d.ts",
+      "import": "./dist/audit-log.mjs",
+      "require": "./dist/audit-log.js"
+    },
     "./health-check": {
       "types": "./dist/health-check.d.ts",
       "import": "./dist/health-check.mjs",

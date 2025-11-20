@@ -10,12 +10,16 @@ interface ProtectedRouteProps {
   children: ReactNode;
   redirectTo?: string;
   fallback?: ReactNode;
+  requiredRole?: 'admin' | 'super_admin';
+  loadingMessage?: string;
 }
 
 export function ProtectedRoute({
   children,
   redirectTo = '/login',
   fallback,
+  requiredRole,
+  loadingMessage,
 }: ProtectedRouteProps) {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
@@ -23,8 +27,13 @@ export function ProtectedRoute({
   useEffect(() => {
     if (!isPending && !session) {
       router.push(redirectTo);
+    } else if (!isPending && session && requiredRole) {
+      const userRole = (session.user as { role?: string }).role;
+      if (userRole !== requiredRole && userRole !== 'super_admin') {
+        router.push(redirectTo);
+      }
     }
-  }, [session, isPending, router, redirectTo]);
+  }, [session, isPending, router, redirectTo, requiredRole]);
 
   if (isPending) {
     return (
@@ -48,6 +57,13 @@ export function ProtectedRoute({
 
   if (!session) {
     return null;
+  }
+
+  if (requiredRole) {
+    const userRole = (session.user as { role?: string }).role;
+    if (userRole !== requiredRole && userRole !== 'super_admin') {
+      return null;
+    }
   }
 
   return <>{children}</>;
