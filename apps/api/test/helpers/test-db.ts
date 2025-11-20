@@ -12,10 +12,8 @@ function getTestDatabaseUrl(): string {
     process.env.DATABASE_URL ||
     'postgresql://postgres:postgres_dev_password@localhost:5432/app_dev';
 
-  // Replace database name with _test suffix
-  // Example: app_dev -> app_dev_test
   const url = new URL(databaseUrl);
-  const dbName = url.pathname.slice(1); // Remove leading slash
+  const dbName = url.pathname.slice(1);
   url.pathname = `/${dbName}_test`;
 
   return url.toString();
@@ -30,7 +28,6 @@ function getTestDatabaseUrl(): string {
 export async function setupTestDatabase(): Promise<void> {
   const testDatabaseUrl = getTestDatabaseUrl();
 
-  // Set test database URL for Prisma
   process.env.DATABASE_URL = testDatabaseUrl;
 
   try {
@@ -41,7 +38,6 @@ export async function setupTestDatabase(): Promise<void> {
       env: { ...process.env, DATABASE_URL: testDatabaseUrl },
     });
 
-    // Create Prisma client for tests
     prisma = new PrismaClient({
       datasources: {
         db: {
@@ -69,21 +65,17 @@ export async function cleanupTestDatabase(): Promise<void> {
     prisma = null;
   }
 
-  // Optional: Drop test database after tests
-  // Set KEEP_TEST_DB=true to preserve database for inspection
   if (process.env.KEEP_TEST_DB !== 'true') {
     try {
       const testDatabaseUrl = getTestDatabaseUrl();
       const url = new URL(testDatabaseUrl);
       const dbName = url.pathname.slice(1);
 
-      // Construct connection string to postgres database
       url.pathname = '/postgres';
       const adminUrl = url.toString();
 
       console.log('⏳ Cleaning up test database...');
 
-      // Use Prisma to drop the database with FORCE to terminate connections
       const adminPrisma = new PrismaClient({
         datasources: { db: { url: adminUrl } },
       });
@@ -96,16 +88,11 @@ export async function cleanupTestDatabase(): Promise<void> {
 
       console.log('✅ Test database cleaned up');
     } catch (error) {
-      // Ignore cleanup errors (database might not exist)
-      console.warn('⚠️ Test database cleanup failed (this is usually ok)');
+      console.warn('⚠️ Test database cleanup failed (usually okay)');
     }
   }
 }
 
-/**
- * Get Prisma client for integration tests
- * Returns the test database Prisma instance
- */
 export function getTestPrisma(): PrismaClient {
   if (!prisma) {
     throw new Error(

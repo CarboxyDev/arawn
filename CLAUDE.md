@@ -185,43 +185,43 @@ API security middleware configured in `main.ts`:
   - Uses bcryptjs for password hashing
   - Prevents reuse of current password
 
-**OAuth Social Login (Optional):**
+**OAuth Social Login:**
 
-By default, the template uses email/password authentication. To enable OAuth providers (GitHub, Google, etc.):
+Google and GitHub OAuth are enabled by default in the authentication configuration. Users can sign in using their Google or GitHub accounts on the login and signup pages.
 
-1. **Get OAuth Credentials:**
-   - GitHub: https://github.com/settings/developers (create OAuth App)
-   - Google: https://console.cloud.google.com/apis/credentials (create OAuth 2.0 Client)
+**Setup OAuth Providers (Optional but Recommended):**
 
-2. **Add to Environment Variables** (`apps/api/.env.local`):
+1. **Google OAuth Setup:**
+   - Visit: https://console.cloud.google.com/apis/credentials
+   - Create OAuth 2.0 Client ID (Web application)
+   - Add authorized redirect URIs:
+     - Development: `http://localhost:8080/api/auth/callback/google`
+     - Production: `https://your-api-domain.com/api/auth/callback/google`
+   - Add credentials to `apps/api/.env.local`:
+     ```bash
+     GOOGLE_CLIENT_ID=your_google_client_id
+     GOOGLE_CLIENT_SECRET=your_google_client_secret
+     ```
 
-   ```bash
-   GITHUB_CLIENT_ID=your_github_client_id
-   GITHUB_CLIENT_SECRET=your_github_client_secret
-   GOOGLE_CLIENT_ID=your_google_client_id
-   GOOGLE_CLIENT_SECRET=your_google_client_secret
-   ```
+2. **GitHub OAuth Setup:**
+   - Visit: https://github.com/settings/developers
+   - Create new OAuth App
+   - Set Authorization callback URL:
+     - Development: `http://localhost:8080/api/auth/callback/github`
+     - Production: `https://your-api-domain.com/api/auth/callback/github`
+   - Add credentials to `apps/api/.env.local`:
+     ```bash
+     GITHUB_CLIENT_ID=your_github_client_id
+     GITHUB_CLIENT_SECRET=your_github_client_secret
+     ```
 
-3. **Enable in Better Auth Config** (`apps/api/src/plugins/auth.ts`):
-   Uncomment the `socialProviders` section and configure:
+**Frontend Integration:**
 
-   ```typescript
-   socialProviders: {
-     github: {
-       clientId: env.GITHUB_CLIENT_ID!,
-       clientSecret: env.GITHUB_CLIENT_SECRET!,
-     },
-     google: {
-       clientId: env.GOOGLE_CLIENT_ID!,
-       clientSecret: env.GOOGLE_CLIENT_SECRET!,
-     },
-   },
-   ```
+- OAuth buttons are included on [login](<apps/frontend/src/app/(auth)/login/page.tsx>) and [signup](<apps/frontend/src/app/(auth)/signup/page.tsx>) pages
+- Google button follows [Google's Sign-In Branding Guidelines](https://developers.google.com/identity/branding-guidelines)
+- OAuth providers are only active when credentials are configured in environment variables
 
-4. **Frontend Integration:**
-   Better Auth React client automatically provides OAuth sign-in methods when enabled.
-
-**Note**: OAuth credentials are optional - the app works perfectly with just email/password authentication.
+**Note**: If OAuth credentials are not provided, the buttons will still appear but won't function. The app works perfectly with just email/password authentication.
 
 **Email Verification:**
 
