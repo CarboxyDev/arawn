@@ -10,6 +10,8 @@ interface AuditLogOptions {
   changes?: Record<string, unknown>;
   userId: string;
   request?: FastifyRequest;
+  ipAddress?: string | null;
+  userAgent?: string | null;
 }
 
 export async function logAudit(
@@ -23,8 +25,9 @@ export async function logAudit(
       resourceType: options.resourceType,
       resourceId: options.resourceId,
       changes: options.changes,
-      ipAddress: options.request?.ip ?? null,
-      userAgent: options.request?.headers['user-agent'] ?? null,
+      ipAddress: options.ipAddress ?? options.request?.ip ?? null,
+      userAgent:
+        options.userAgent ?? options.request?.headers['user-agent'] ?? null,
     });
   } catch (error) {
     // Log error but don't fail the original operation

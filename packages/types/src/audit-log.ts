@@ -3,6 +3,9 @@ import { z } from 'zod';
 import { PaginationSchema } from './pagination';
 
 export const AuditActionSchema = z.enum([
+  'user.login',
+  'user.logout',
+  'user.login_failed',
   'user.created',
   'user.updated',
   'user.deleted',
@@ -13,7 +16,6 @@ export const AuditActionSchema = z.enum([
   'account.linked',
   'account.unlinked',
   'email.verified',
-  'email.verification_sent',
 ]);
 
 export type AuditAction = z.infer<typeof AuditActionSchema>;

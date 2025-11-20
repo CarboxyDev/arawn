@@ -20,7 +20,7 @@
 - [ ] User Management Admin UI (full CRUD, bulk actions, search/filter, admin-only routes)
 - [ ] Better Error Pages (custom 404, 500, 403, error boundaries with recovery)
 - [ ] SEO Optimization (og:image, Twitter cards, sitemap, robots.txt, JSON-LD)
-- [ ] Audit Logging (Postgres-based, track user actions, admin view, no external services)
+- [x] Audit Logging (Postgres-based, track user actions, admin view, no external services)
 
 ## Research & Considerations
 
