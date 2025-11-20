@@ -91,9 +91,23 @@ describe('UserSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should reject invalid CUID', () => {
+  it('should accept Better Auth ID format', () => {
+    const validUser = {
+      id: 'auth-1763496954387-0tr9175',
+      email: 'test@example.com',
+      name: 'John Doe',
+      role: 'user' as const,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const result = UserSchema.safeParse(validUser);
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject empty id', () => {
     const invalidUser = {
-      id: 'not-a-cuid',
+      id: '',
       email: 'test@example.com',
       name: 'John Doe',
       role: 'user' as const,

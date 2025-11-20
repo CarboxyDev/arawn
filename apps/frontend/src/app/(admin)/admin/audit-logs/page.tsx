@@ -6,9 +6,10 @@ import type {
   AuditResourceType,
 } from '@repo/packages-types';
 import { format } from 'date-fns';
-import { Calendar, Search, User } from 'lucide-react';
+import { Calendar, Eye, Search, User, UserX } from 'lucide-react';
 import { useState } from 'react';
 
+import { AuditLogDetailsDialog } from '@/components/admin/audit-log-details-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -65,6 +66,11 @@ function AuditLogsContent() {
   const [resourceTypeFilter, setResourceTypeFilter] = useState<
     AuditResourceType | 'all'
   >('all');
+  const [selectedLog, setSelectedLog] = useState<
+    | (AuditLog & { user?: { email: string; name?: string; role?: string } })
+    | null
+  >(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data, isLoading } = useFetchAuditLogs({
     page,
@@ -180,55 +186,122 @@ function AuditLogsContent() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Action</TableHead>
-                  <TableHead>User</TableHead>
+                  <TableHead>Performed By</TableHead>
+                  <TableHead>Affected User</TableHead>
                   <TableHead>Resource</TableHead>
                   <TableHead>IP Address</TableHead>
                   <TableHead>Timestamp</TableHead>
+                  <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {logs.map((log: AuditLog & { user?: { email: string } }) => (
-                  <TableRow key={log.id}>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className={getActionBadgeClasses(log.action)}
-                      >
-                        {formatAction(log.action)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <User className="text-muted-foreground h-4 w-4" />
-                        <span className="text-sm">
-                          {log.user?.email || log.userId}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div className="font-medium capitalize">
-                          {log.resourceType}
-                        </div>
-                        {log.resourceId && (
-                          <div className="text-muted-foreground max-w-[200px] truncate text-xs">
-                            {log.resourceId}
+                {logs.map(
+                  (
+                    log: AuditLog & {
+                      user?: { email: string; name?: string; role?: string };
+                    }
+                  ) => {
+                    const affectedUser = log.changes?.before as
+                      | { email?: string; name?: string; role?: string }
+                      | null
+                      | undefined;
+
+                    return (
+                      <TableRow key={log.id}>
+                        <TableCell>
+                          <Badge
+                            variant="secondary"
+                            className={getActionBadgeClasses(log.action)}
+                          >
+                            {formatAction(log.action)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <User className="text-muted-foreground h-4 w-4" />
+                            <div className="min-w-0 flex-1">
+                              <div className="truncate text-sm font-medium">
+                                {log.user?.name ||
+                                  log.user?.email ||
+                                  log.userId}
+                              </div>
+                              {log.user?.name && log.user?.email && (
+                                <div className="text-muted-foreground truncate text-xs">
+                                  {log.user.email}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-muted-foreground text-sm">
-                        {log.ipAddress || 'N/A'}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-muted-foreground text-sm">
-                        {format(new Date(log.createdAt), 'MMM dd, yyyy HH:mm')}
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                        </TableCell>
+                        <TableCell>
+                          {affectedUser ? (
+                            <div className="flex items-center gap-2">
+                              <User className="text-muted-foreground h-4 w-4" />
+                              <div className="min-w-0 flex-1">
+                                <div className="truncate text-sm font-medium">
+                                  {affectedUser.name ||
+                                    affectedUser.email ||
+                                    'Unknown'}
+                                </div>
+                                {affectedUser.name && affectedUser.email && (
+                                  <div className="text-muted-foreground truncate text-xs">
+                                    {affectedUser.email}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <UserX className="text-muted-foreground h-4 w-4" />
+                              <span className="text-muted-foreground text-sm">
+                                N/A
+                              </span>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            <div className="font-medium capitalize">
+                              {log.resourceType}
+                            </div>
+                            {log.resourceId && (
+                              <div className="text-muted-foreground max-w-[200px] truncate text-xs">
+                                {log.resourceId}
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-muted-foreground text-sm">
+                            {log.ipAddress || 'N/A'}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-muted-foreground text-sm">
+                            {format(
+                              new Date(log.createdAt),
+                              'MMM dd, yyyy HH:mm'
+                            )}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedLog(log);
+                              setDialogOpen(true);
+                            }}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Eye className="h-4 w-4" />
+                            <span className="sr-only">View details</span>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  }
+                )}
               </TableBody>
             </Table>
           </div>
@@ -262,6 +335,12 @@ function AuditLogsContent() {
           )}
         </>
       )}
+
+      <AuditLogDetailsDialog
+        log={selectedLog}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
     </div>
   );
 }
