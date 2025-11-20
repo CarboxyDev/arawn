@@ -17,7 +17,7 @@
 
 ## Feature Additions
 
-- [ ] User Management Admin UI (full CRUD, search/filter)
+- [x] User Management Admin UI (full CRUD, search/filter)
 - [x] Admin Audit Logging (Postgres-based, track user actions, admin view, no external services)
 - [x] Admin Dashboard with all of the admin related pages
 - [ ] Better Error Pages (custom 404, 500, 403, error boundaries with recovery)
@@ -31,13 +31,6 @@
   - Consider: Billing per organization vs per user
   - Decide: Build in from start or provide migration guide later?
 
-## Nice to Have
-
-- [ ] Add 2-3 min video walkthrough (setup → signup → API docs → tests)
-- [ ] Add performance metrics (build times, bundle sizes, API benchmarks)
-- [ ] Add roadmap section
-- [ ] Add VS Code workspace settings (`.vscode/settings.json`)
-
 ## UI & UX Improvements
 
 - [ ] Improve UI for auth pages (login, register, forgot password, reset password)
@@ -48,6 +41,11 @@
 - [ ] Dark mode polish (smooth transitions, better component coverage)
 - [ ] Add breadcrumbs for navigation
 - [ ] Improve mobile responsiveness across all pages
+
+## Nice to Have
+
+- [ ] Add 2-3 min video walkthrough (setup → signup → API docs → tests)
+- [ ] Add VS Code workspace settings (`.vscode/settings.json`)
 
 ## Bugs to fix
 
