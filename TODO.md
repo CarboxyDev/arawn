@@ -17,7 +17,7 @@
 
 ## Feature Additions
 
-- [ ] User Management Admin UI (full CRUD, bulk actions, search/filter, admin-only routes)
+- [ ] User Management Admin UI (full CRUD, search/filter)
 - [x] Admin Audit Logging (Postgres-based, track user actions, admin view, no external services)
 - [x] Admin Dashboard with all of the admin related pages
 - [ ] Better Error Pages (custom 404, 500, 403, error boundaries with recovery)
@@ -48,3 +48,7 @@
 - [ ] Dark mode polish (smooth transitions, better component coverage)
 - [ ] Add breadcrumbs for navigation
 - [ ] Improve mobile responsiveness across all pages
+
+## Bugs to fix
+
+- [] Fix audit log not working for some cases (for example google oauth account creation)

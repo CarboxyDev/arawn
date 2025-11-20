@@ -2,6 +2,7 @@ import type {
   CreateUser,
   PaginatedResponse,
   QueryUsers,
+  UpdateUser,
   User,
 } from '@repo/packages-types';
 import {
@@ -96,6 +97,55 @@ export function useCreateUser() {
     onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       queryClient.setQueryData(userKeys.detail(user.id), user);
+    },
+  });
+}
+
+/**
+ * Update an existing user
+ *
+ * @example
+ * ```tsx
+ * const { mutate: updateUser, isPending } = useUpdateUser();
+ *
+ * const handleUpdate = (id: string, data: UpdateUser) => {
+ *   updateUser({ id, data });
+ * };
+ * ```
+ */
+export function useUpdateUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateUser }) =>
+      api.patch<User>(`/users/${id}`, data),
+    onSuccess: (user) => {
+      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      queryClient.setQueryData(userKeys.detail(user.id), user);
+    },
+  });
+}
+
+/**
+ * Delete a user
+ *
+ * @example
+ * ```tsx
+ * const { mutate: deleteUser, isPending } = useDeleteUser();
+ *
+ * const handleDelete = (id: string) => {
+ *   deleteUser(id);
+ * };
+ * ```
+ */
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/users/${id}`),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      queryClient.removeQueries({ queryKey: userKeys.detail(id) });
     },
   });
 }

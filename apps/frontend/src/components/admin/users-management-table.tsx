@@ -1,6 +1,7 @@
 'use client';
 
-import type { User } from '@repo/packages-types';
+import type { Role, User } from '@repo/packages-types';
+import { RoleSchema } from '@repo/packages-types';
 import type {
   ColumnDef,
   ColumnFiltersState,
@@ -8,15 +9,19 @@ import type {
   SortingState,
 } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { MoreHorizontal } from 'lucide-react';
+import { Filter, MoreHorizontal, UserCheck } from 'lucide-react';
 import * as React from 'react';
 
+import { UserCreateDialog } from '@/components/admin/user-create-dialog';
+import { UserDeleteDialog } from '@/components/admin/user-delete-dialog';
+import { UserEditDialog } from '@/components/admin/user-edit-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -25,6 +30,28 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useFetchUsers } from '@/hooks/api/use-users';
 
+const getRoleBadgeVariant = (role: Role) => {
+  switch (role) {
+    case 'super_admin':
+      return 'default';
+    case 'admin':
+      return 'secondary';
+    default:
+      return 'outline';
+  }
+};
+
+const getRoleDisplay = (role: Role) => {
+  switch (role) {
+    case 'super_admin':
+      return 'Super Admin';
+    case 'admin':
+      return 'Admin';
+    default:
+      return 'User';
+  }
+};
+
 const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'name',
@@ -32,7 +59,12 @@ const columns: ColumnDef<User>[] = [
       <DataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue('name')}</div>
+      <div className="flex items-center gap-2">
+        <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
+          <UserCheck className="text-primary h-4 w-4" />
+        </div>
+        <div className="font-medium">{row.getValue('name')}</div>
+      </div>
     ),
   },
   {
@@ -41,7 +73,9 @@ const columns: ColumnDef<User>[] = [
       <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue('email')}</div>
+      <div className="text-muted-foreground font-mono text-sm">
+        {row.getValue('email')}
+      </div>
     ),
   },
   {
@@ -50,10 +84,10 @@ const columns: ColumnDef<User>[] = [
       <DataTableColumnHeader column={column} title="Role" />
     ),
     cell: ({ row }) => {
-      const role = row.getValue('role') as string;
+      const role = row.getValue('role') as Role;
       return (
-        <Badge variant={role === 'admin' ? 'default' : 'secondary'}>
-          {role}
+        <Badge variant={getRoleBadgeVariant(role)}>
+          {getRoleDisplay(role)}
         </Badge>
       );
     },
@@ -69,7 +103,7 @@ const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const date = row.getValue('createdAt') as string | Date;
       return (
-        <div className="text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           {format(new Date(date), 'MMM dd, yyyy')}
         </div>
       );
@@ -81,25 +115,35 @@ const columns: ColumnDef<User>[] = [
       const user = row.original;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
-            >
-              Copy user ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit user</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center justify-end gap-2">
+          <UserEditDialog user={user} />
+          <UserDeleteDialog user={user} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">More options</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>More Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigator.clipboard.writeText(user.id);
+                }}
+              >
+                Copy User ID
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigator.clipboard.writeText(user.email);
+                }}
+              >
+                Copy Email
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       );
     },
   },
@@ -118,6 +162,8 @@ export function UsersManagementTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+
+  const [selectedRoles, setSelectedRoles] = React.useState<Role[]>([]);
 
   const searchFilter = columnFilters.find((filter) => filter.id === 'name');
   const searchValue = searchFilter?.value as string | undefined;
@@ -156,14 +202,72 @@ export function UsersManagementTable() {
     );
   }
 
-  const users = response?.data || [];
+  const allUsers = response?.data || [];
+  const filteredUsers =
+    selectedRoles.length > 0
+      ? allUsers.filter((user) => selectedRoles.includes(user.role))
+      : allUsers;
+
   const total = response?.pagination?.total || 0;
+
+  const toggleRole = (role: Role) => {
+    setSelectedRoles((prev) =>
+      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
+    );
+  };
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Filter className="mr-2 h-4 w-4" />
+                Filter by Role
+                {selectedRoles.length > 0 && (
+                  <Badge variant="secondary" className="ml-2">
+                    {selectedRoles.length}
+                  </Badge>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuLabel>Filter by Role</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {RoleSchema.options.map((role) => (
+                <DropdownMenuCheckboxItem
+                  key={role}
+                  checked={selectedRoles.includes(role)}
+                  onCheckedChange={() => toggleRole(role)}
+                >
+                  {getRoleDisplay(role)}
+                </DropdownMenuCheckboxItem>
+              ))}
+              {selectedRoles.length > 0 && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setSelectedRoles([])}>
+                    Clear filters
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {selectedRoles.length > 0 && (
+            <div className="text-muted-foreground text-sm">
+              Showing {filteredUsers.length} of {allUsers.length} users
+            </div>
+          )}
+        </div>
+
+        <UserCreateDialog />
+      </div>
+
       <DataTable
         columns={columns}
-        data={users}
+        data={filteredUsers}
         pagination={pagination}
         onPaginationChange={setPagination}
         sorting={sorting}
@@ -172,7 +276,7 @@ export function UsersManagementTable() {
         onColumnFiltersChange={setColumnFilters}
         rowCount={total}
         isLoading={isLoading}
-        searchPlaceholder="Search users..."
+        searchPlaceholder="Search by name or email..."
         searchColumnId="name"
       />
     </div>
