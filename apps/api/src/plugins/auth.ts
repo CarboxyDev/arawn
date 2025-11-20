@@ -76,15 +76,13 @@ const authPlugin: FastifyPluginAsync = async (app) => {
       },
     },
     advanced: {
-      // CRITICAL: For cross-domain deployments (e.g., Vercel frontend + Railway API)
+      // IMPORTANT: For cross-domain deployments
       // useSecureCookies forces secure cookies even in development
       useSecureCookies: env.NODE_ENV === 'production',
       database: {
-        // Generate request ID for tracing
         generateId: () =>
           `auth-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
       },
-      // Redirect to frontend URL instead of backend on errors
       redirectURLs: {
         onError: env.FRONTEND_URL,
         afterSignIn: env.FRONTEND_URL,
@@ -102,7 +100,6 @@ const authPlugin: FastifyPluginAsync = async (app) => {
 
   app.decorate('auth', auth);
 
-  // Register the catch-all route for Better Auth with stricter rate limiting
   app.all(
     '/api/auth/*',
     {
@@ -132,28 +129,23 @@ const authPlugin: FastifyPluginAsync = async (app) => {
             const cookieValue = value;
 
             if (env.NODE_ENV === 'production') {
-              // In production (cross-domain), modify cookie attributes
               let modifiedCookie = cookieValue;
 
-              // Ensure Secure flag is present
               if (!modifiedCookie.includes('Secure')) {
                 modifiedCookie += '; Secure';
               }
 
-              // Replace SameSite=Lax with SameSite=None for cross-domain
               if (modifiedCookie.includes('SameSite=Lax')) {
                 modifiedCookie = modifiedCookie.replace(
                   'SameSite=Lax',
                   'SameSite=None'
                 );
               } else if (!modifiedCookie.includes('SameSite=')) {
-                // If no SameSite is set, add it
                 modifiedCookie += '; SameSite=None';
               }
 
               reply.header(key, modifiedCookie);
             } else {
-              // In development (localhost), use default behavior
               reply.header(key, cookieValue);
             }
           } else {
@@ -161,7 +153,6 @@ const authPlugin: FastifyPluginAsync = async (app) => {
           }
         });
 
-        // Send the response body
         const body = await response.text();
         return reply.send(body);
       } catch (error) {
@@ -178,11 +169,9 @@ const authPlugin: FastifyPluginAsync = async (app) => {
   app.log.info('✅ Better Auth configured');
 };
 
-// Helper function to convert Fastify request to Web Request
 async function toWebRequest(request: FastifyRequest): Promise<Request> {
   const url = new URL(request.url, `${request.protocol}://${request.hostname}`);
 
-  // Build headers
   const headers = new Headers();
   Object.entries(request.headers).forEach(([key, value]) => {
     if (value) {
@@ -193,10 +182,8 @@ async function toWebRequest(request: FastifyRequest): Promise<Request> {
     }
   });
 
-  // Get request body for non-GET/HEAD requests
   let body: string | null = null;
   if (request.method !== 'GET' && request.method !== 'HEAD') {
-    // Better Auth expects raw body, so we read it from raw property or stringify
     if (request.body) {
       body = JSON.stringify(request.body);
     }
