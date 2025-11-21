@@ -121,3 +121,32 @@ export const quickStartCommands: Array<{
     command: 'pnpm dev',
   },
 ];
+
+export const includedFeatures = [
+  {
+    iconName: 'Lock' as const,
+    title: 'Authentication System',
+    pages: [
+      { name: 'Sign in', href: '/login' },
+      { name: 'Sign up', href: '/signup' },
+      { name: 'Forgot password', href: '/forgot-password' },
+    ],
+  },
+  {
+    iconName: 'LayoutDashboard' as const,
+    title: 'User Dashboard',
+    pages: [
+      { name: 'Dashboard', href: '/dashboard' },
+      { name: 'Change password', href: '/dashboard/change-password' },
+    ],
+  },
+  {
+    iconName: 'ShieldCheck' as const,
+    title: 'Admin Dashboard',
+    pages: [
+      { name: 'Admin overview', href: '/admin' },
+      { name: 'User management', href: '/admin/users' },
+      { name: 'Audit logs', href: '/admin/audit-logs' },
+    ],
+  },
+] as const;
