@@ -93,7 +93,7 @@ export default async function Home() {
         <div className="border-border bg-card rounded-lg border p-8">
           <h2 className="text-card-foreground mb-8 flex items-center gap-2 text-xl font-medium">
             <PackageCheck className="text-foreground h-5 w-5" />
-            <span>What&apos;s Included</span>
+            <span>Out of the Box</span>
           </h2>
           <div className="grid gap-6 md:grid-cols-3">
             {includedFeatures.map((feature) => (
@@ -130,7 +130,7 @@ export default async function Home() {
 
         <div
           id="quick-start"
-          className="border-border bg-muted rounded-lg border p-8"
+          className="border-border bg-card border-l-primary rounded-lg border border-l-8 p-8"
         >
           <div className="mb-6 flex items-center gap-3">
             <Terminal className="text-foreground h-5 w-5" />
