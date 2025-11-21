@@ -1,3 +1,23 @@
+## Feature Additions
+
+- [x] User Management Admin UI (full CRUD, search/filter)
+- [x] Admin Audit Logging (Postgres-based, track user actions, admin view, no external services)
+- [x] Admin Dashboard with all of the admin related pages
+- [x] Better Error Pages (custom 404, 500, 403, error boundaries with recovery)
+- [ ] SEO Optimization (og:image, Twitter cards, sitemap, robots.txt, JSON-LD)
+
+## UI & UX Improvements
+
+- [x] Add "What's Included" section to landing page
+- [ ] Improve UI for auth pages (login, register, forgot password, reset password)
+- [ ] Add dashboard layout with sidebar for user
+- [ ] Add settings page for user
+- [ ] Show a better UI for the default dashboard
+- [ ] Better loading states (global loading bar, more skeleton screens, optimistic updates, suspense boundaries)
+- [ ] Better file upload UX (multiple files, progress bars, image cropping, better previews)
+- [ ] Form improvements (auto-save drafts, unsaved changes warning, field-level validation feedback)
+- [ ] Improve mobile responsiveness across all pages
+
 ## Pre-Launch Critical
 
 - [ ] Rewrite README with comprehensive features section (auth, security, API, frontend, DX, built-in examples)
@@ -14,38 +34,6 @@
 - [ ] Improve Quick Start section with expected output
 - [ ] Add troubleshooting section (common setup issues)
 - [ ] Add customization guide (rename project, add routes, change schema)
-
-## Feature Additions
-
-- [x] User Management Admin UI (full CRUD, search/filter)
-- [x] Admin Audit Logging (Postgres-based, track user actions, admin view, no external services)
-- [x] Admin Dashboard with all of the admin related pages
-- [ ] Better Error Pages (custom 404, 500, 403, error boundaries with recovery)
-- [ ] SEO Optimization (og:image, Twitter cards, sitemap, robots.txt, JSON-LD)
-
-## Research & Considerations
-
-- [ ] Research multi-tenancy/organizations support (teams, invitations, role-based access per org)
-  - Consider: Data isolation strategies (row-level security vs separate schemas)
-  - Consider: Invitation flow and team switching UI
-  - Consider: Billing per organization vs per user
-  - Decide: Build in from start or provide migration guide later?
-
-## UI & UX Improvements
-
-- [ ] Improve UI for auth pages (login, register, forgot password, reset password)
-- [ ] Show a better UI for the default dashboard
-- [ ] Better loading states (global loading bar, more skeleton screens, optimistic updates, suspense boundaries)
-- [ ] Better file upload UX (multiple files, progress bars, image cropping, better previews)
-- [ ] Form improvements (auto-save drafts, unsaved changes warning, field-level validation feedback)
-- [ ] Dark mode polish (smooth transitions, better component coverage)
-- [ ] Add breadcrumbs for navigation
-- [ ] Improve mobile responsiveness across all pages
-
-## Nice to Have
-
-- [ ] Add 2-3 min video walkthrough (setup → signup → API docs → tests)
-- [ ] Add VS Code workspace settings (`.vscode/settings.json`)
 
 ## Bugs to fix
 

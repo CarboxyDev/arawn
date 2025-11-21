@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 
+import { Forbidden } from '@/components/error/forbidden';
 import { Skeleton } from '@/components/ui/skeleton';
 import { authClient } from '@/lib/auth';
 
@@ -27,13 +28,8 @@ export function ProtectedRoute({
   useEffect(() => {
     if (!isPending && !session) {
       router.push(redirectTo);
-    } else if (!isPending && session && requiredRole) {
-      const userRole = (session.user as { role?: string }).role;
-      if (userRole !== requiredRole && userRole !== 'super_admin') {
-        router.push(redirectTo);
-      }
     }
-  }, [session, isPending, router, redirectTo, requiredRole]);
+  }, [session, isPending, router, redirectTo]);
 
   if (isPending) {
     return (
@@ -62,7 +58,7 @@ export function ProtectedRoute({
   if (requiredRole) {
     const userRole = (session.user as { role?: string }).role;
     if (userRole !== requiredRole && userRole !== 'super_admin') {
-      return null;
+      return <Forbidden />;
     }
   }
 

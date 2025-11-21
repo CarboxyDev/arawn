@@ -48,12 +48,7 @@ export function FeatureCard({
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
     >
-      <motion.div
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        transition={{ duration: 0.2 }}
-      >
-        <Icon className="text-foreground mb-3 h-5 w-5" />
-      </motion.div>
+      <Icon className="text-foreground mb-3 h-5 w-5" />
       <h3 className="text-card-foreground mb-2 text-base font-medium">
         {title}
       </h3>

@@ -1,14 +1,20 @@
 import { type HealthCheck } from '@repo/packages-types';
-import { ArrowRight, Boxes, Terminal } from 'lucide-react';
+import { ArrowRight, Boxes, PackageCheck, Terminal } from 'lucide-react';
 import Link from 'next/link';
 
 import { CommandBlock } from '@/components/landing/command-block';
 import { FeatureCard } from '@/components/landing/feature-card';
+import { IncludedFeatureCard } from '@/components/landing/included-feature-card';
 import { Logo } from '@/components/landing/logo';
 import { TechBadge } from '@/components/landing/tech-badge';
 import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
-import { features, quickStartCommands, techStack } from '@/config/landing-data';
+import {
+  features,
+  includedFeatures,
+  quickStartCommands,
+  techStack,
+} from '@/config/landing-data';
 
 async function getHealth(): Promise<HealthCheck | null> {
   try {
@@ -86,6 +92,23 @@ export default async function Home() {
 
         <div className="border-border bg-card rounded-lg border p-8">
           <h2 className="text-card-foreground mb-8 flex items-center gap-2 text-xl font-medium">
+            <PackageCheck className="text-foreground h-5 w-5" />
+            <span>Out of the Box</span>
+          </h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            {includedFeatures.map((feature) => (
+              <IncludedFeatureCard
+                key={feature.title}
+                iconName={feature.iconName}
+                title={feature.title}
+                pages={feature.pages}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="border-border bg-card rounded-lg border p-8">
+          <h2 className="text-card-foreground mb-8 flex items-center gap-2 text-xl font-medium">
             <Boxes className="text-foreground h-5 w-5" />
             <span>Tech Stack</span>
           </h2>
@@ -107,7 +130,7 @@ export default async function Home() {
 
         <div
           id="quick-start"
-          className="border-border bg-muted rounded-lg border p-8"
+          className="border-border bg-card border-l-primary rounded-lg border border-l-8 p-8"
         >
           <div className="mb-6 flex items-center gap-3">
             <Terminal className="text-foreground h-5 w-5" />
