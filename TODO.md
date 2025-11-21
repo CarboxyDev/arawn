@@ -1,20 +1,3 @@
-## Pre-Launch Critical
-
-- [ ] Rewrite README with comprehensive features section (auth, security, API, frontend, DX, built-in examples)
-- [ ] Add screenshots/GIFs (login, dashboard, API docs, examples page, setup terminal output)
-- [ ] Add deployment guide (env vars, platforms, security checklist)
-- [ ] Add badges to README.md (build status, TypeScript, license)
-- [ ] Create GitHub social preview image
-
-## Documentation Improvements
-
-- [ ] Add comparison table (vs create-t3-app, Turborepo starter, from scratch)
-- [ ] Add "Design Philosophy" section (why Fastify, TanStack Query, Zod, monorepo)
-- [ ] Add security documentation section (password hashing, CSRF, rate limiting, etc.)
-- [ ] Improve Quick Start section with expected output
-- [ ] Add troubleshooting section (common setup issues)
-- [ ] Add customization guide (rename project, add routes, change schema)
-
 ## Feature Additions
 
 - [x] User Management Admin UI (full CRUD, search/filter)
@@ -33,14 +16,30 @@
 
 ## UI & UX Improvements
 
+- [ ] Add "What's Included" section to landing page
 - [ ] Improve UI for auth pages (login, register, forgot password, reset password)
 - [ ] Show a better UI for the default dashboard
 - [ ] Better loading states (global loading bar, more skeleton screens, optimistic updates, suspense boundaries)
 - [ ] Better file upload UX (multiple files, progress bars, image cropping, better previews)
 - [ ] Form improvements (auto-save drafts, unsaved changes warning, field-level validation feedback)
-- [ ] Dark mode polish (smooth transitions, better component coverage)
-- [ ] Add breadcrumbs for navigation
 - [ ] Improve mobile responsiveness across all pages
+
+## Pre-Launch Critical
+
+- [ ] Rewrite README with comprehensive features section (auth, security, API, frontend, DX, built-in examples)
+- [ ] Add screenshots/GIFs (login, dashboard, API docs, examples page, setup terminal output)
+- [ ] Add deployment guide (env vars, platforms, security checklist)
+- [ ] Add badges to README.md (build status, TypeScript, license)
+- [ ] Create GitHub social preview image
+
+## Documentation Improvements
+
+- [ ] Add comparison table (vs create-t3-app, Turborepo starter, from scratch)
+- [ ] Add "Design Philosophy" section (why Fastify, TanStack Query, Zod, monorepo)
+- [ ] Add security documentation section (password hashing, CSRF, rate limiting, etc.)
+- [ ] Improve Quick Start section with expected output
+- [ ] Add troubleshooting section (common setup issues)
+- [ ] Add customization guide (rename project, add routes, change schema)
 
 ## Nice to Have
 
