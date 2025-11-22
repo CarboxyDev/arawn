@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { EmailVerificationBanner } from '@/components/auth/email-verification-banner';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { authClient } from '@/lib/auth';
 
@@ -27,14 +28,80 @@ const formatDate = (date: Date | string) => {
   });
 };
 
+function DashboardSkeleton() {
+  return (
+    <div className="container mx-auto max-w-6xl space-y-6 p-8">
+      <div className="flex items-center gap-4">
+        <Skeleton className="h-16 w-16 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-80" />
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="border-border bg-card rounded-lg border p-6">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-11 w-11 rounded-full" />
+              <div className="space-y-2">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-5 w-32" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {[...Array(2)].map((_, i) => (
+          <div key={i} className="border-border bg-card rounded-lg border p-8">
+            <div className="mb-4 flex items-center gap-2">
+              <Skeleton className="h-5 w-5 rounded" />
+              <Skeleton className="h-6 w-40" />
+            </div>
+            <div className="space-y-4">
+              {[...Array(3)].map((_, j) => (
+                <div key={j} className="flex items-start gap-3">
+                  <Skeleton className="mt-0.5 h-4 w-4 rounded" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="border-border bg-card rounded-lg border p-8">
+        <Skeleton className="mb-4 h-6 w-32" />
+        <div className="flex flex-wrap gap-3">
+          <Skeleton className="h-10 w-40 rounded-md" />
+          <Skeleton className="h-10 w-28 rounded-md" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
 
   const handleSignOut = async () => {
     await authClient.signOut();
     router.push('/');
   };
+
+  if (isPending) {
+    return (
+      <ProtectedRoute redirectTo="/login">
+        <DashboardSkeleton />
+      </ProtectedRoute>
+    );
+  }
 
   if (!session) return null;
 

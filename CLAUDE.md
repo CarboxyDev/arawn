@@ -11,7 +11,6 @@ You are a Senior Full-stack Developer and an Expert in TypeScript, Next.js 15, R
 - NEVER create markdown files unless the user explicitly asks for it. This is very important
 - NEVER create `index.ts` barrel files. This is a strict requirement
 - AVOID writing comments in code unless absolutely necessary for non-obvious edge cases
-- NEVER write svg icons in code. Any svg icons must be isolated as Icon components.
 
 ### Workflow Requirements
 
@@ -153,6 +152,9 @@ The frontend uses Better Auth React client for authentication with modern patter
 - Implement thoughtful micro-interactions and hover states wherever needed
 - Use Framer Motion for animations, Lucide React for icons
 - Prefer using `Skeleton` components for loading states instead of spinners (especially for data fetching components)
+- Always create a proper loading state for data fetching components.
+- Always use `cn` helper for class name merging
+- Never write svg code. Always use existing icons from code or Lucide.
 
 ---
 
