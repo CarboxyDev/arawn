@@ -20,7 +20,7 @@ export function GithubButton() {
     <Button
       type="button"
       variant="outline"
-      className="w-full border-gray-300 bg-white font-medium text-gray-700 hover:bg-gray-50"
+      className="w-full"
       onClick={handleGithubSignIn}
       disabled={isLoading}
     >

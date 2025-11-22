@@ -71,10 +71,10 @@ export default function LoginPage() {
   return (
     <RedirectIfAuthenticated>
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="bg-card w-full max-w-md rounded-lg border p-6 shadow-sm">
+        <div className="bg-card w-full max-w-md rounded-lg border p-8">
           <div className="mb-6">
             <h1 className="text-2xl font-semibold">Sign In</h1>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground mt-2 text-sm">
               Enter your email and password to access your account
             </p>
           </div>
@@ -106,7 +106,7 @@ export default function LoginPage() {
                 disabled={isLoading}
               />
               {errors.email && (
-                <p className="text-destructive text-sm">
+                <p className="text-destructive text-xs">
                   {errors.email.message}
                 </p>
               )}
@@ -120,12 +120,12 @@ export default function LoginPage() {
                 disabled={isLoading}
               />
               {errors.password && (
-                <p className="text-destructive text-sm">
+                <p className="text-destructive text-xs">
                   {errors.password.message}
                 </p>
               )}
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pt-2">
               <div className="flex items-center space-x-2">
                 <Checkbox id="rememberMe" {...register('rememberMe')} />
                 <Label
@@ -142,7 +142,7 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
-            <div className="flex flex-col space-y-4 pt-2">
+            <div className="flex flex-col gap-4 pt-2">
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </Button>

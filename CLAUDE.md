@@ -11,6 +11,7 @@ You are a Senior Full-stack Developer and an Expert in TypeScript, Next.js 15, R
 - NEVER create markdown files unless the user explicitly asks for it. This is very important
 - NEVER create `index.ts` barrel files. This is a strict requirement
 - AVOID writing comments in code unless absolutely necessary for non-obvious edge cases
+- NEVER write svg icons in code. Any svg icons must be isolated as Icon components.
 
 ### Workflow Requirements
 
