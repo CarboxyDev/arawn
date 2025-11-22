@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowLeft, CheckCircle2, KeyRound, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -10,7 +11,16 @@ import { z } from 'zod';
 
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { PasswordInput } from '@/components/ui/password-input';
 import { authClient } from '@/lib/auth';
 
@@ -37,12 +47,7 @@ export default function ChangePasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [changeSuccess, setChangeSuccess] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ChangePasswordFormData>({
+  const form = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
       currentPassword: '',
@@ -68,7 +73,7 @@ export default function ChangePasswordPage() {
       }
 
       setChangeSuccess(true);
-      reset();
+      form.reset();
       toast.success(
         data.revokeOtherSessions
           ? 'Password changed successfully! All other sessions have been signed out.'
@@ -82,49 +87,31 @@ export default function ChangePasswordPage() {
     }
   };
 
+  const hasErrors = Object.keys(form.formState.errors).length > 0;
+
   if (changeSuccess) {
     return (
       <ProtectedRoute redirectTo="/login">
-        <div className="container mx-auto max-w-2xl p-8">
-          <div className="bg-card rounded-lg border p-6 shadow-sm">
+        <div className="container mx-auto max-w-3xl space-y-6 p-8">
+          <div className="border-border bg-card rounded-lg border p-8">
             <div className="mb-6 text-center">
-              <div className="bg-primary/10 text-primary mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-6 w-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m4.5 12.75 6 6 9-13.5"
-                  />
-                </svg>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 text-green-600 dark:text-green-500">
+                <CheckCircle2 className="h-8 w-8" />
               </div>
-              <h1 className="text-2xl font-semibold">
-                Password changed successfully
+              <h1 className="text-2xl font-bold">
+                Password Changed Successfully
               </h1>
-              <p className="text-muted-foreground mt-2 text-sm">
+              <p className="text-muted-foreground mt-2">
                 Your password has been updated. You can continue using your
                 account with the new password.
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <Button
                 className="flex-1"
                 onClick={() => router.push('/dashboard')}
               >
                 Back to Dashboard
-              </Button>
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => setChangeSuccess(false)}
-              >
-                Change Again
               </Button>
             </div>
           </div>
@@ -135,120 +122,132 @@ export default function ChangePasswordPage() {
 
   return (
     <ProtectedRoute redirectTo="/login">
-      <div className="container mx-auto max-w-2xl p-8">
-        <div className="mb-4">
+      <div className="container mx-auto max-w-3xl space-y-6 p-8">
+        <div className="flex items-center gap-2">
           <Link
             href="/dashboard"
-            className="text-muted-foreground hover:text-foreground flex items-center text-sm transition-colors"
+            className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm transition-colors"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="mr-1 h-4 w-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-              />
-            </svg>
+            <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Link>
         </div>
-        <div className="bg-card rounded-lg border p-6 shadow-sm">
-          <div className="mb-6">
-            <h1 className="text-2xl font-semibold">Change password</h1>
-            <p className="text-muted-foreground text-sm">
-              Update your password to keep your account secure
-            </p>
+
+        <div className="border-border bg-card rounded-lg border p-8">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="bg-primary/10 text-primary rounded-full p-3">
+              <KeyRound className="h-6 w-6" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">Change Password</h1>
+              <p className="text-muted-foreground">
+                Update your password to keep your account secure
+              </p>
+            </div>
           </div>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="currentPassword">Current password</Label>
-              <PasswordInput
-                id="currentPassword"
-                placeholder="Enter current password"
-                {...register('currentPassword')}
-                disabled={isLoading}
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="currentPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Current Password</FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="Enter current password"
+                        disabled={isLoading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.currentPassword && (
-                <p className="text-destructive text-sm">
-                  {errors.currentPassword.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="newPassword">New password</Label>
-              <PasswordInput
-                id="newPassword"
-                placeholder="Enter new password"
-                {...register('newPassword')}
-                disabled={isLoading}
+
+              <FormField
+                control={form.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Password</FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="Enter new password"
+                        disabled={isLoading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.newPassword && (
-                <p className="text-destructive text-sm">
-                  {errors.newPassword.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm new password</Label>
-              <PasswordInput
-                id="confirmPassword"
-                placeholder="Confirm new password"
-                {...register('confirmPassword')}
-                disabled={isLoading}
+
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="Confirm new password"
+                        disabled={isLoading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.confirmPassword && (
-                <p className="text-destructive text-sm">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-            <div className="bg-muted/50 space-y-3 rounded-lg p-4">
-              <div>
-                <p className="text-muted-foreground text-sm font-medium">
-                  Password requirements:
-                </p>
-                <ul className="text-muted-foreground mt-2 list-inside list-disc space-y-1 text-sm">
-                  <li>At least 8 characters long</li>
-                  <li>Must be different from current password</li>
-                  <li>Must match confirmation password</li>
-                </ul>
-              </div>
-              <div className="border-muted border-t pt-3">
-                <div className="flex items-start space-x-2">
-                  <input
-                    type="checkbox"
-                    id="revokeOtherSessions"
-                    className="border-input bg-background mt-0.5 h-4 w-4 rounded border"
-                    {...register('revokeOtherSessions')}
-                    disabled={isLoading}
-                  />
-                  <div>
-                    <Label
-                      htmlFor="revokeOtherSessions"
-                      className="text-sm font-medium leading-none"
-                    >
-                      Sign out all other devices
-                    </Label>
-                    <p className="text-muted-foreground mt-1 text-xs">
-                      Recommended for security. This will end all active
-                      sessions on other devices.
-                    </p>
+
+              {hasErrors && (
+                <div className="border-destructive/50 bg-destructive/5 rounded-lg border p-4">
+                  <div className="flex items-start gap-3">
+                    <ShieldAlert className="text-destructive mt-0.5 h-5 w-5 shrink-0" />
+                    <div>
+                      <p className="text-destructive text-sm font-medium">
+                        Password requirements:
+                      </p>
+                      <ul className="text-destructive/80 mt-1.5 space-y-1 text-sm">
+                        <li>• At least 8 characters long</li>
+                        <li>• Different from current password</li>
+                        <li>• Passwords must match</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="flex flex-col space-y-4 pt-2">
+              )}
+
+              <FormField
+                control={form.control}
+                name="revokeOtherSessions"
+                render={({ field }) => (
+                  <FormItem className="border-border bg-muted/30 flex flex-row items-start space-x-3 space-y-0 rounded-lg border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Sign out all other devices</FormLabel>
+                      <FormDescription>
+                        Recommended for security. This will end all active
+                        sessions on other devices.
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Changing password...' : 'Change password'}
+                {isLoading ? 'Changing Password...' : 'Change Password'}
               </Button>
-            </div>
-          </form>
+            </form>
+          </Form>
         </div>
       </div>
     </ProtectedRoute>
