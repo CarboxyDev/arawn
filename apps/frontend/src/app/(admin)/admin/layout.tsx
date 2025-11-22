@@ -102,11 +102,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <ProtectedRoute
-      requiredRole="admin"
-      redirectTo="/dashboard"
-      loadingMessage="Loading admin panel..."
-    >
+    <ProtectedRoute requiredRole="admin" redirectTo="/dashboard">
       <AdminLayoutContent>{children}</AdminLayoutContent>
     </ProtectedRoute>
   );

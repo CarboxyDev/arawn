@@ -6,13 +6,14 @@ import {
   KeyRound,
   LogOut,
   Mail,
-  Settings,
   ShieldCheck,
+  ShieldUser,
   User,
-  UserCog,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { formatDateTime, getRelativeTime } from 'packages/utils/dist';
+import { formatShortDate } from 'packages/utils/dist/date';
 
 import { EmailVerificationBanner } from '@/components/auth/email-verification-banner';
 import { ProtectedRoute } from '@/components/auth/protected-route';
@@ -20,14 +21,6 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { authClient } from '@/lib/auth';
-
-const formatDate = (date: Date | string) => {
-  return new Date(date).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-};
 
 function DashboardSkeleton() {
   return (
@@ -116,13 +109,19 @@ export default function DashboardPage() {
     : session.user.email?.charAt(0).toUpperCase() || 'U';
 
   const accountCreatedDate = session.user.createdAt
-    ? formatDate(session.user.createdAt)
+    ? formatShortDate(session.user.createdAt)
     : 'N/A';
 
-  const sessionExpiresDate = formatDate(session.session.expiresAt);
+  const lastLoginDate = session.session.createdAt
+    ? getRelativeTime(session.session.createdAt, { alwaysShowTime: true })
+    : 'N/A';
+
+  const sessionExpiresDate = session.session.expiresAt
+    ? formatDateTime(session.session.expiresAt)
+    : 'N/A';
 
   const isEmailVerified = session.user.emailVerified;
-  const isAdminOrHigher =
+  const isAdmin =
     session.user.role === 'admin' || session.user.role === 'super_admin';
 
   return (
@@ -170,9 +169,9 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
-                  Session Expires
+                  Last Login
                 </p>
-                <p className="text-lg font-semibold">{sessionExpiresDate}</p>
+                <p className="text-lg font-semibold">{lastLoginDate}</p>
               </div>
             </div>
           </div>
@@ -232,7 +231,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <UserCog className="text-muted-foreground mt-0.5 h-4 w-4" />
+                <ShieldUser className="text-muted-foreground mt-0.5 h-4 w-4" />
                 <div className="flex-1">
                   <p className="text-muted-foreground text-xs font-medium">
                     Role
@@ -258,7 +257,7 @@ export default function DashboardPage() {
                     Session Created
                   </p>
                   <p className="text-sm font-medium">
-                    {formatDate(session.session.createdAt)}
+                    {formatDateTime(session.session.createdAt)}
                   </p>
                 </div>
               </div>
@@ -278,10 +277,10 @@ export default function DashboardPage() {
         <div className="border-border bg-card rounded-lg border p-8">
           <h2 className="mb-4 text-lg font-semibold">Quick Actions</h2>
           <div className="flex flex-wrap gap-3">
-            {isAdminOrHigher && (
+            {isAdmin && (
               <Link href="/admin">
                 <Button variant="default" className="gap-2">
-                  <Settings className="h-4 w-4" />
+                  <ShieldCheck className="h-4 w-4" />
                   Admin Dashboard
                 </Button>
               </Link>
