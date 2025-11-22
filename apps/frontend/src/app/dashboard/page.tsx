@@ -1,12 +1,31 @@
 'use client';
 
+import {
+  Calendar,
+  Clock,
+  KeyRound,
+  LogOut,
+  Mail,
+  ShieldCheck,
+  User,
+  UserCog,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { EmailVerificationBanner } from '@/components/auth/email-verification-banner';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { Button } from '@/components/ui/button';
+import { UserAvatar } from '@/components/ui/user-avatar';
 import { authClient } from '@/lib/auth';
+
+const formatDate = (date: Date | string) => {
+  return new Date(date).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+};
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -17,73 +36,191 @@ export default function DashboardPage() {
     router.push('/');
   };
 
+  if (!session) return null;
+
+  const userInitials = session.user.name
+    ? session.user.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    : session.user.email?.charAt(0).toUpperCase() || 'U';
+
+  const accountCreatedDate = session.user.createdAt
+    ? formatDate(session.user.createdAt)
+    : 'N/A';
+
+  const sessionExpiresDate = formatDate(session.session.expiresAt);
+
+  const isEmailVerified = session.user.emailVerified;
+
   return (
     <ProtectedRoute redirectTo="/login">
-      {session && (
-        <div className="container mx-auto max-w-4xl p-8">
-          <div className="mb-4">
-            <EmailVerificationBanner />
+      <div className="container mx-auto max-w-6xl space-y-6 p-8">
+        <div className="mb-4">
+          <EmailVerificationBanner />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <UserAvatar
+            src={session.user.image}
+            alt={session.user.name || 'User avatar'}
+            fallback={userInitials}
+          />
+          <div>
+            <h1 className="text-3xl font-bold">
+              Welcome back, {session.user.name || 'User'}!
+            </h1>
+            <p className="text-muted-foreground">
+              Here's what's happening with your account
+            </p>
           </div>
-          <div className="bg-card rounded-lg border p-6 shadow-sm">
-            <div className="mb-6">
-              <h1 className="text-2xl font-semibold">Dashboard</h1>
-              <p className="text-muted-foreground text-sm">
-                Welcome back, {session.user.name || session.user.email}!
-              </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="border-border bg-card rounded-lg border p-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 text-primary rounded-full p-3">
+                <Calendar className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+                  Account Created
+                </p>
+                <p className="text-lg font-semibold">{accountCreatedDate}</p>
+              </div>
             </div>
+          </div>
 
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h3 className="text-muted-foreground text-sm font-medium">
-                  User Information
-                </h3>
-                <div className="space-y-1">
-                  <p className="text-sm">
-                    <span className="font-medium">Email:</span>{' '}
-                    {session.user.email}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-medium">Name:</span>{' '}
-                    {session.user.name || 'Not set'}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-medium">User ID:</span>{' '}
-                    {session.user.id}
-                  </p>
-                </div>
+          <div className="border-border bg-card rounded-lg border p-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 text-primary rounded-full p-3">
+                <Clock className="h-5 w-5" />
               </div>
-
-              <div className="space-y-2">
-                <h3 className="text-muted-foreground text-sm font-medium">
-                  Session Information
-                </h3>
-                <div className="space-y-1">
-                  <p className="text-sm">
-                    <span className="font-medium">Session ID:</span>{' '}
-                    {session.session.id}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-medium">Expires:</span>{' '}
-                    {new Date(session.session.expiresAt).toLocaleString()}
-                  </p>
-                </div>
+              <div>
+                <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+                  Session Expires
+                </p>
+                <p className="text-lg font-semibold">{sessionExpiresDate}</p>
               </div>
+            </div>
+          </div>
 
-              <div className="flex flex-wrap gap-2">
-                <Link href="/dashboard/sessions">
-                  <Button variant="secondary">Manage Sessions</Button>
-                </Link>
-                <Link href="/dashboard/change-password">
-                  <Button variant="secondary">Change Password</Button>
-                </Link>
-                <Button onClick={handleSignOut} variant="outline">
-                  Sign Out
-                </Button>
+          <div className="border-border bg-card rounded-lg border p-6">
+            <div className="flex items-center gap-3">
+              <div
+                className={`rounded-full p-3 ${
+                  isEmailVerified
+                    ? 'bg-green-500/10 text-green-600 dark:text-green-500'
+                    : 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-500'
+                }`}
+              >
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+                  Email Status
+                </p>
+                <p className="text-lg font-semibold">
+                  {isEmailVerified ? 'Verified' : 'Not Verified'}
+                </p>
               </div>
             </div>
           </div>
         </div>
-      )}
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="border-border bg-card rounded-lg border p-8">
+            <div className="mb-4 flex items-center gap-2">
+              <User className="text-primary h-5 w-5" />
+              <h2 className="text-lg font-semibold">User Information</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Mail className="text-muted-foreground mt-0.5 h-4 w-4" />
+                <div className="flex-1">
+                  <p className="text-muted-foreground text-xs font-medium">
+                    Email Address
+                  </p>
+                  <p className="text-sm font-medium">{session.user.email}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <User className="text-muted-foreground mt-0.5 h-4 w-4" />
+                <div className="flex-1">
+                  <p className="text-muted-foreground text-xs font-medium">
+                    Display Name
+                  </p>
+                  <p className="text-sm font-medium">
+                    {session.user.name || (
+                      <span className="text-muted-foreground italic">
+                        Not set
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <UserCog className="text-muted-foreground mt-0.5 h-4 w-4" />
+                <div className="flex-1">
+                  <p className="text-muted-foreground text-xs font-medium">
+                    Role
+                  </p>
+                  <p className="text-sm font-medium capitalize">
+                    {session.user.role || 'User'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-border bg-card rounded-lg border p-8">
+            <div className="mb-4 flex items-center gap-2">
+              <Clock className="text-primary h-5 w-5" />
+              <h2 className="text-lg font-semibold">Session Details</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Calendar className="text-muted-foreground mt-0.5 h-4 w-4" />
+                <div className="flex-1">
+                  <p className="text-muted-foreground text-xs font-medium">
+                    Session Created
+                  </p>
+                  <p className="text-sm font-medium">
+                    {formatDate(session.session.createdAt)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Clock className="text-muted-foreground mt-0.5 h-4 w-4" />
+                <div className="flex-1">
+                  <p className="text-muted-foreground text-xs font-medium">
+                    Session Expires
+                  </p>
+                  <p className="text-sm font-medium">{sessionExpiresDate}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-border bg-card rounded-lg border p-8">
+          <h2 className="mb-4 text-lg font-semibold">Quick Actions</h2>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/dashboard/change-password">
+              <Button variant="default" className="gap-2">
+                <KeyRound className="h-4 w-4" />
+                Change Password
+              </Button>
+            </Link>
+            <Button onClick={handleSignOut} variant="outline" className="gap-2">
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </div>
     </ProtectedRoute>
   );
 }
