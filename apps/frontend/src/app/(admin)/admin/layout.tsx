@@ -1,14 +1,22 @@
 'use client';
 
-import { LayoutDashboard, ScrollText, ShieldCheck, Users } from 'lucide-react';
+import {
+  LayoutDashboard,
+  LogOut,
+  ScrollText,
+  ShieldCheck,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { type ReactNode } from 'react';
 
 import { ProtectedRoute } from '@/components/auth/protected-route';
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -20,6 +28,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { UserAvatar } from '@/components/ui/user-avatar';
+import { authClient } from '@/lib/auth';
 
 const adminNavItems = [
   {
@@ -41,6 +51,22 @@ const adminNavItems = [
 
 function AdminLayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    router.push('/');
+  };
+
+  const userInitials = session?.user.name
+    ? session.user.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    : session?.user.email?.charAt(0).toUpperCase() || 'A';
 
   return (
     <SidebarProvider>
@@ -88,6 +114,33 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        <SidebarFooter className="border-t p-4">
+          <div className="flex items-center gap-3">
+            <UserAvatar
+              src={session?.user.image}
+              alt={session?.user.name || 'Admin'}
+              fallback={userInitials}
+              className="size-8"
+            />
+            <div className="flex-1 overflow-hidden">
+              <p className="truncate text-sm font-medium">
+                {session?.user.name || 'Admin'}
+              </p>
+              <p className="text-muted-foreground truncate text-xs">
+                {session?.user.email}
+              </p>
+            </div>
+            <Button
+              onClick={handleSignOut}
+              variant="ghost"
+              size="icon"
+              className="size-8 shrink-0"
+              title="Sign out"
+            >
+              <LogOut className="size-4" />
+            </Button>
+          </div>
+        </SidebarFooter>
       </Sidebar>
       <SidebarInset>
         <header className="border-sidebar-border sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-white px-6 dark:bg-gray-950">
