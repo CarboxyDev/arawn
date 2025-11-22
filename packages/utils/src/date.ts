@@ -14,14 +14,50 @@ export function formatDateTime(date: Date | string): string {
   });
 }
 
-export function getRelativeTime(date: Date | string): string {
+export function formatShortDate(
+  date: Date | string,
+  includeYear = false
+): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return d.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    ...(includeYear && { year: 'numeric' }),
+  });
+}
+
+export function getRelativeTime(
+  date: Date | string,
+  options: { short?: boolean; alwaysShowTime?: boolean } = {}
+): string {
+  const { short = false, alwaysShowTime = false } = options;
   const d = typeof date === 'string' ? new Date(date) : date;
   const now = new Date();
   const seconds = Math.floor((now.getTime() - d.getTime()) / 1000);
 
-  if (seconds < 60) return 'just now';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+  if (seconds < 60) {
+    return alwaysShowTime ? (short ? '1m ago' : '1 minute ago') : 'just now';
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) {
+    return short ? `${minutes}m ago` : `${minutes} minutes ago`;
+  }
+
+  const hours = Math.floor(seconds / 3600);
+  if (hours < 24) {
+    return short ? `${hours}h ago` : `${hours} hours ago`;
+  }
+
+  const days = Math.floor(seconds / 86400);
+  if (days < 7) {
+    return short ? `${days}d ago` : `${days} days ago`;
+  }
+
+  const weeks = Math.floor(days / 7);
+  if (weeks < 4) {
+    return short ? `${weeks}w ago` : `${weeks} weeks ago`;
+  }
+
   return formatDate(d);
 }

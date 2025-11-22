@@ -2,12 +2,13 @@ import { type HealthCheck } from '@repo/packages-types';
 import { ArrowRight, Boxes, PackageCheck, Terminal } from 'lucide-react';
 import Link from 'next/link';
 
+import { GitHubIcon } from '@/components/icons/brand-icons';
 import { CommandBlock } from '@/components/landing/command-block';
 import { FeatureCard } from '@/components/landing/feature-card';
 import { IncludedFeatureCard } from '@/components/landing/included-feature-card';
 import { Logo } from '@/components/landing/logo';
 import { TechBadge } from '@/components/landing/tech-badge';
-import { PageHeader } from '@/components/layout/page-header';
+import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import { Button } from '@/components/ui/button';
 import {
   features,
@@ -15,6 +16,7 @@ import {
   quickStartCommands,
   techStack,
 } from '@/config/landing-data';
+import { siteConfig } from '@/config/site';
 
 async function getHealth(): Promise<HealthCheck | null> {
   try {
@@ -40,7 +42,12 @@ export default async function Home() {
 
   return (
     <main className="bg-background relative flex flex-1 flex-col items-center justify-center p-8 pb-0">
-      <PageHeader />
+      <div className="absolute right-8 top-8 flex items-center gap-2">
+        <Button asChild variant="default">
+          <Link href="/login">Sign In</Link>
+        </Button>
+        <AnimatedThemeToggler />
+      </div>
       <div className="w-full max-w-5xl space-y-12">
         <div className="space-y-6 text-center">
           <div className="flex justify-center">
@@ -72,9 +79,15 @@ export default async function Home() {
               variant="outline"
               className="group transition-all hover:scale-105"
             >
-              <Link href="/examples" className="flex items-center gap-2">
-                View Live Examples
-              </Link>
+              <a
+                href={siteConfig.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <GitHubIcon className="size-4" />
+                GitHub
+              </a>
             </Button>
           </div>
         </div>

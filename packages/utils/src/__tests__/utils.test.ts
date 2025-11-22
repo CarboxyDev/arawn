@@ -112,7 +112,7 @@ describe('getRelativeTime', () => {
   it('should return formatted date for old dates', () => {
     const now = new Date();
     vi.setSystemTime(now);
-    const oldDate = new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000);
+    const oldDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const result = getRelativeTime(oldDate);
     expect(result).toMatch(/\d{4}-\d{2}-\d{2}/);
   });
