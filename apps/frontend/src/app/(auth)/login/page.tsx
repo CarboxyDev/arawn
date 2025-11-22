@@ -143,8 +143,8 @@ export default function LoginPage() {
               </Link>
             </div>
             <div className="flex flex-col gap-4 pt-2">
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Signing in...' : 'Sign In'}
+              <Button type="submit" className="w-full" isLoading={isLoading}>
+                Sign In
               </Button>
               <p className="text-muted-foreground text-center text-sm">
                 Don&apos;t have an account?{' '}

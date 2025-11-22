@@ -243,8 +243,8 @@ export default function ChangePasswordPage() {
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Changing Password...' : 'Change Password'}
+              <Button type="submit" className="w-full" isLoading={isLoading}>
+                Change Password
               </Button>
             </form>
           </Form>

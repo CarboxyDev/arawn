@@ -214,8 +214,8 @@ function ResetPasswordContent() {
             </div>
           )}
           <div className="flex flex-col gap-4 pt-2">
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Resetting password...' : 'Reset password'}
+            <Button type="submit" className="w-full" isLoading={isLoading}>
+              Reset password
             </Button>
             <p className="text-muted-foreground text-center text-sm">
               Remember your password?{' '}

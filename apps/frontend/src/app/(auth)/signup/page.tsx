@@ -135,8 +135,8 @@ export default function SignupPage() {
               )}
             </div>
             <div className="flex flex-col gap-4 pt-2">
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Creating account...' : 'Create Account'}
+              <Button type="submit" className="w-full" isLoading={isLoading}>
+                Create Account
               </Button>
               <p className="text-muted-foreground text-center text-sm">
                 Already have an account?{' '}
