@@ -11,7 +11,7 @@
 - [x] Improve UI for auth pages (login, signup, forgot password, reset password)
 - [x] Improve UI for the default dashboard
 - [x] Improve UI for the change password page
-- [ ] Better loading states (global loading bar, more skeleton screens, optimistic updates, suspense boundaries)
+- [x] Better loading states (global loading bar, more skeleton variants)
 - [ ] Add more ways to navigate between pages
 - [ ] Improve mobile responsiveness across all pages
 
