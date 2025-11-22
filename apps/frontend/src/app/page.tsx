@@ -2,6 +2,7 @@ import { type HealthCheck } from '@repo/packages-types';
 import { ArrowRight, Boxes, PackageCheck, Terminal } from 'lucide-react';
 import Link from 'next/link';
 
+import { GitHubIcon } from '@/components/icons/brand-icons';
 import { CommandBlock } from '@/components/landing/command-block';
 import { FeatureCard } from '@/components/landing/feature-card';
 import { IncludedFeatureCard } from '@/components/landing/included-feature-card';
@@ -15,6 +16,7 @@ import {
   quickStartCommands,
   techStack,
 } from '@/config/landing-data';
+import { siteConfig } from '@/config/site';
 
 async function getHealth(): Promise<HealthCheck | null> {
   try {
@@ -72,9 +74,15 @@ export default async function Home() {
               variant="outline"
               className="group transition-all hover:scale-105"
             >
-              <Link href="/examples" className="flex items-center gap-2">
-                View Live Examples
-              </Link>
+              <a
+                href={siteConfig.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <GitHubIcon className="size-4" />
+                GitHub
+              </a>
             </Button>
           </div>
         </div>
