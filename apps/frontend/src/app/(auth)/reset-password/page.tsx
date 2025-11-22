@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
@@ -13,15 +14,9 @@ import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
 import { authClient } from '@/lib/auth';
 
-const resetPasswordSchema = z
-  .object({
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
+const resetPasswordSchema = z.object({
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
@@ -42,23 +37,24 @@ function ResetPasswordContent() {
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       password: '',
-      confirmPassword: '',
     },
   });
+
+  const hasErrors = Object.keys(errors).length > 0;
 
   if (!token || error) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="bg-card w-full max-w-md rounded-lg border p-6 shadow-sm">
+        <div className="bg-card w-full max-w-md rounded-lg border p-8">
           <div className="mb-6 text-center">
-            <div className="bg-destructive/10 text-destructive mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
+            <div className="bg-destructive/10 text-destructive mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="h-6 w-6"
+                className="h-7 w-7"
               >
                 <path
                   strokeLinecap="round"
@@ -72,7 +68,7 @@ function ResetPasswordContent() {
               This password reset link is invalid or has expired.
             </p>
           </div>
-          <div className="bg-muted/50 space-y-2 rounded-lg p-4">
+          <div className="bg-muted/50 mb-6 space-y-2 rounded-lg p-4">
             <p className="text-muted-foreground text-sm">
               Password reset links expire after 1 hour for security reasons.
             </p>
@@ -80,7 +76,7 @@ function ResetPasswordContent() {
               Please request a new password reset link to continue.
             </p>
           </div>
-          <div className="mt-6 flex flex-col gap-3">
+          <div className="flex flex-col gap-3">
             <Button
               className="w-full"
               onClick={() => router.push('/forgot-password')}
@@ -132,16 +128,16 @@ function ResetPasswordContent() {
   if (resetSuccess) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="bg-card w-full max-w-md rounded-lg border p-6 shadow-sm">
+        <div className="bg-card w-full max-w-md rounded-lg border p-8">
           <div className="mb-6 text-center">
-            <div className="bg-primary/10 text-primary mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
+            <div className="bg-primary/10 text-primary mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="h-6 w-6"
+                className="h-7 w-7"
               >
                 <path
                   strokeLinecap="round"
@@ -168,10 +164,10 @@ function ResetPasswordContent() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="bg-card w-full max-w-md rounded-lg border p-6 shadow-sm">
+      <div className="bg-card w-full max-w-md rounded-lg border p-8">
         <div className="mb-6">
           <h1 className="text-2xl font-semibold">Create new password</h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground mt-2 text-sm">
             Enter a new password for your account
           </p>
         </div>
@@ -180,42 +176,46 @@ function ResetPasswordContent() {
             <Label htmlFor="password">New password</Label>
             <PasswordInput
               id="password"
-              placeholder="Enter new password"
+              placeholder="Enter your new password"
               {...register('password')}
               disabled={isLoading}
             />
             {errors.password && (
-              <p className="text-destructive text-sm">
+              <p className="text-destructive text-xs">
                 {errors.password.message}
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm new password</Label>
-            <PasswordInput
-              id="confirmPassword"
-              placeholder="Confirm new password"
-              {...register('confirmPassword')}
-              disabled={isLoading}
-            />
-            {errors.confirmPassword && (
-              <p className="text-destructive text-sm">
-                {errors.confirmPassword.message}
+
+          {hasErrors && (
+            <div className="border-destructive/50 bg-destructive/5 rounded-lg border p-4">
+              <div className="flex items-start gap-3">
+                <ShieldAlert className="text-destructive mt-0.5 h-5 w-5 shrink-0" />
+                <div>
+                  <p className="text-destructive text-sm font-medium">
+                    Password requirements:
+                  </p>
+                  <ul className="text-destructive/80 mt-1.5 space-y-1 text-sm">
+                    <li>• At least 8 characters long</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!hasErrors && (
+            <div className="bg-muted/50 rounded-lg p-4">
+              <p className="text-muted-foreground text-sm font-medium">
+                Password requirements:
               </p>
-            )}
-          </div>
-          <div className="bg-muted/50 rounded-lg p-4">
-            <p className="text-muted-foreground text-sm font-medium">
-              Password requirements:
-            </p>
-            <ul className="text-muted-foreground mt-2 list-inside list-disc space-y-1 text-sm">
-              <li>At least 8 characters long</li>
-              <li>Must match confirmation password</li>
-            </ul>
-          </div>
-          <div className="flex flex-col space-y-4 pt-2">
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Resetting password...' : 'Reset password'}
+              <ul className="text-muted-foreground mt-2 space-y-1 text-sm">
+                <li>• At least 8 characters long</li>
+              </ul>
+            </div>
+          )}
+          <div className="flex flex-col gap-4 pt-2">
+            <Button type="submit" className="w-full" isLoading={isLoading}>
+              Reset password
             </Button>
             <p className="text-muted-foreground text-center text-sm">
               Remember your password?{' '}

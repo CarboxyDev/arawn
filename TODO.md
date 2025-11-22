@@ -4,18 +4,15 @@
 - [x] Admin Audit Logging (Postgres-based, track user actions, admin view, no external services)
 - [x] Admin Dashboard with all of the admin related pages
 - [x] Better Error Pages (custom 404, 500, 403, error boundaries with recovery)
-- [ ] SEO Optimization (og:image, Twitter cards, sitemap, robots.txt, JSON-LD)
 
 ## UI & UX Improvements
 
 - [x] Add "What's Included" section to landing page
-- [ ] Improve UI for auth pages (login, register, forgot password, reset password)
-- [ ] Add dashboard layout with sidebar for user
-- [ ] Add settings page for user
-- [ ] Show a better UI for the default dashboard
+- [x] Improve UI for auth pages (login, signup, forgot password, reset password)
+- [x] Improve UI for the default dashboard
+- [x] Improve UI for the change password page
 - [ ] Better loading states (global loading bar, more skeleton screens, optimistic updates, suspense boundaries)
-- [ ] Better file upload UX (multiple files, progress bars, image cropping, better previews)
-- [ ] Form improvements (auto-save drafts, unsaved changes warning, field-level validation feedback)
+- [ ] Add more ways to navigate between pages
 - [ ] Improve mobile responsiveness across all pages
 
 ## Pre-Launch Critical

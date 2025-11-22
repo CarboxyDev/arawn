@@ -17,17 +17,11 @@ import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
 import { authClient } from '@/lib/auth';
 
-const signupSchema = z
-  .object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  });
+const signupSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
 
 type SignupFormData = z.infer<typeof signupSchema>;
 
@@ -71,10 +65,10 @@ export default function SignupPage() {
   return (
     <RedirectIfAuthenticated>
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="bg-card w-full max-w-md rounded-lg border p-6 shadow-sm">
+        <div className="bg-card w-full max-w-md rounded-lg border p-8">
           <div className="mb-6">
             <h1 className="text-2xl font-semibold">Create Account</h1>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground mt-2 text-sm">
               Enter your information to create a new account
             </p>
           </div>
@@ -106,7 +100,7 @@ export default function SignupPage() {
                 disabled={isLoading}
               />
               {errors.name && (
-                <p className="text-destructive text-sm">
+                <p className="text-destructive text-xs">
                   {errors.name.message}
                 </p>
               )}
@@ -121,7 +115,7 @@ export default function SignupPage() {
                 disabled={isLoading}
               />
               {errors.email && (
-                <p className="text-destructive text-sm">
+                <p className="text-destructive text-xs">
                   {errors.email.message}
                 </p>
               )}
@@ -130,33 +124,19 @@ export default function SignupPage() {
               <Label htmlFor="password">Password</Label>
               <PasswordInput
                 id="password"
-                placeholder="Create a password"
+                placeholder="Create a password (min. 8 characters)"
                 {...register('password')}
                 disabled={isLoading}
               />
               {errors.password && (
-                <p className="text-destructive text-sm">
+                <p className="text-destructive text-xs">
                   {errors.password.message}
                 </p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <PasswordInput
-                id="confirmPassword"
-                placeholder="Confirm your password"
-                {...register('confirmPassword')}
-                disabled={isLoading}
-              />
-              {errors.confirmPassword && (
-                <p className="text-destructive text-sm">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-col space-y-4 pt-2">
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Creating account...' : 'Create Account'}
+            <div className="flex flex-col gap-4 pt-2">
+              <Button type="submit" className="w-full" isLoading={isLoading}>
+                Create Account
               </Button>
               <p className="text-muted-foreground text-center text-sm">
                 Already have an account?{' '}

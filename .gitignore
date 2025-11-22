@@ -10,6 +10,8 @@ coverage
 .env.*.local
 .DS_Store
 .temp
+tsconfig.tsbuildinfo
+*.tsbuildinfo
 
 # File uploads (local storage)
 apps/api/public/uploads/
