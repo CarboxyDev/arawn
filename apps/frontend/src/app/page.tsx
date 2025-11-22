@@ -8,7 +8,7 @@ import { FeatureCard } from '@/components/landing/feature-card';
 import { IncludedFeatureCard } from '@/components/landing/included-feature-card';
 import { Logo } from '@/components/landing/logo';
 import { TechBadge } from '@/components/landing/tech-badge';
-import { PageHeader } from '@/components/layout/page-header';
+import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import { Button } from '@/components/ui/button';
 import {
   features,
@@ -42,7 +42,12 @@ export default async function Home() {
 
   return (
     <main className="bg-background relative flex flex-1 flex-col items-center justify-center p-8 pb-0">
-      <PageHeader />
+      <div className="absolute right-8 top-8 flex items-center gap-2">
+        <Button asChild variant="default">
+          <Link href="/login">Sign In</Link>
+        </Button>
+        <AnimatedThemeToggler />
+      </div>
       <div className="w-full max-w-5xl space-y-12">
         <div className="space-y-6 text-center">
           <div className="flex justify-center">
