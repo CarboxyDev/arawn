@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutDashboard, ScrollText, Users } from 'lucide-react';
+import { LayoutDashboard, ScrollText, ShieldCheck, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { type ReactNode } from 'react';
@@ -11,6 +11,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
@@ -44,22 +45,25 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
       <Sidebar>
-        <SidebarHeader className="border-b px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
-              <LayoutDashboard className="text-primary-foreground h-4 w-4" />
+        <SidebarHeader className="h-14 border-b px-6 py-0">
+          <div className="flex h-full items-center gap-3">
+            <div className="bg-primary flex size-9 items-center justify-center rounded-lg shadow-sm">
+              <ShieldCheck className="text-primary-foreground size-5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-semibold">Admin Panel</span>
+              <span className="text-sm font-semibold">Admin Dashboard</span>
               <span className="text-muted-foreground text-xs">
-                Management Console
+                Manage Application
               </span>
             </div>
           </div>
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent className="pt-4">
           <SidebarGroup>
-            <SidebarGroupContent>
+            <SidebarGroupLabel className="px-4 text-xs font-semibold uppercase tracking-wider">
+              Navigation
+            </SidebarGroupLabel>
+            <SidebarGroupContent className="mt-2">
               <SidebarMenu>
                 {adminNavItems.map((item) => {
                   const Icon = item.icon;
@@ -67,7 +71,11 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
 
                   return (
                     <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton asChild isActive={isActive}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        tooltip={item.title}
+                      >
                         <Link href={item.href}>
                           <Icon />
                           <span>{item.title}</span>

@@ -6,6 +6,7 @@ import {
   KeyRound,
   LogOut,
   Mail,
+  Settings,
   ShieldCheck,
   User,
   UserCog,
@@ -121,6 +122,8 @@ export default function DashboardPage() {
   const sessionExpiresDate = formatDate(session.session.expiresAt);
 
   const isEmailVerified = session.user.emailVerified;
+  const isAdminOrHigher =
+    session.user.role === 'admin' || session.user.role === 'super_admin';
 
   return (
     <ProtectedRoute redirectTo="/login">
@@ -275,6 +278,14 @@ export default function DashboardPage() {
         <div className="border-border bg-card rounded-lg border p-8">
           <h2 className="mb-4 text-lg font-semibold">Quick Actions</h2>
           <div className="flex flex-wrap gap-3">
+            {isAdminOrHigher && (
+              <Link href="/admin">
+                <Button variant="default" className="gap-2">
+                  <Settings className="h-4 w-4" />
+                  Admin Dashboard
+                </Button>
+              </Link>
+            )}
             <Link href="/dashboard/change-password">
               <Button variant="default" className="gap-2">
                 <KeyRound className="h-4 w-4" />
