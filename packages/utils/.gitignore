@@ -1,0 +1,11 @@
+# Build artifacts (should never exist in source-only packages)
+dist/
+build/
+
+# Test coverage
+coverage/
+*.lcov
+
+# Temporary files
+*.log
+.DS_Store

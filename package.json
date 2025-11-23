@@ -12,7 +12,6 @@
     "dev:frontend": "turbo run dev --filter @repo/frontend",
     "dev:api": "turbo run dev --filter @repo/api",
     "dev:app": "turbo run dev --filter @repo/frontend --filter @repo/api",
-    "dev:packages": "turbo run dev --filter '@repo/packages-*'",
     "dev:email": "turbo run email:dev",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",

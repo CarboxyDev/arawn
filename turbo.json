@@ -4,19 +4,18 @@
   "globalDependencies": ["tsconfig.json", "turbo.json", "eslint.config.ts"],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [],
       "outputs": ["dist/**", ".next/**", "build/**"],
       "inputs": [
         "src/**",
         "prisma/**",
         "package.json",
         "tsconfig.json",
-        "tsup.config.ts",
         "next.config.ts"
       ]
     },
     "typecheck": {
-      "dependsOn": ["^build", "db:generate"],
+      "dependsOn": ["db:generate"],
       "cache": true,
       "inputs": ["src/**", "prisma/**", "tsconfig.json", "package.json"]
     },
@@ -29,17 +28,17 @@
       "cache": false
     },
     "lint": {
-      "dependsOn": ["^build"],
+      "dependsOn": [],
       "inputs": ["src/**", "eslint.config.*", "package.json"],
       "outputs": []
     },
     "lint:fix": {
-      "dependsOn": ["^build"],
+      "dependsOn": [],
       "cache": false,
       "inputs": ["src/**", "eslint.config.*", "package.json"]
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": [],
       "inputs": [
         "src/**",
         "**/*.test.ts",
@@ -50,7 +49,7 @@
       "outputs": ["coverage/**"]
     },
     "test:unit": {
-      "dependsOn": ["^build"],
+      "dependsOn": [],
       "inputs": [
         "src/**",
         "**/*.test.ts",
@@ -61,7 +60,7 @@
       "outputs": ["coverage/**"]
     },
     "test:integration": {
-      "dependsOn": ["^build"],
+      "dependsOn": [],
       "inputs": [
         "src/**",
         "test/**",
@@ -72,12 +71,12 @@
       "outputs": ["coverage/**"]
     },
     "test:watch": {
-      "dependsOn": ["^build"],
+      "dependsOn": [],
       "cache": false,
       "persistent": true
     },
     "test:coverage": {
-      "dependsOn": ["^build"],
+      "dependsOn": [],
       "outputs": ["coverage/**"],
       "inputs": [
         "src/**",
