@@ -2,7 +2,7 @@
 
 import type { Upload } from '@repo/packages-types';
 import { FileText, Image, Loader2, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import {
   useUploadFile,
 } from '@/hooks/api/use-uploads';
 
-export default function FileUploadExamplePage() {
+export default function FileUploadExamplePage(): React.ReactElement {
   const [selectedFile, setSelectedFile] = useState<globalThis.File | null>(
     null
   );

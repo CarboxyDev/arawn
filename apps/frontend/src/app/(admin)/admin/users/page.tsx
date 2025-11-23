@@ -1,8 +1,10 @@
 'use client';
 
+import React from 'react';
+
 import { UsersManagementTable } from '@/components/admin/users-management-table';
 
-export default function AdminUsersPage() {
+export default function AdminUsersPage(): React.ReactElement {
   return (
     <div className="container mx-auto px-6 py-8">
       <div className="mb-8">

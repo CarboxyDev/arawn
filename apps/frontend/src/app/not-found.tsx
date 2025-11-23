@@ -2,11 +2,12 @@
 
 import { FileQuestion } from 'lucide-react';
 import Link from 'next/link';
+import React from 'react';
 
 import { ErrorCard } from '@/components/error/error-card';
 import { Button } from '@/components/ui/button';
 
-export default function NotFound() {
+export default function NotFound(): React.ReactElement {
   return (
     <ErrorCard
       icon={FileQuestion}

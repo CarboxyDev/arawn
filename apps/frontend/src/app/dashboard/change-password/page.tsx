@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, CheckCircle2, KeyRound, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -42,7 +42,7 @@ const changePasswordSchema = z
 
 type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
-export default function ChangePasswordPage() {
+export default function ChangePasswordPage(): React.ReactElement {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [changeSuccess, setChangeSuccess] = useState(false);

@@ -1,5 +1,6 @@
 import { ArrowRight, Boxes, PackageCheck, Terminal } from 'lucide-react';
 import Link from 'next/link';
+import React from 'react';
 
 import { GitHubIcon } from '@/components/icons/brand-icons';
 import { CommandBlock } from '@/components/landing/command-block';
@@ -17,7 +18,7 @@ import {
 } from '@/config/landing-data';
 import { siteConfig } from '@/config/site';
 
-export default async function Home() {
+export default async function Home(): Promise<React.ReactElement> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
   const isLocalDev =
     apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');

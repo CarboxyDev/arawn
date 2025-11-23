@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { ScrollText, Users } from 'lucide-react';
 import Link from 'next/link';
+import React from 'react';
 
 const adminCards = [
   {
@@ -21,7 +22,7 @@ const adminCards = [
   },
 ];
 
-export default function AdminDashboardPage() {
+export default function AdminDashboardPage(): React.ReactElement {
   return (
     <div className="container mx-auto px-6 py-8">
       <div className="mb-8">
