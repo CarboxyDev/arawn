@@ -44,7 +44,7 @@ export const features = [
   {
     iconName: 'PackageOpen' as const,
     title: 'Shared Packages',
-    description: 'Types and utilities shared across frontend and backend',
+    description: 'Types and utilities shared across web and backend',
   },
   {
     iconName: 'Bot' as const,
@@ -55,8 +55,8 @@ export const features = [
 ] as const;
 
 export const techStack = {
-  frontend: {
-    title: 'Frontend',
+  web: {
+    title: 'Web',
     items: [
       'Next.js 16',
       'React 19',

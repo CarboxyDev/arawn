@@ -33,13 +33,13 @@ const SETUP_CONFIG = {
   services: ['postgres'],
   ports: [
     { port: 5432, service: 'PostgreSQL' },
-    { port: 3000, service: 'Frontend (Next.js)' },
+    { port: 3000, service: 'Web (Next.js)' },
     { port: 8080, service: 'API (Fastify)' },
   ],
   envFiles: [
     {
-      from: 'apps/frontend/.env.local.example',
-      to: 'apps/frontend/.env.local',
+      from: 'apps/web/.env.local.example',
+      to: 'apps/web/.env.local',
     },
     { from: 'apps/api/.env.local.example', to: 'apps/api/.env.local' },
   ],
@@ -677,7 +677,7 @@ ${bright}Next steps:${reset}
      ${cyan}pnpm dev${reset}
 
   2. Open your browser:
-     ${dim}Frontend:${reset}      http://localhost:3000
+     ${dim}Web:${reset}            http://localhost:3000
      ${dim}API:${reset}           http://localhost:8080
      ${dim}API Docs:${reset}      http://localhost:8080/docs
 

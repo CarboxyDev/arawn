@@ -9,7 +9,7 @@ export default mergeConfig(
   defineConfig({
     plugins: [react()],
     test: {
-      name: '@repo/frontend',
+      name: '@repo/web',
       include: ['src/**/*.{test,spec}.{ts,tsx}'],
       environment: 'jsdom',
       setupFiles: ['./src/test/setup.ts'],

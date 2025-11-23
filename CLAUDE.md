@@ -44,8 +44,8 @@ pnpm lint
 ### Individual Package Commands
 
 ```bash
-# Frontend (Next.js on port 3000)
-cd apps/frontend
+# Web (Next.js on port 3000)
+cd apps/web
 pnpm dev
 pnpm typecheck
 
@@ -93,7 +93,7 @@ pnpm db:seed          # Seed database
 ### Environment
 
 - Environment variables are managed per-app with Zod validation
-- Frontend: Only `NEXT_PUBLIC_*` variables are exposed to the browser
+- Web: Only `NEXT_PUBLIC_*` variables are exposed to the browser
 - Prisma CLI commands are wrapped with `dotenv-cli` to read from `.env.local`
 
 ### Database
@@ -118,7 +118,7 @@ Integration Tests: `*.integration.spec.ts`
 
 ---
 
-## Frontend Architecture Patterns
+## Web Architecture Patterns
 
 ### State Management
 
@@ -127,14 +127,14 @@ Integration Tests: `*.integration.spec.ts`
 
 ### API Integration
 
-- API config centralized in `apps/frontend/src/lib/api.ts`
+- API config centralized in `apps/web/src/lib/api.ts`
 - **API Response Unwrapping**: The `api.ts` fetcher unwraps `{ data: T }` to `T` but preserves `{ data: T[], pagination: {...} }` responses intact
 
 ### Authentication & Protected Routes
 
-The frontend uses Better Auth for authentication with modern patterns:
+The web app uses Better Auth for authentication with modern patterns:
 
-- **Auth Client**: Configured in `apps/frontend/src/lib/auth.ts`
+- **Auth Client**: Configured in `apps/web/src/lib/auth.ts`
   - Provides `useSession()` hook for accessing current user/session
   - Handles sign in/out, session persistence via cookies
 - **Protected Routes**: `<ProtectedRoute>` wrapper component for page-level protection

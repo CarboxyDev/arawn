@@ -153,7 +153,7 @@ export default async function Home(): Promise<React.ReactElement> {
                   rel="noopener noreferrer"
                   className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
                 >
-                  Frontend <span className="text-muted-foreground">:3000</span>
+                  Web <span className="text-muted-foreground">:3000</span>
                 </a>
                 <a
                   href={`http://localhost:${backendPort}`}
@@ -161,7 +161,7 @@ export default async function Home(): Promise<React.ReactElement> {
                   rel="noopener noreferrer"
                   className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
                 >
-                  Backend{' '}
+                  API{' '}
                   <span className="text-muted-foreground">:{backendPort}</span>
                 </a>
                 <a

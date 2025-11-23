@@ -12,7 +12,7 @@
     "noEmit": true,
     "baseUrl": "../../",
     "paths": {
-      "@/*": ["apps/frontend/src/*"]
+      "@/*": ["apps/web/src/*"]
     },
     "plugins": [
       {

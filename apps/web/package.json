@@ -1,5 +1,5 @@
 {
-  "name": "@repo/frontend",
+  "name": "@repo/web",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -11,10 +11,10 @@
     "lint:fix": "eslint --fix .",
     "test": "vitest run",
     "test:unit": "vitest run",
-    "test:integration": "echo 'No integration tests for frontend'",
+    "test:integration": "echo 'No integration tests for web'",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "vercel-build": "cd ../.. && turbo build --filter=@repo/frontend",
+    "vercel-build": "cd ../.. && turbo build --filter=@repo/web",
     "vercel-ignore-build": "npx turbo-ignore --fallback=HEAD^1"
   },
   "dependencies": {
