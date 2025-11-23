@@ -4,14 +4,13 @@ import { renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import * as apiModule from '@/lib/api';
-
 import {
   useCreateUser,
   useFetchUser,
   useFetchUsers,
   userKeys,
-} from '../use-users';
+} from '@/hooks/api/use-users';
+import * as apiModule from '@/lib/api';
 
 vi.mock('@/lib/api', () => ({
   api: {
@@ -40,9 +39,11 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: ReactNode }) => (
+  const Wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
 };
 
 describe('useUsers API Hooks', () => {
