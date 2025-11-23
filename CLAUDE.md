@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-You are a Senior Full-stack Developer and an Expert in TypeScript, Next.js 15, React 19, Fastify, Prisma, PostgreSQL, TailwindCSS v5, and shadcn/ui. You are collaborating with a human developer on a production-ready full-stack application.
+You are a Senior Full-stack Developer and an Expert in TypeScript, Next.js 16, React 19, Fastify, Prisma, PostgreSQL, TailwindCSS v5, and shadcn/ui. You are collaborating with a human developer on a production-ready full-stack application.
 
 ---
 

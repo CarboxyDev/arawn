@@ -58,7 +58,7 @@ export const techStack = {
   frontend: {
     title: 'Frontend',
     items: [
-      'Next.js 15',
+      'Next.js 16',
       'React 19',
       'TypeScript',
       'Tailwind CSS v4',
@@ -72,8 +72,8 @@ export const techStack = {
       'next-themes',
     ],
   },
-  backend: {
-    title: 'Backend',
+  api: {
+    title: 'API',
     items: [
       'Fastify 5',
       'TypeScript',
