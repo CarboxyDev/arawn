@@ -20,7 +20,10 @@ const env = loadEnv();
 
 export const app = Fastify({
   logger: {
-    level: env.LOG_LEVEL === 'minimal' ? 'error' : 'info',
+    level: 'trace',
+    formatters: {
+      level: (label) => ({ level: label }),
+    },
     transport:
       env.NODE_ENV === 'development'
         ? {
@@ -28,13 +31,13 @@ export const app = Fastify({
             options: {
               colorize: true,
               ignore: 'pid,hostname',
+              singleLine: false,
               translateTime: 'HH:MM:ss',
             },
           }
         : undefined,
   },
-  requestIdLogLabel: 'reqId',
-  disableRequestLogging: false,
+  disableRequestLogging: true,
   requestIdHeader: 'x-request-id',
   genReqId: () => `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
   bodyLimit: 1048576,
@@ -150,11 +153,11 @@ await app.register(scalarPlugin);
 const { default: schedulePlugin } = await import('@/plugins/schedule.js');
 await app.register(schedulePlugin);
 
-const errorHandler = async (
+const errorHandler = (
   error: FastifyError,
   request: FastifyRequest,
   reply: FastifyReply
-) => {
+): void => {
   request.log.error(
     {
       err: error,
@@ -166,29 +169,31 @@ const errorHandler = async (
   );
 
   if (error instanceof AppError) {
-    return reply.status(error.statusCode).send({
+    void reply.status(error.statusCode).send({
       error: {
         message: error.message,
         code: error.code,
         ...(error.details && { details: error.details }),
       },
     });
+    return;
   }
 
   if (error.validation) {
-    return reply.status(400).send({
+    void reply.status(400).send({
       error: {
         message: 'Validation failed',
         code: 'VALIDATION_ERROR',
         details: error.validation,
       },
     });
+    return;
   }
 
   const isProduction = env.NODE_ENV === 'production';
   const statusCode = error.statusCode || 500;
 
-  return reply.status(statusCode).send({
+  void reply.status(statusCode).send({
     error: {
       message:
         isProduction && statusCode === 500
@@ -202,25 +207,116 @@ const errorHandler = async (
 app.setErrorHandler(errorHandler);
 
 app.addHook('onRequest', async (request) => {
-  request.log = request.log.child({ reqId: request.id });
+  if (env.LOG_LEVEL === 'detailed' || env.LOG_LEVEL === 'verbose') {
+    request.log = request.log.child({ reqId: request.id });
+  }
 });
 
 app.addHook('onResponse', async (request, reply) => {
-  const responseTime = reply.elapsedTime;
+  try {
+    const responseTime = reply.elapsedTime;
+    const statusCode = reply.statusCode;
+    const isError = statusCode >= 400;
+    const logMessage = `${request.method} ${request.url} → ${statusCode} (${responseTime.toFixed(2)}ms)`;
 
-  if (env.LOG_LEVEL === 'minimal' && reply.statusCode < 400) {
-    return;
+    switch (env.LOG_LEVEL) {
+      case 'minimal':
+        if (isError) {
+          request.log.error(
+            {
+              method: request.method,
+              url: request.url,
+              statusCode,
+              responseTime: `${responseTime.toFixed(2)}ms`,
+            },
+            logMessage
+          );
+        }
+        break;
+
+      case 'normal':
+        if (isError) {
+          request.log.error(logMessage);
+        } else {
+          request.log.info(logMessage);
+        }
+        break;
+
+      case 'detailed':
+        if (isError) {
+          request.log.error(
+            {
+              method: request.method,
+              url: request.url,
+              statusCode,
+              responseTime: `${responseTime.toFixed(2)}ms`,
+              ip: request.ip,
+              userAgent: request.headers['user-agent'],
+            },
+            logMessage
+          );
+        } else {
+          request.log.info(
+            {
+              method: request.method,
+              url: request.url,
+              statusCode,
+              responseTime: `${responseTime.toFixed(2)}ms`,
+              ip: request.ip,
+              userAgent: request.headers['user-agent'],
+            },
+            logMessage
+          );
+        }
+        break;
+
+      case 'verbose':
+        if (isError) {
+          request.log.error(
+            {
+              method: request.method,
+              url: request.url,
+              statusCode,
+              responseTime: `${responseTime.toFixed(2)}ms`,
+              ip: request.ip,
+              userAgent: request.headers['user-agent'],
+              req: {
+                params: request.params,
+                query: request.query,
+                headers: request.headers,
+              },
+              res: {
+                headers: reply.getHeaders(),
+              },
+            },
+            logMessage
+          );
+        } else {
+          request.log.info(
+            {
+              method: request.method,
+              url: request.url,
+              statusCode,
+              responseTime: `${responseTime.toFixed(2)}ms`,
+              ip: request.ip,
+              userAgent: request.headers['user-agent'],
+              req: {
+                params: request.params,
+                query: request.query,
+                headers: request.headers,
+              },
+              res: {
+                headers: reply.getHeaders(),
+              },
+            },
+            logMessage
+          );
+        }
+        break;
+    }
+  } catch (error) {
+    console.error('[onResponse hook error]:', error);
   }
-
-  request.log.info(
-    {
-      method: request.method,
-      url: request.url,
-      statusCode: reply.statusCode,
-      responseTime: `${responseTime.toFixed(2)}ms`,
-    },
-    'Request completed'
-  );
 });
 
 app.get('/health', async (request, reply) => {

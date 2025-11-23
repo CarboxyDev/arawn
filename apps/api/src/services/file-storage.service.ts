@@ -44,9 +44,9 @@ export class FileStorageService {
 
   private initializeStorage(): void {
     if (this.storageType === 'local') {
-      this.logger.info('Using local file storage', {
-        uploadDir: this.localUploadDir,
-      });
+      this.logger.info(
+        `Using local file storage. Upload directory: ${this.localUploadDir}`
+      );
       return;
     }
 

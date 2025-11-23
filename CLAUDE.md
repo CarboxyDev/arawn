@@ -162,6 +162,7 @@ The frontend uses Better Auth for authentication with modern patterns:
 ### Logging
 
 - The API uses Pino for structured logging with request tracing
+- Verbosity controlled by `LOG_LEVEL` env var: `minimal` | `normal` | `detailed` | `verbose`
 - **IMPORTANT**: Never use `console.log` in the API. Use the logger service instead
 
 **Log Methods:**
@@ -169,5 +170,6 @@ The frontend uses Better Auth for authentication with modern patterns:
 - `logger.info(message, context?)` - Standard information
 - `logger.error(message, error?, context?)` - Errors with automatic Error serialization
 - `logger.warn(message, context?)` - Warnings
-- `logger.debug(message, context?)` - Debug information
-- `logger.http(message, context?)` - HTTP requests
+- `logger.debug(message, context?)` - Debug information (detailed+ level)
+- `logger.trace(message, context?)` - Trace logs (verbose level only)
+- `logger.perf(message, metrics)` - Performance metrics
