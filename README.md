@@ -14,7 +14,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 - **Zero-config setup**: Run one command and you're ready to code. Environment files, Docker containers, database migrations—all handled automatically.
 
-- **Full-stack type safety**: Zod schemas define your API contracts once in `packages/types`, then flow automatically to frontend forms, API validation, and database queries. No duplicate validation logic.
+- **Full-stack type safety**: Zod schemas define your API contracts once in `packages/types`, then flow automatically to web forms, API validation, and database queries. No duplicate validation logic.
 
 - **Production-grade infrastructure**: Better-auth with session management and OAuth ready. Request ID tracing, automatic validation, rate limiting, structured logging, and environment-aware error responses out of the box.
 
@@ -22,7 +22,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 ## Tech Stack
 
-**Frontend:** Next.js, React, TanStack Query, Tailwind CSS
+**Web:** Next.js, React, TanStack Query, Tailwind CSS
 
 **Backend:** Fastify, Prisma, PostgreSQL
 
@@ -33,7 +33,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 <p>
 
-**Frontend**
+**Web**
 
 - Next.js 16 + React 19
 - TanStack Query v5 for server state
@@ -78,7 +78,7 @@ You must have docker installed and running on your machine.
 
 **What's running:**
 
-- Frontend: [http://localhost:3000](http://localhost:3000)
+- Web: [http://localhost:3000](http://localhost:3000)
 - API: [http://localhost:8080/api](http://localhost:8080/api)
 - API Docs: [http://localhost:8080/docs](http://localhost:8080/docs)
 - Health Check: [http://localhost:8080/health](http://localhost:8080/health)
@@ -101,7 +101,7 @@ You must have docker installed and running on your machine.
 ```
 arawn/
 ├── apps/
-│   ├── frontend/     # Next.js app
+│   ├── web/          # Next.js app
 │   └── api/          # Fastify API
 └── packages/
     ├── types/        # Zod schemas + inferred types

@@ -16,7 +16,7 @@ pnpm dev
 
 ### Update Branding
 
-- `apps/frontend/src/config/site.ts` → Project name, description, GitHub URL
+- `apps/web/src/config/site.ts` → Project name, description, GitHub URL
 - `README.md` → Replace Arawn README.md with yours
 
 ### Optional: Change Database Credentials
