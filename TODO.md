@@ -12,7 +12,7 @@
 - [x] Improve UI for the default dashboard
 - [x] Improve UI for the change password page
 - [x] Better loading states (global loading bar, more skeleton variants)
-- [ ] Add more ways to navigate between pages
+- [x] Add more ways to navigate between pages
 - [ ] Improve mobile responsiveness across all pages
 
 ## Pre-Launch Critical
