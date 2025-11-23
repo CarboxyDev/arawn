@@ -4,7 +4,6 @@ import formbody from '@fastify/formbody';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import { AppError } from '@repo/packages-utils/errors';
-import closeWithGrace from 'close-with-grace';
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import Fastify from 'fastify';
 import {
@@ -13,15 +12,18 @@ import {
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod';
 
-import { loadEnv } from '@/config/env.js';
-import type { RateLimitRole } from '@/config/rate-limit.js';
-import { RATE_LIMIT_CONFIG } from '@/config/rate-limit.js';
+import { loadEnv } from '@/config/env';
+import type { RateLimitRole } from '@/config/rate-limit';
+import { RATE_LIMIT_CONFIG } from '@/config/rate-limit';
 
 const env = loadEnv();
 
-const app = Fastify({
+export const app = Fastify({
   logger: {
-    level: env.LOG_LEVEL === 'minimal' ? 'error' : 'info',
+    level: 'trace',
+    formatters: {
+      level: (label) => ({ level: label }),
+    },
     transport:
       env.NODE_ENV === 'development'
         ? {
@@ -29,13 +31,13 @@ const app = Fastify({
             options: {
               colorize: true,
               ignore: 'pid,hostname',
+              singleLine: false,
               translateTime: 'HH:MM:ss',
             },
           }
         : undefined,
   },
-  requestIdLogLabel: 'reqId',
-  disableRequestLogging: false,
+  disableRequestLogging: true,
   requestIdHeader: 'x-request-id',
   genReqId: () => `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
   bodyLimit: 1048576,
@@ -151,11 +153,11 @@ await app.register(scalarPlugin);
 const { default: schedulePlugin } = await import('@/plugins/schedule.js');
 await app.register(schedulePlugin);
 
-const errorHandler = async (
+const errorHandler = (
   error: FastifyError,
   request: FastifyRequest,
   reply: FastifyReply
-) => {
+): void => {
   request.log.error(
     {
       err: error,
@@ -167,29 +169,31 @@ const errorHandler = async (
   );
 
   if (error instanceof AppError) {
-    return reply.status(error.statusCode).send({
+    void reply.status(error.statusCode).send({
       error: {
         message: error.message,
         code: error.code,
         ...(error.details && { details: error.details }),
       },
     });
+    return;
   }
 
   if (error.validation) {
-    return reply.status(400).send({
+    void reply.status(400).send({
       error: {
         message: 'Validation failed',
         code: 'VALIDATION_ERROR',
         details: error.validation,
       },
     });
+    return;
   }
 
   const isProduction = env.NODE_ENV === 'production';
   const statusCode = error.statusCode || 500;
 
-  return reply.status(statusCode).send({
+  void reply.status(statusCode).send({
     error: {
       message:
         isProduction && statusCode === 500
@@ -203,25 +207,116 @@ const errorHandler = async (
 app.setErrorHandler(errorHandler);
 
 app.addHook('onRequest', async (request) => {
-  request.log = request.log.child({ reqId: request.id });
+  if (env.LOG_LEVEL === 'detailed' || env.LOG_LEVEL === 'verbose') {
+    request.log = request.log.child({ reqId: request.id });
+  }
 });
 
 app.addHook('onResponse', async (request, reply) => {
-  const responseTime = reply.elapsedTime;
+  try {
+    const responseTime = reply.elapsedTime;
+    const statusCode = reply.statusCode;
+    const isError = statusCode >= 400;
+    const logMessage = `${request.method} ${request.url} → ${statusCode} (${responseTime.toFixed(2)}ms)`;
 
-  if (env.LOG_LEVEL === 'minimal' && reply.statusCode < 400) {
-    return;
+    switch (env.LOG_LEVEL) {
+      case 'minimal':
+        if (isError) {
+          request.log.error(
+            {
+              method: request.method,
+              url: request.url,
+              statusCode,
+              responseTime: `${responseTime.toFixed(2)}ms`,
+            },
+            logMessage
+          );
+        }
+        break;
+
+      case 'normal':
+        if (isError) {
+          request.log.error(logMessage);
+        } else {
+          request.log.info(logMessage);
+        }
+        break;
+
+      case 'detailed':
+        if (isError) {
+          request.log.error(
+            {
+              method: request.method,
+              url: request.url,
+              statusCode,
+              responseTime: `${responseTime.toFixed(2)}ms`,
+              ip: request.ip,
+              userAgent: request.headers['user-agent'],
+            },
+            logMessage
+          );
+        } else {
+          request.log.info(
+            {
+              method: request.method,
+              url: request.url,
+              statusCode,
+              responseTime: `${responseTime.toFixed(2)}ms`,
+              ip: request.ip,
+              userAgent: request.headers['user-agent'],
+            },
+            logMessage
+          );
+        }
+        break;
+
+      case 'verbose':
+        if (isError) {
+          request.log.error(
+            {
+              method: request.method,
+              url: request.url,
+              statusCode,
+              responseTime: `${responseTime.toFixed(2)}ms`,
+              ip: request.ip,
+              userAgent: request.headers['user-agent'],
+              req: {
+                params: request.params,
+                query: request.query,
+                headers: request.headers,
+              },
+              res: {
+                headers: reply.getHeaders(),
+              },
+            },
+            logMessage
+          );
+        } else {
+          request.log.info(
+            {
+              method: request.method,
+              url: request.url,
+              statusCode,
+              responseTime: `${responseTime.toFixed(2)}ms`,
+              ip: request.ip,
+              userAgent: request.headers['user-agent'],
+              req: {
+                params: request.params,
+                query: request.query,
+                headers: request.headers,
+              },
+              res: {
+                headers: reply.getHeaders(),
+              },
+            },
+            logMessage
+          );
+        }
+        break;
+    }
+  } catch (error) {
+    console.error('[onResponse hook error]:', error);
   }
-
-  request.log.info(
-    {
-      method: request.method,
-      url: request.url,
-      statusCode: reply.statusCode,
-      responseTime: `${responseTime.toFixed(2)}ms`,
-    },
-    'Request completed'
-  );
 });
 
 app.get('/health', async (request, reply) => {
@@ -242,63 +337,30 @@ app.get('/health', async (request, reply) => {
   }
 });
 
-const registerRoutes = async () => {
-  const { default: usersRoutes } = await import('@/routes/users.js');
-  const { default: sessionsRoutes } = await import('@/routes/sessions.js');
-  const { default: passwordRoutes } = await import('@/routes/password.js');
-  const { default: verificationRoutes } = await import(
-    '@/routes/verification.js'
-  );
-  const { default: uploadsRoutes } = await import('@/routes/uploads.js');
-  const { default: uploadsServeRoutes } = await import(
-    '@/routes/uploads-serve.js'
-  );
-  const { default: accountsRoutes } = await import('@/routes/accounts.js');
-  const { default: auditRoutes } = await import('@/routes/audit.js');
-
-  // Register file serving (conditional on storage type)
-  await app.register(uploadsServeRoutes);
-
-  await app.register(
-    async (app) => {
-      await app.register(usersRoutes);
-      await app.register(sessionsRoutes);
-      await app.register(passwordRoutes);
-      await app.register(verificationRoutes);
-      await app.register(uploadsRoutes);
-      await app.register(accountsRoutes);
-      await app.register(auditRoutes);
-    },
-    { prefix: '/api' }
-  );
-};
-
-const start = async () => {
-  await registerRoutes();
-
-  try {
-    await app.listen({ port: env.PORT, host: '0.0.0.0' });
-    app.log.info(`🚀 API server ready at ${env.API_URL}`);
-    app.log.info(`📝 Environment: ${env.NODE_ENV}`);
-    app.log.info(`🔒 CORS enabled for: ${env.FRONTEND_URL}`);
-  } catch (err) {
-    app.log.error(err);
-    process.exit(1);
-  }
-};
-
-const closeListeners = closeWithGrace(
-  { delay: Number(process.env.FASTIFY_CLOSE_GRACE_DELAY) || 500 },
-  async ({ err }) => {
-    if (err) {
-      app.log.error(err);
-    }
-    await app.close();
-  }
+const { default: usersRoutes } = await import('@/routes/users.js');
+const { default: sessionsRoutes } = await import('@/routes/sessions.js');
+const { default: passwordRoutes } = await import('@/routes/password.js');
+const { default: verificationRoutes } = await import(
+  '@/routes/verification.js'
 );
+const { default: uploadsRoutes } = await import('@/routes/uploads.js');
+const { default: uploadsServeRoutes } = await import(
+  '@/routes/uploads-serve.js'
+);
+const { default: accountsRoutes } = await import('@/routes/accounts.js');
+const { default: auditRoutes } = await import('@/routes/audit.js');
 
-app.addHook('onClose', async () => {
-  closeListeners.uninstall();
-});
+await app.register(uploadsServeRoutes);
 
-start();
+await app.register(
+  async (app) => {
+    await app.register(usersRoutes);
+    await app.register(sessionsRoutes);
+    await app.register(passwordRoutes);
+    await app.register(verificationRoutes);
+    await app.register(uploadsRoutes);
+    await app.register(accountsRoutes);
+    await app.register(auditRoutes);
+  },
+  { prefix: '/api' }
+);

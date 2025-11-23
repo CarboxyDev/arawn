@@ -52,7 +52,7 @@ const servicesPlugin: FastifyPluginAsync = async (app) => {
   app.decorate('accountsService', accountsService);
   app.decorate('auditService', auditService);
 
-  app.log.info('✅ Services configured');
+  app.log.info('[+] Services configured');
 };
 
 export default fp(servicesPlugin);

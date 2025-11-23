@@ -35,10 +35,9 @@ const authPlugin: FastifyPluginAsync = async (app) => {
     };
   }
 
-  app.log.info({
-    providers: Object.keys(socialProviders),
-    message: 'OAuth providers configured',
-  });
+  app.log.info(
+    `[+] OAuth configured with providers: ${Object.keys(socialProviders).join(', ')}`
+  );
 
   const auth = betterAuth({
     database: prismaAdapter(app.prisma as unknown as PrismaClient, {
@@ -260,7 +259,7 @@ const authPlugin: FastifyPluginAsync = async (app) => {
     }
   );
 
-  app.log.info('✅ Better Auth configured');
+  app.log.info('[+] Better Auth configured');
 };
 
 async function toWebRequest(request: FastifyRequest): Promise<Request> {

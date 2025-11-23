@@ -14,7 +14,7 @@ const scalarPlugin: FastifyPluginAsync = async (app) => {
     },
   });
 
-  app.log.info('✅ Scalar API documentation configured at /docs');
+  app.log.info('[+] Scalar docs available at /docs');
 };
 
 export default fp(scalarPlugin);

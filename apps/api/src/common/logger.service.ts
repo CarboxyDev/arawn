@@ -1,50 +1,61 @@
+import type { FastifyBaseLogger } from 'fastify';
 import pino, { type Logger } from 'pino';
 
 import { loadEnv } from '@/config/env';
 
 type VerbosityLevel = 'minimal' | 'normal' | 'detailed' | 'verbose';
-type LogLevel = 'error' | 'warn' | 'info' | 'debug' | 'http';
+type LogLevel = 'error' | 'warn' | 'info' | 'debug' | 'trace';
 
 interface LogContext {
   [key: string]: unknown;
 }
 
+interface PerformanceMetrics {
+  operation: string;
+  duration: number;
+  [key: string]: unknown;
+}
+
 export class LoggerService {
-  private readonly logger: Logger;
+  private readonly logger: Logger | FastifyBaseLogger;
   private readonly globalVerbosity: VerbosityLevel;
   private readonly isDevelopment: boolean;
   private verbosityOverride?: VerbosityLevel;
   private context?: string;
 
-  constructor() {
+  constructor(existingLogger?: Logger | FastifyBaseLogger) {
     const env = loadEnv();
     this.isDevelopment = env.NODE_ENV === 'development';
     this.globalVerbosity = env.LOG_LEVEL;
 
-    this.logger = pino({
-      level: 'trace',
-      formatters: {
-        level: (label) => ({ level: label }),
-      },
-      serializers: {
-        err: pino.stdSerializers.err,
-        error: pino.stdSerializers.err,
-        req: pino.stdSerializers.req,
-        res: pino.stdSerializers.res,
-      },
-      transport: this.isDevelopment
-        ? {
-            target: 'pino-pretty',
-            options: {
-              colorize: true,
-              ignore: 'pid,hostname',
-              singleLine: false,
-              messageFormat: '{if context}[{context}] {end}{msg}',
-              translateTime: 'HH:MM:ss',
-            },
-          }
-        : undefined,
-    });
+    if (existingLogger) {
+      this.logger = existingLogger;
+    } else {
+      this.logger = pino({
+        level: 'trace',
+        formatters: {
+          level: (label) => ({ level: label }),
+        },
+        serializers: {
+          err: pino.stdSerializers.err,
+          error: pino.stdSerializers.err,
+          req: pino.stdSerializers.req,
+          res: pino.stdSerializers.res,
+        },
+        transport: this.isDevelopment
+          ? {
+              target: 'pino-pretty',
+              options: {
+                colorize: true,
+                ignore: 'pid,hostname',
+                singleLine: false,
+                messageFormat: '{if context}[{context}] {end}{msg}',
+                translateTime: 'HH:MM:ss',
+              },
+            }
+          : undefined,
+      });
+    }
   }
 
   minimal(): this {
@@ -116,10 +127,27 @@ export class LoggerService {
     }
   }
 
-  http(message: string, context?: LogContext): void {
-    if (this.shouldLog('http')) {
-      this.writeLog('info', message, context);
+  trace(message: string, context?: LogContext): void {
+    if (this.shouldLog('trace')) {
+      this.writeLog('trace', message, context);
     }
+  }
+
+  perf(message: string, metrics: PerformanceMetrics): void {
+    if (this.shouldLog('debug')) {
+      this.writeLog('debug', message, {
+        performance: true,
+        ...metrics,
+      });
+    }
+  }
+
+  getVerbosity(): VerbosityLevel {
+    return this.verbosityOverride ?? this.globalVerbosity;
+  }
+
+  getRawLogger(): Logger | FastifyBaseLogger {
+    return this.logger;
   }
 
   private shouldLog(level: LogLevel): boolean {
@@ -141,26 +169,50 @@ export class LoggerService {
       case 'warn':
         return currentLevel >= 0;
       case 'info':
-      case 'http':
         return currentLevel >= 1;
       case 'debug':
         return currentLevel >= 2;
+      case 'trace':
+        return currentLevel >= 3;
       default:
         return false;
     }
   }
 
   private writeLog(
-    level: 'info' | 'error' | 'warn' | 'debug',
+    level: 'info' | 'error' | 'warn' | 'debug' | 'trace',
     message: string,
     context?: LogContext
   ): void {
-    const enrichedContext: LogContext = {
-      ...(this.context && { context: this.context }),
-      ...context,
-    };
+    const effectiveVerbosity = this.verbosityOverride ?? this.globalVerbosity;
+    const enrichedContext: LogContext = {};
 
-    this.logger[level](enrichedContext, message);
+    if (effectiveVerbosity === 'minimal') {
+      // Minimal: message only + critical error fields
+      if (context?.err) enrichedContext.err = context.err;
+      if (context?.error) enrichedContext.error = context.error;
+    } else if (effectiveVerbosity === 'normal') {
+      // Normal: [context] + message + error fields (no additional fields)
+      if (this.context) {
+        enrichedContext.context = this.context;
+      }
+      if (context?.err) enrichedContext.err = context.err;
+      if (context?.error) enrichedContext.error = context.error;
+      if (context?.trace) enrichedContext.trace = context.trace;
+    } else {
+      // Detailed & Verbose: [context] + message + all fields
+      if (this.context) {
+        enrichedContext.context = this.context;
+      }
+      if (context) {
+        Object.assign(enrichedContext, context);
+      }
+    }
+
+    (this.logger[level] as (obj: object, msg?: string) => void)(
+      enrichedContext,
+      message
+    );
   }
 
   private clone(): this {

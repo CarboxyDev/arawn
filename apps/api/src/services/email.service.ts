@@ -1,12 +1,11 @@
 import type { PrismaClient } from '@prisma/client';
 import { render } from '@react-email/components';
+import PasswordResetEmail from 'emails/password-reset-email';
+import VerificationEmail from 'emails/verification-email';
 import { Resend } from 'resend';
 
 import type { LoggerService } from '@/common/logger.service';
 import type { Env } from '@/config/env';
-
-import PasswordResetEmail from '../../emails/password-reset-email';
-import VerificationEmail from '../../emails/verification-email';
 
 export class EmailService {
   private resend: Resend | null = null;
@@ -25,9 +24,9 @@ export class EmailService {
 
     if (this.isConfigured) {
       this.resend = new Resend(this.env.RESEND_API_KEY!);
-      this.logger.info('Email service initialized with Resend', {
-        from: this.emailFrom,
-      });
+      this.logger.info(
+        `[+] Email service initialized with Resend. Email: ${this.emailFrom}`
+      );
     } else {
       this.logger.warn(
         'Email service not configured (missing RESEND_API_KEY or EMAIL_FROM) - emails will be logged to console'

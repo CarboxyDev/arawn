@@ -51,8 +51,6 @@ const swaggerPlugin: FastifyPluginAsync = async (app) => {
     },
     transform: jsonSchemaTransform,
   });
-
-  app.log.info('✅ Swagger configured');
 };
 
 export default fp(swaggerPlugin);
