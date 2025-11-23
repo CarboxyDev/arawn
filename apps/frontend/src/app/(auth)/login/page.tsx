@@ -24,8 +24,6 @@ const loginSchema = z.object({
   rememberMe: z.boolean().default(false),
 });
 
-type LoginFormData = z.infer<typeof loginSchema>;
-
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);

@@ -2,7 +2,7 @@ import type { PrismaClient } from '@prisma/client';
 import { UnauthorizedError, ValidationError } from '@repo/packages-utils';
 import * as bcrypt from 'bcryptjs';
 
-import { SessionsService } from '@/services/sessions.service';
+import { type SessionsService } from '@/services/sessions.service';
 
 export class PasswordService {
   constructor(

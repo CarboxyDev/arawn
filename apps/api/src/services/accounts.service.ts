@@ -1,7 +1,7 @@
 import type { PrismaClient } from '@prisma/client';
 import { NotFoundError, ValidationError } from '@repo/packages-utils/errors';
 
-import { LoggerService } from '@/common/logger.service';
+import { type LoggerService } from '@/common/logger.service';
 
 export interface ConnectedAccount {
   providerId: string;

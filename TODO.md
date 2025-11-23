@@ -18,6 +18,7 @@
 ## Pre-Launch Critical
 
 - [ ] Rewrite README with comprehensive features section (auth, security, API, frontend, DX, built-in examples)
+- [ ] Update GETTING_STARTED.md
 - [ ] Add screenshots/GIFs (login, dashboard, API docs, examples page, setup terminal output)
 - [ ] Add deployment guide (env vars, platforms, security checklist)
 - [ ] Add badges to README.md (build status, TypeScript, license)
