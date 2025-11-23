@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Production-ready TypeScript monorepo with Next.js and Fastify",
+  "description": "Production-ready Full Stack TypeScript monorepo with Next.js and Fastify",
   "scripts": {
     "init:project": "node scripts/setup.js",
     "dev": "turbo run dev",
     "dev:tui": "turbo run dev --ui=tui",
     "dev:debug": "turbo run dev --verbose",
     "dev:frontend": "turbo run dev --filter @repo/frontend",
+    "dev:api": "turbo run dev --filter @repo/api",
     "dev:app": "turbo run dev --filter @repo/frontend --filter @repo/api",
     "dev:packages": "turbo run dev --filter '@repo/packages-*'",
     "dev:email": "turbo run email:dev",
@@ -24,7 +25,6 @@
     "test:coverage": "turbo run test:coverage",
     "test:parallel": "turbo run test --concurrency=3",
     "graph": "turbo run build --graph=graph.html && open graph.html",
-    "graph:dev": "turbo run dev --graph=dev-graph.html && open dev-graph.html",
     "analyze": "turbo run build --dry-run=json > build-plan.json",
     "prepare": "husky"
   },

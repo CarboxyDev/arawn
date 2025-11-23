@@ -4,7 +4,7 @@
   "globalDependencies": ["tsconfig.json", "turbo.json"],
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "typecheck"],
+      "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "build/**"],
       "inputs": [
         "src/**",
@@ -16,9 +16,9 @@
       ]
     },
     "typecheck": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "db:generate"],
       "cache": true,
-      "inputs": ["src/**", "tsconfig.json", "package.json"]
+      "inputs": ["src/**", "prisma/**", "tsconfig.json", "package.json"]
     },
     "dev": {
       "dependsOn": ["db:generate"],
@@ -86,6 +86,34 @@
         "vitest.config.ts",
         "package.json"
       ]
+    },
+    "clean": {
+      "cache": false,
+      "outputs": []
+    },
+    "format": {
+      "cache": false,
+      "outputs": []
+    },
+    "format:check": {
+      "cache": true,
+      "outputs": []
+    },
+    "db:migrate": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:push": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:seed": {
+      "cache": false,
+      "outputs": []
     }
   }
 }

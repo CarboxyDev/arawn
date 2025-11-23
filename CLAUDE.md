@@ -96,10 +96,9 @@ All packages (`@repo/packages-types`, `@repo/packages-utils`) are consumed as wo
 - Run in watch mode during development
 - Frontend's `next.config.ts` transpiles these packages on-the-fly
 
-### Environment Configuration
+### Environment
 
-Environment variables are managed per-app with Zod validation
-
+- Environment variables are managed per-app with Zod validation
 - Frontend: Only `NEXT_PUBLIC_*` variables are exposed to the browser
 - Prisma CLI commands are wrapped with `dotenv-cli` to read from `.env.local`
 
@@ -110,18 +109,18 @@ Environment variables are managed per-app with Zod validation
 
 ### Type Safety & Validation
 
-The codebase emphasizes runtime and compile-time type safety with **Zod v4 as the single validation library** across the entire stack:
-
-- NO class-validator - only Zod
+- The codebase emphasizes runtime and compile-time type safety with **Zod v4 as the single validation library** across the entire stack
+- No class-validator
 
 ### Testing
 
 Unit Tests: `*.spec.ts`
 Integration Tests: `*.integration.spec.ts`
 
-**Better Auth Integration:**
+### Authentication
 
-- **IMPORTANT**: When creating test users with password auth, set `accountId` to the user's email (not user.id)
+- Uses Better Auth
+- When creating test users with password auth, set `accountId` to the user's email (not user.id)
 
 ---
 
@@ -139,7 +138,7 @@ Integration Tests: `*.integration.spec.ts`
 
 ### Authentication & Protected Routes
 
-The frontend uses Better Auth React client for authentication with modern patterns:
+The frontend uses Better Auth for authentication with modern patterns:
 
 - **Auth Client**: Configured in `apps/frontend/src/lib/auth.ts`
   - Provides `useSession()` hook for accessing current user/session
