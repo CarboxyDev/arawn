@@ -13,6 +13,17 @@ import unusedImports from 'eslint-plugin-unused-imports';
 import globals from 'globals';
 
 export default [
+  {
+    ignores: [
+      '**/dist/**',
+      '**/build/**',
+      '**/.next/**',
+      '**/node_modules/**',
+      '**/.turbo/**',
+      '**/coverage/**',
+      '**/next-env.d.ts',
+    ],
+  },
   eslint.configs.recommended,
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
@@ -57,6 +68,7 @@ export default [
 
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs['core-web-vitals'].rules,
+      '@next/next/no-html-link-for-pages': 'off', // Using App Router, not Pages Router
 
       ...reactHooks.configs.recommended.rules,
       'react-hooks/exhaustive-deps': 'warn',
@@ -102,16 +114,6 @@ export default [
       'unicorn/prevent-abbreviations': 'off',
       'unicorn/no-array-reduce': 'off',
     },
-  },
-  {
-    ignores: [
-      'dist/**',
-      'build/**',
-      '.next/**',
-      'node_modules/**',
-      '.turbo/**',
-      'coverage/**',
-    ],
   },
   prettier,
 ] satisfies Linter.Config[];
