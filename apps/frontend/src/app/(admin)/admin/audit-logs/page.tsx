@@ -7,7 +7,7 @@ import type {
 } from '@repo/packages-types';
 import { format } from 'date-fns';
 import { Calendar, Eye, Search, User, UserX } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { AuditLogDetailsDialog } from '@/components/admin/audit-log-details-dialog';
 import { Badge } from '@/components/ui/badge';
@@ -345,6 +345,6 @@ function AuditLogsContent() {
   );
 }
 
-export default function AuditLogsPage() {
+export default function AuditLogsPage(): React.ReactElement {
   return <AuditLogsContent />;
 }
