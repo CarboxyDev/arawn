@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -24,9 +24,7 @@ const loginSchema = z.object({
   rememberMe: z.boolean().default(false),
 });
 
-type LoginFormData = z.infer<typeof loginSchema>;
-
-export default function LoginPage() {
+export default function LoginPage(): React.ReactElement {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 

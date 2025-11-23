@@ -35,7 +35,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 **Frontend**
 
-- Next.js 15 + React 19
+- Next.js 16 + React 19
 - TanStack Query v5 for server state
 - shadcn/ui + Tailwind CSS v4
 - React Hook Form + Zod validation
@@ -101,7 +101,7 @@ You must have docker installed and running on your machine.
 ```
 arawn/
 ├── apps/
-│   ├── frontend/     # Next.js 15 app
+│   ├── frontend/     # Next.js app
 │   └── api/          # Fastify API
 └── packages/
     ├── types/        # Zod schemas + inferred types

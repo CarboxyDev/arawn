@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Production-ready TypeScript monorepo with Next.js and Fastify",
+  "description": "Production-ready Full Stack TypeScript monorepo with Next.js and Fastify",
   "scripts": {
     "init:project": "node scripts/setup.js",
     "dev": "turbo run dev",
     "dev:tui": "turbo run dev --ui=tui",
     "dev:debug": "turbo run dev --verbose",
     "dev:frontend": "turbo run dev --filter @repo/frontend",
+    "dev:api": "turbo run dev --filter @repo/api",
     "dev:app": "turbo run dev --filter @repo/frontend --filter @repo/api",
     "dev:packages": "turbo run dev --filter '@repo/packages-*'",
     "dev:email": "turbo run email:dev",
@@ -24,11 +25,11 @@
     "test:coverage": "turbo run test:coverage",
     "test:parallel": "turbo run test --concurrency=3",
     "graph": "turbo run build --graph=graph.html && open graph.html",
-    "graph:dev": "turbo run dev --graph=dev-graph.html && open dev-graph.html",
     "analyze": "turbo run build --dry-run=json > build-plan.json",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^16.0.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -38,11 +39,15 @@
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-n": "^17.23.1",
     "eslint-plugin-promise": "^7.2.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unicorn": "^61.0.2",
     "eslint-plugin-unused-imports": "^4.2.0",
+    "globals": "^16.5.0",
     "husky": "^9.1.7",
     "jsdom": "^27.0.0",
     "lint-staged": "^15.2.11",
@@ -57,5 +62,12 @@
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "csstype": "^3.2.3",
+      "@types/react": "19.2.6",
+      "@types/react-dom": "19.2.3"
+    }
   }
 }

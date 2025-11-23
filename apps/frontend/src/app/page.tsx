@@ -1,6 +1,6 @@
-import { type HealthCheck } from '@repo/packages-types';
 import { ArrowRight, Boxes, PackageCheck, Terminal } from 'lucide-react';
 import Link from 'next/link';
+import React from 'react';
 
 import { GitHubIcon } from '@/components/icons/brand-icons';
 import { CommandBlock } from '@/components/landing/command-block';
@@ -18,22 +18,7 @@ import {
 } from '@/config/landing-data';
 import { siteConfig } from '@/config/site';
 
-async function getHealth(): Promise<HealthCheck | null> {
-  try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-    const res = await fetch(`${apiUrl}/health`, {
-      cache: 'no-store',
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
-}
-
-export default async function Home() {
-  const health = await getHealth();
-
+export default async function Home(): Promise<React.ReactElement> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
   const isLocalDev =
     apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');

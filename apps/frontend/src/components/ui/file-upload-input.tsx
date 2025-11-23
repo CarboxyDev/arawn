@@ -102,6 +102,13 @@ export function FileUploadInput({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   const handleClear = () => {
     setSelectedFile(null);
     setError(null);
@@ -122,10 +129,13 @@ export function FileUploadInput({
       />
 
       <div
+        role="button"
+        tabIndex={0}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={cn(
           'relative flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 transition-colors',
           isDragging && !disabled && 'border-primary bg-primary/5',

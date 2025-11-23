@@ -10,7 +10,7 @@ import Fastify from 'fastify';
 import {
   serializerCompiler,
   validatorCompiler,
-  ZodTypeProvider,
+  type ZodTypeProvider,
 } from 'fastify-type-provider-zod';
 
 import { loadEnv } from '@/config/env.js';

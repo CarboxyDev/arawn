@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { type ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { Button } from '@/components/ui/button';
@@ -153,7 +153,11 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
   );
 }
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactElement {
   return (
     <ProtectedRoute requiredRole="admin" redirectTo="/dashboard">
       <AdminLayoutContent>{children}</AdminLayoutContent>

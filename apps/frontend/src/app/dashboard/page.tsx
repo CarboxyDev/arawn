@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatDateTime, getRelativeTime } from 'packages/utils/dist';
 import { formatShortDate } from 'packages/utils/dist/date';
+import React from 'react';
 
 import { EmailVerificationBanner } from '@/components/auth/email-verification-banner';
 import { ProtectedRoute } from '@/components/auth/protected-route';
@@ -292,7 +293,7 @@ function DashboardContent() {
   );
 }
 
-export default function DashboardPage() {
+export default function DashboardPage(): React.ReactElement {
   return (
     <ProtectedRoute redirectTo="/login" fallback={<DashboardSkeleton />}>
       <DashboardContent />

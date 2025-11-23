@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { env } from './env';
 
 export class ApiError extends Error {
