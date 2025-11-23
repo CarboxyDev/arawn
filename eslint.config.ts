@@ -1,4 +1,5 @@
 import eslint from '@eslint/js';
+import nextPlugin from '@next/eslint-plugin-next';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
 import type { Linter } from 'eslint';
@@ -32,6 +33,7 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tseslint,
+      '@next/next': nextPlugin,
       react,
       'react-hooks': reactHooks,
       'jsx-a11y': jsxA11y,
@@ -52,6 +54,9 @@ export default [
       'react/react-in-jsx-scope': 'off',
       'react/display-name': 'warn',
       'react/no-unescaped-entities': 'off',
+
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
 
       ...reactHooks.configs.recommended.rules,
       'react-hooks/exhaustive-deps': 'warn',

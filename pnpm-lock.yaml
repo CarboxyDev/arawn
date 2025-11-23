@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     devDependencies:
+      '@next/eslint-plugin-next':
+        specifier: ^16.0.3
+        version: 16.0.3
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1
@@ -1980,6 +1983,12 @@ packages:
     resolution:
       {
         integrity: sha512-FMzm412l9oFB8zdRD+K6HQ1VzlS+sNNsdg0MfvTg0i8lfCyTgP/RFxiu/pGJqZ/IQnzn9xSiLkjOVI7Iv4nbdQ==,
+      }
+
+  '@next/eslint-plugin-next@16.0.3':
+    resolution:
+      {
+        integrity: sha512-6sPWmZetzFWMsz7Dhuxsdmbu3fK+/AxKRtj7OB0/3OZAI2MHB/v2FeYh271LZ9abvnM1WIwWc/5umYjx0jo5sQ==,
       }
 
   '@next/swc-darwin-arm64@15.5.5':
@@ -11081,6 +11090,10 @@ snapshots:
   '@next/env@15.5.5': {}
 
   '@next/eslint-plugin-next@15.5.5':
+    dependencies:
+      fast-glob: 3.3.1
+
+  '@next/eslint-plugin-next@16.0.3':
     dependencies:
       fast-glob: 3.3.1
 
