@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client';
-import { NotFoundError } from '@repo/packages-utils';
+import { NotFoundError } from '@repo/packages-utils/errors';
 
 export interface SessionInfo {
   id: string;

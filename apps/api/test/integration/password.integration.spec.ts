@@ -1,7 +1,8 @@
-import { UnauthorizedError, ValidationError } from '@repo/packages-utils';
+import { UnauthorizedError } from '@repo/packages-utils/errors';
 import { createMockLogger } from '@test/helpers/mock-logger';
 import { getTestPrisma, resetTestDatabase } from '@test/helpers/test-db';
 import * as bcrypt from 'bcryptjs';
+import { ValidationError } from 'better-auth/client';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import type { LoggerService } from '@/common/logger.service';

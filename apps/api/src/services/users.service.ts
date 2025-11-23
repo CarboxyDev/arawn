@@ -1,12 +1,14 @@
 import type { PrismaClient } from '@prisma/client';
-import type {
-  CreateUser,
-  PaginatedResponse,
-  QueryUsers,
-  UpdateUser,
-  User,
-} from '@repo/packages-types';
-import { NotFoundError } from '@repo/packages-utils';
+import {
+  type PaginatedResponse,
+  type QueryUsers,
+} from '@repo/packages-types/pagination';
+import {
+  type CreateUser,
+  type UpdateUser,
+  type User,
+} from '@repo/packages-types/user';
+import { NotFoundError } from '@repo/packages-utils/errors';
 
 import type { LoggerService } from '@/common/logger.service';
 

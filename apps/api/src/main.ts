@@ -3,7 +3,7 @@ import cors from '@fastify/cors';
 import formbody from '@fastify/formbody';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
-import { AppError } from '@repo/packages-utils';
+import { AppError } from '@repo/packages-utils/errors';
 import closeWithGrace from 'close-with-grace';
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import Fastify from 'fastify';

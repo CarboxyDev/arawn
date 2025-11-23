@@ -1,4 +1,5 @@
-import type { CreateUser, PaginatedResponse, User } from '@repo/packages-types';
+import type { PaginatedResponse } from '@repo/packages-types/pagination';
+import type { CreateUser, User } from '@repo/packages-types/user';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';

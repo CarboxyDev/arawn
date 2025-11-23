@@ -4,8 +4,11 @@ import {
   GetUploadsQuerySchema,
   UploadResponseSchema,
   UploadStatsSchema,
-} from '@repo/packages-types';
-import { UnauthorizedError, ValidationError } from '@repo/packages-utils';
+} from '@repo/packages-types/upload';
+import {
+  UnauthorizedError,
+  ValidationError,
+} from '@repo/packages-utils/errors';
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';

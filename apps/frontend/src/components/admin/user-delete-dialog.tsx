@@ -1,6 +1,6 @@
 'use client';
 
-import type { User } from '@repo/packages-types';
+import type { User } from '@repo/packages-types/user';
 import { Trash2 } from 'lucide-react';
 import * as React from 'react';
 import { toast } from 'sonner';

@@ -1,7 +1,7 @@
 'use client';
 
-import type { UpdateUser, User } from '@repo/packages-types';
-import { RoleSchema } from '@repo/packages-types';
+import { RoleSchema } from '@repo/packages-types/role';
+import type { UpdateUser, User } from '@repo/packages-types/user';
 import { Pencil } from 'lucide-react';
 import * as React from 'react';
 import { toast } from 'sonner';

@@ -1,7 +1,8 @@
 'use client';
 
-import type { Role, User } from '@repo/packages-types';
-import { RoleSchema } from '@repo/packages-types';
+import type { Role } from '@repo/packages-types/role';
+import { RoleSchema } from '@repo/packages-types/role';
+import type { User } from '@repo/packages-types/user';
 import type {
   ColumnDef,
   ColumnFiltersState,

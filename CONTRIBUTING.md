@@ -21,9 +21,7 @@ Thank you for your interest in contributing! This is a TypeScript monorepo templ
 ## Code Style
 
 - Follow patterns in `CLAUDE.md`
-- Use TypeScript strict mode
 - Always use import aliases (`@/...`)
-- No barrel files outside of packages
 
 ## Pull Requests
 

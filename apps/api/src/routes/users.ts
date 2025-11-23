@@ -1,10 +1,10 @@
+import { QueryUsersSchema } from '@repo/packages-types/pagination';
 import {
   CreateUserSchema,
   GetUserByIdSchema,
-  QueryUsersSchema,
   UpdateUserSchema,
-} from '@repo/packages-types';
-import { message, success } from '@repo/packages-utils';
+} from '@repo/packages-types/user';
+import { message, success } from '@repo/packages-utils/response';
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 

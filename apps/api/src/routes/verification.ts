@@ -1,4 +1,4 @@
-import { message } from '@repo/packages-utils';
+import { message } from '@repo/packages-utils/response';
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';

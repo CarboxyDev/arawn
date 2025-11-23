@@ -4,9 +4,9 @@ import type {
   AuditLog,
   AuditLogStats,
   AuditResourceType,
-  PaginatedResponse,
   QueryAuditLogs,
-} from '@repo/packages-types';
+} from '@repo/packages-types/audit-log';
+import type { PaginatedResponse } from '@repo/packages-types/pagination';
 
 import type { LoggerService } from '@/common/logger.service';
 
