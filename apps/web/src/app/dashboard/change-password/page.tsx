@@ -1,6 +1,18 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/packages-ui/button';
+import { Checkbox } from '@repo/packages-ui/checkbox';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@repo/packages-ui/form';
+import { PasswordInput } from '@repo/packages-ui/password-input';
 import { ArrowLeft, CheckCircle2, KeyRound, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -10,18 +22,6 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { ProtectedRoute } from '@/components/auth/protected-route';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { PasswordInput } from '@/components/ui/password-input';
 import { authClient } from '@/lib/auth';
 
 const changePasswordSchema = z
@@ -42,7 +42,7 @@ const changePasswordSchema = z
 
 type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
-export default function ChangePasswordPage(): React.ReactElement {
+export default function ChangePasswordPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [changeSuccess, setChangeSuccess] = useState(false);

@@ -1,6 +1,11 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/packages-ui/button';
+import { Checkbox } from '@repo/packages-ui/checkbox';
+import { Input } from '@repo/packages-ui/input';
+import { Label } from '@repo/packages-ui/label';
+import { PasswordInput } from '@repo/packages-ui/password-input';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -11,11 +16,6 @@ import { z } from 'zod';
 import { GithubButton } from '@/components/auth/github-button';
 import { GoogleButton } from '@/components/auth/google-button';
 import { RedirectIfAuthenticated } from '@/components/auth/redirect-if-authenticated';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { PasswordInput } from '@/components/ui/password-input';
 import { authClient } from '@/lib/auth';
 
 const loginSchema = z.object({
@@ -24,7 +24,7 @@ const loginSchema = z.object({
   rememberMe: z.boolean().default(false),
 });
 
-export default function LoginPage(): React.ReactElement {
+export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 

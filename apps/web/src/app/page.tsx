@@ -1,15 +1,15 @@
+import { AnimatedThemeToggler } from '@repo/packages-ui/animated-theme-toggler';
+import { Button } from '@repo/packages-ui/button';
+import { GitHubIcon } from '@repo/packages-ui/icons/brand-icons';
 import { ArrowRight, Boxes, PackageCheck, Terminal } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
-import { GitHubIcon } from '@/components/icons/brand-icons';
 import { CommandBlock } from '@/components/landing/command-block';
 import { FeatureCard } from '@/components/landing/feature-card';
 import { IncludedFeatureCard } from '@/components/landing/included-feature-card';
 import { Logo } from '@/components/landing/logo';
 import { TechBadge } from '@/components/landing/tech-badge';
-import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
-import { Button } from '@/components/ui/button';
 import {
   features,
   includedFeatures,

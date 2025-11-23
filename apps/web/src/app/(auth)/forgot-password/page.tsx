@@ -1,6 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/packages-ui/button';
+import { Input } from '@repo/packages-ui/input';
+import { Label } from '@repo/packages-ui/label';
 import { Info, MailIcon, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -10,9 +13,6 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { RedirectIfAuthenticated } from '@/components/auth/redirect-if-authenticated';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth';
 
 const forgotPasswordSchema = z.object({
@@ -21,7 +21,7 @@ const forgotPasswordSchema = z.object({
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
-export default function ForgotPasswordPage(): React.ReactElement {
+export default function ForgotPasswordPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);

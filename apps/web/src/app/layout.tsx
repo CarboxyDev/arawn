@@ -1,10 +1,10 @@
 import './globals.css';
 
+import { Toaster } from '@repo/packages-ui/sonner';
 import type { Metadata } from 'next';
 import React from 'react';
 
 import { Footer } from '@/components/layout/footer';
-import { Toaster } from '@/components/ui/sonner';
 import { isDevelopment } from '@/lib/env';
 import { Providers } from '@/providers';
 
@@ -17,7 +17,7 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>): React.ReactElement {
+}>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body

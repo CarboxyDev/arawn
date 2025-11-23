@@ -1,18 +1,6 @@
 'use client';
 
-import {
-  LayoutDashboard,
-  LogOut,
-  ScrollText,
-  ShieldCheck,
-  Users,
-} from 'lucide-react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import React, { type ReactNode } from 'react';
-
-import { ProtectedRoute } from '@/components/auth/protected-route';
-import { Button } from '@/components/ui/button';
+import { Button } from '@repo/packages-ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -27,8 +15,20 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from '@/components/ui/sidebar';
-import { UserAvatar } from '@/components/ui/user-avatar';
+} from '@repo/packages-ui/sidebar';
+import { UserAvatar } from '@repo/packages-ui/user-avatar';
+import {
+  LayoutDashboard,
+  LogOut,
+  ScrollText,
+  ShieldCheck,
+  Users,
+} from 'lucide-react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { type ReactNode } from 'react';
+
+import { ProtectedRoute } from '@/components/auth/protected-route';
 import { authClient } from '@/lib/auth';
 
 const adminNavItems = [
@@ -157,7 +157,7 @@ export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
-}): React.ReactElement {
+}) {
   return (
     <ProtectedRoute requiredRole="admin" redirectTo="/dashboard">
       <AdminLayoutContent>{children}</AdminLayoutContent>

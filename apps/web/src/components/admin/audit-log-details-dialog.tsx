@@ -1,6 +1,15 @@
 'use client';
 
 import type { AuditLog } from '@repo/packages-types/audit-log';
+import { Badge } from '@repo/packages-ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@repo/packages-ui/dialog';
+import { ScrollArea } from '@repo/packages-ui/scroll-area';
 import { format } from 'date-fns';
 import {
   AlertCircle,
@@ -12,16 +21,6 @@ import {
   ShieldAlert,
   User,
 } from 'lucide-react';
-
-import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface AuditLogDetailsDialogProps {
   log:

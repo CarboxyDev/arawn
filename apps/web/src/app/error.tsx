@@ -1,10 +1,10 @@
 'use client';
 
+import { Button } from '@repo/packages-ui/button';
 import { ServerCrash } from 'lucide-react';
 import Link from 'next/link';
 
 import { ErrorCard } from '@/components/error/error-card';
-import { Button } from '@/components/ui/button';
 
 interface ErrorProps {
   error: Error & { digest?: string };

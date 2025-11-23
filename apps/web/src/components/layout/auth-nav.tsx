@@ -1,10 +1,6 @@
 'use client';
 
-import { LogOut, User } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-
-import { Button } from '@/components/ui/button';
+import { Button } from '@repo/packages-ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +8,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@repo/packages-ui/dropdown-menu';
+import { LogOut, User } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import { authClient } from '@/lib/auth';
 
 export function AuthNav() {

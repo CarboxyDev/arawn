@@ -3,9 +3,8 @@
 import type { Table } from '@tanstack/react-table';
 import { X } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-
+import { Button } from '../button';
+import { Input } from '../input';
 import { DataTableViewOptions } from './data-table-view-options';
 
 interface DataTableToolbarProps<TData> {

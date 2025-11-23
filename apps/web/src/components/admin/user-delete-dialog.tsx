@@ -1,10 +1,6 @@
 'use client';
 
 import type { User } from '@repo/packages-types/user';
-import { Trash2 } from 'lucide-react';
-import * as React from 'react';
-import { toast } from 'sonner';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,8 +11,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+} from '@repo/packages-ui/alert-dialog';
+import { Button } from '@repo/packages-ui/button';
+import { Trash2 } from 'lucide-react';
+import * as React from 'react';
+import { toast } from 'sonner';
+
 import { useDeleteUser } from '@/hooks/api/use-users';
 
 interface UserDeleteDialogProps {

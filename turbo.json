@@ -4,15 +4,24 @@
   "globalDependencies": ["tsconfig.json", "turbo.json", "eslint.config.ts"],
   "tasks": {
     "build": {
-      "dependsOn": [],
+      "dependsOn": ["build:styles", "build:components"],
       "outputs": ["dist/**", ".next/**", "build/**"],
       "inputs": [
         "src/**",
         "prisma/**",
         "package.json",
         "tsconfig.json",
-        "next.config.ts"
+        "next.config.ts",
+        "tailwind.config.ts"
       ]
+    },
+    "build:styles": {
+      "outputs": ["dist/**"],
+      "inputs": ["src/styles.css", "tailwind.config.js", "postcss.config.js"]
+    },
+    "build:components": {
+      "outputs": ["dist/**"],
+      "inputs": ["src/**/*.tsx", "src/**/*.ts", "tsconfig.json"]
     },
     "typecheck": {
       "dependsOn": ["db:generate"],
@@ -22,7 +31,18 @@
     "dev": {
       "dependsOn": ["db:generate"],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "with": ["dev:styles", "dev:components"]
+    },
+    "dev:styles": {
+      "cache": false,
+      "persistent": true,
+      "outputs": ["dist/**"]
+    },
+    "dev:components": {
+      "cache": false,
+      "persistent": true,
+      "outputs": ["dist/**"]
     },
     "db:generate": {
       "cache": false

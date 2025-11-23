@@ -1,8 +1,8 @@
 'use client';
 
+import { Button } from '@repo/packages-ui/button';
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth';
 
 export function GithubButton() {
