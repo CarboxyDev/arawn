@@ -1,18 +1,13 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { groupBy, unique } from '@repo/packages-utils/array';
+import { retry, sleep } from '@repo/packages-utils/async';
 import {
-  clamp,
-  formatBytes,
   formatDate,
   formatDateTime,
   getRelativeTime,
-  groupBy,
-  retry,
-  sleep,
-  slugify,
-  truncate,
-  unique,
-} from '../index';
+} from '@repo/packages-utils/date';
+import { clamp, formatBytes } from '@repo/packages-utils/number';
+import { slugify, truncate } from '@repo/packages-utils/string';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('slugify', () => {
   it('should convert text to slug format', () => {

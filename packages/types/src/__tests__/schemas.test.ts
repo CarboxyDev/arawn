@@ -1,12 +1,10 @@
-import { describe, expect, it } from 'vitest';
-
 import {
-  CreateUserSchema,
-  HealthCheckSchema,
   ListResponseSchema,
   MessageResponseSchema,
-  UserSchema,
-} from '../index';
+} from '@repo/packages-types/api-response';
+import { HealthCheckSchema } from '@repo/packages-types/health-check';
+import { CreateUserSchema, UserSchema } from '@repo/packages-types/user';
+import { describe, expect, it } from 'vitest';
 
 describe('HealthCheckSchema', () => {
   it('should validate a valid health check object', () => {

@@ -53,10 +53,6 @@ pnpm typecheck
 cd apps/api
 pnpm dev
 pnpm start
-
-# Packages (types, utils)
-cd packages/{types,utils}
-pnpm dev
 ```
 
 ### Database Commands (run from `apps/api`)
@@ -91,10 +87,8 @@ pnpm db:seed          # Seed database
 
 ### Packages
 
-All packages (`@repo/packages-types`, `@repo/packages-utils`) are consumed as workspace dependencies:
-
-- Run in watch mode during development
-- Frontend's `next.config.ts` transpiles these packages on-the-fly
+- All packages (`@repo/packages-types`, `@repo/packages-utils`) are consumed directly as TypeScript source files
+- No build or watch required for these packages
 
 ### Environment
 

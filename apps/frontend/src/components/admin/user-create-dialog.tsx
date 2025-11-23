@@ -1,7 +1,8 @@
 'use client';
 
-import type { CreateUser, Role } from '@repo/packages-types';
-import { RoleSchema } from '@repo/packages-types';
+import type { Role } from '@repo/packages-types/role';
+import { RoleSchema } from '@repo/packages-types/role';
+import type { CreateUser } from '@repo/packages-types/user';
 import { UserPlus } from 'lucide-react';
 import * as React from 'react';
 import { toast } from 'sonner';

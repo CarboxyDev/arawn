@@ -1,12 +1,12 @@
 'use client';
 
+import { format } from 'date-fns';
+import { Calendar, Eye, Search, User, UserX } from 'lucide-react';
 import type {
   AuditAction,
   AuditLog,
   AuditResourceType,
-} from '@repo/packages-types';
-import { format } from 'date-fns';
-import { Calendar, Eye, Search, User, UserX } from 'lucide-react';
+} from 'packages/types/src/audit-log';
 import React, { useState } from 'react';
 
 import { AuditLogDetailsDialog } from '@/components/admin/audit-log-details-dialog';

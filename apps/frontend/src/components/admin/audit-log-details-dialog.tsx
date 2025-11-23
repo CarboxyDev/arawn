@@ -1,6 +1,6 @@
 'use client';
 
-import type { AuditLog } from '@repo/packages-types';
+import type { AuditLog } from '@repo/packages-types/audit-log';
 import { format } from 'date-fns';
 import {
   AlertCircle,

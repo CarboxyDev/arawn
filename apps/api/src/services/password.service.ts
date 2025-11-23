@@ -1,5 +1,8 @@
 import type { PrismaClient } from '@prisma/client';
-import { UnauthorizedError, ValidationError } from '@repo/packages-utils';
+import {
+  UnauthorizedError,
+  ValidationError,
+} from '@repo/packages-utils/errors';
 import * as bcrypt from 'bcryptjs';
 
 import { type SessionsService } from '@/services/sessions.service';

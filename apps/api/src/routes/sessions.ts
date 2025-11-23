@@ -1,4 +1,4 @@
-import { message, success } from '@repo/packages-utils';
+import { message, success } from '@repo/packages-utils/response';
 import type { FastifyPluginAsync } from 'fastify';
 
 import { requireAuth } from '@/hooks/auth';

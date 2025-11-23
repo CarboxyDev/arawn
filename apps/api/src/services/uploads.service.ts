@@ -4,7 +4,7 @@ import {
   ForbiddenError,
   NotFoundError,
   ValidationError,
-} from '@repo/packages-utils';
+} from '@repo/packages-utils/errors';
 
 import type { LoggerService } from '@/common/logger.service';
 import {

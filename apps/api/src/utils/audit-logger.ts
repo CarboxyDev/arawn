@@ -1,4 +1,7 @@
-import type { AuditAction, AuditResourceType } from '@repo/packages-types';
+import type {
+  AuditAction,
+  AuditResourceType,
+} from '@repo/packages-types/audit-log';
 import type { FastifyRequest } from 'fastify';
 
 import type { AuditService } from '@/services/audit.service';

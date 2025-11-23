@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch --clear-screen=false src/main.ts",
+    "dev": "tsx watch --clear-screen=false --ignore '../../packages/**' --ignore '**/node_modules/**' src/main.ts",
     "build": "tsc && tsc-alias -p tsconfig.json --resolve-full-paths",
     "start": "node dist/src/main.js",
     "start:dev": "tsx src/main.ts",

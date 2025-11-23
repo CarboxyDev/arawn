@@ -1,4 +1,5 @@
-import { message, ValidationError } from '@repo/packages-utils';
+import { ValidationError } from '@repo/packages-utils/errors';
+import { message } from '@repo/packages-utils/response';
 import type { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
 

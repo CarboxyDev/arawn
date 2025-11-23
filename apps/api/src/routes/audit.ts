@@ -1,4 +1,4 @@
-import { QueryAuditLogsSchema } from '@repo/packages-types';
+import { QueryAuditLogsSchema } from '@repo/packages-types/audit-log';
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 

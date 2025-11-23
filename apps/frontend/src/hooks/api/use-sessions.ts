@@ -1,4 +1,7 @@
-import type { ListResponse, MessageResponse } from '@repo/packages-types';
+import type {
+  ListResponse,
+  MessageResponse,
+} from '@repo/packages-types/api-response';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetcher } from '@/lib/api';

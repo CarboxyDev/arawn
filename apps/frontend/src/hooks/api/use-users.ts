@@ -1,10 +1,8 @@
 import type {
-  CreateUser,
   PaginatedResponse,
   QueryUsers,
-  UpdateUser,
-  User,
-} from '@repo/packages-types';
+} from '@repo/packages-types/pagination';
+import type { CreateUser, UpdateUser, User } from '@repo/packages-types/user';
 import {
   useMutation,
   useQuery,

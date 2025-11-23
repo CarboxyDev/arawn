@@ -1,4 +1,4 @@
-import { ForbiddenError, UnauthorizedError } from '@repo/packages-utils';
+import { ForbiddenError, UnauthorizedError } from '@repo/packages-utils/errors';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 export interface AuthUser {

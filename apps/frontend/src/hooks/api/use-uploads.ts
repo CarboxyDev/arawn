@@ -4,7 +4,7 @@ import type {
   Upload,
   UploadResponse,
   UploadStats,
-} from '@repo/packages-types';
+} from '@repo/packages-types/upload';
 import {
   useMutation,
   type UseMutationOptions,

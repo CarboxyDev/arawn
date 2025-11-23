@@ -1,4 +1,4 @@
-import { NotFoundError } from '@repo/packages-utils';
+import { NotFoundError } from '@repo/packages-utils/errors';
 import { createMockLogger } from '@test/helpers/mock-logger';
 import { getTestPrisma, resetTestDatabase } from '@test/helpers/test-db';
 import { beforeEach, describe, expect, it } from 'vitest';

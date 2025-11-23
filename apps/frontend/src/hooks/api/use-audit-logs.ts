@@ -1,9 +1,9 @@
 import type {
   AuditLog,
   AuditLogStats,
-  PaginatedResponse,
   QueryAuditLogs,
-} from '@repo/packages-types';
+} from '@repo/packages-types/audit-log';
+import type { PaginatedResponse } from '@repo/packages-types/pagination';
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';

@@ -1,7 +1,7 @@
 'use client';
 
-import type { Upload } from '@repo/packages-types';
 import { FileText, Image, Loader2, Trash2 } from 'lucide-react';
+import { type Upload } from 'packages/types/src/upload';
 import React, { useState } from 'react';
 
 import { Alert } from '@/components/ui/alert';
