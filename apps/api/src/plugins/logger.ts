@@ -22,7 +22,7 @@ const loggerPlugin: FastifyPluginAsync = async (app) => {
     request.logger = logger.child('Request');
   });
 
-  app.log.info('✅ Logger service configured');
+  app.log.info('[+] Logger service configured');
 };
 
 export default fp(loggerPlugin);

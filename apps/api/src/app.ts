@@ -4,7 +4,6 @@ import formbody from '@fastify/formbody';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import { AppError } from '@repo/packages-utils/errors';
-import closeWithGrace from 'close-with-grace';
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import Fastify from 'fastify';
 import {
@@ -13,13 +12,13 @@ import {
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod';
 
-import { loadEnv } from '@/config/env.js';
-import type { RateLimitRole } from '@/config/rate-limit.js';
-import { RATE_LIMIT_CONFIG } from '@/config/rate-limit.js';
+import { loadEnv } from '@/config/env';
+import type { RateLimitRole } from '@/config/rate-limit';
+import { RATE_LIMIT_CONFIG } from '@/config/rate-limit';
 
 const env = loadEnv();
 
-const app = Fastify({
+export const app = Fastify({
   logger: {
     level: env.LOG_LEVEL === 'minimal' ? 'error' : 'info',
     transport:
@@ -242,63 +241,30 @@ app.get('/health', async (request, reply) => {
   }
 });
 
-const registerRoutes = async () => {
-  const { default: usersRoutes } = await import('@/routes/users.js');
-  const { default: sessionsRoutes } = await import('@/routes/sessions.js');
-  const { default: passwordRoutes } = await import('@/routes/password.js');
-  const { default: verificationRoutes } = await import(
-    '@/routes/verification.js'
-  );
-  const { default: uploadsRoutes } = await import('@/routes/uploads.js');
-  const { default: uploadsServeRoutes } = await import(
-    '@/routes/uploads-serve.js'
-  );
-  const { default: accountsRoutes } = await import('@/routes/accounts.js');
-  const { default: auditRoutes } = await import('@/routes/audit.js');
-
-  // Register file serving (conditional on storage type)
-  await app.register(uploadsServeRoutes);
-
-  await app.register(
-    async (app) => {
-      await app.register(usersRoutes);
-      await app.register(sessionsRoutes);
-      await app.register(passwordRoutes);
-      await app.register(verificationRoutes);
-      await app.register(uploadsRoutes);
-      await app.register(accountsRoutes);
-      await app.register(auditRoutes);
-    },
-    { prefix: '/api' }
-  );
-};
-
-const start = async () => {
-  await registerRoutes();
-
-  try {
-    await app.listen({ port: env.PORT, host: '0.0.0.0' });
-    app.log.info(`🚀 API server ready at ${env.API_URL}`);
-    app.log.info(`📝 Environment: ${env.NODE_ENV}`);
-    app.log.info(`🔒 CORS enabled for: ${env.FRONTEND_URL}`);
-  } catch (err) {
-    app.log.error(err);
-    process.exit(1);
-  }
-};
-
-const closeListeners = closeWithGrace(
-  { delay: Number(process.env.FASTIFY_CLOSE_GRACE_DELAY) || 500 },
-  async ({ err }) => {
-    if (err) {
-      app.log.error(err);
-    }
-    await app.close();
-  }
+const { default: usersRoutes } = await import('@/routes/users.js');
+const { default: sessionsRoutes } = await import('@/routes/sessions.js');
+const { default: passwordRoutes } = await import('@/routes/password.js');
+const { default: verificationRoutes } = await import(
+  '@/routes/verification.js'
 );
+const { default: uploadsRoutes } = await import('@/routes/uploads.js');
+const { default: uploadsServeRoutes } = await import(
+  '@/routes/uploads-serve.js'
+);
+const { default: accountsRoutes } = await import('@/routes/accounts.js');
+const { default: auditRoutes } = await import('@/routes/audit.js');
 
-app.addHook('onClose', async () => {
-  closeListeners.uninstall();
-});
+await app.register(uploadsServeRoutes);
 
-start();
+await app.register(
+  async (app) => {
+    await app.register(usersRoutes);
+    await app.register(sessionsRoutes);
+    await app.register(passwordRoutes);
+    await app.register(verificationRoutes);
+    await app.register(uploadsRoutes);
+    await app.register(accountsRoutes);
+    await app.register(auditRoutes);
+  },
+  { prefix: '/api' }
+);

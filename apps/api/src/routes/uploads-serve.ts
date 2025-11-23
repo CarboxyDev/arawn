@@ -16,10 +16,10 @@ const uploadsServeRoutes: FastifyPluginAsync = async (app) => {
       decorateReply: false,
     });
 
-    app.log.info('✅ Local file serving configured at /uploads/files/');
+    app.log.info('[+] Local file serving configured at /uploads/files/');
   } else {
     app.log.info(
-      `ℹ️  Using ${storageType} storage - local file serving disabled`
+      `[+] Using ${storageType} storage - local file serving disabled`
     );
   }
 };

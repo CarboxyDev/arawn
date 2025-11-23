@@ -41,10 +41,10 @@ const schedulePlugin: FastifyPluginAsync = async (app) => {
   // Add the job to the scheduler
   app.scheduler.addSimpleIntervalJob(job);
 
-  app.log.info('✅ Scheduled tasks configured (session cleanup every 24h)');
+  app.log.info('[+] Scheduled tasks configured');
 
   app.addHook('onClose', async (instance) => {
-    instance.log.info('Stopping scheduled tasks...');
+    instance.log.info('[-] Stopping scheduled tasks...');
     instance.scheduler.stop();
   });
 };

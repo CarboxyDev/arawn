@@ -17,12 +17,12 @@ const databasePlugin: FastifyPluginAsync = async (app) => {
   });
 
   await prisma.$connect();
-  app.log.info('✅ Database connected successfully');
+  app.log.info('[+] Database connected successfully');
 
   app.decorate('prisma', prisma);
 
   app.addHook('onClose', async (instance) => {
-    instance.log.info('Disconnecting from database...');
+    instance.log.info('[-] Disconnecting from database...');
     await instance.prisma.$disconnect();
   });
 };

@@ -11,8 +11,6 @@ const multipartPlugin: FastifyPluginAsync = async (app) => {
       files: 1, // Allow 1 file per request (can be increased)
     },
   });
-
-  app.log.info('✅ Multipart configured');
 };
 
 export default fp(multipartPlugin);

@@ -260,7 +260,7 @@ const authPlugin: FastifyPluginAsync = async (app) => {
     }
   );
 
-  app.log.info('✅ Better Auth configured');
+  app.log.info('[+] Better Auth configured');
 };
 
 async function toWebRequest(request: FastifyRequest): Promise<Request> {
