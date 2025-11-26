@@ -4,12 +4,6 @@
   "type": "module",
   "private": true,
   "exports": {
-    "./tailwind": "./tailwind.config.js",
-    "./postcss": "./postcss.config.js"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^4.1.14"
+    "./theme.css": "./theme.css"
   }
 }

@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "exports": {
-    "./styles.css": "./dist/index.css",
     "./alert-dialog": "./src/alert-dialog.tsx",
     "./alert": "./src/alert.tsx",
     "./animated-theme-toggler": "./src/animated-theme-toggler.tsx",
@@ -59,11 +58,7 @@
     "test:unit": "vitest run",
     "test:integration": "echo 'No integration tests for packages-ui'",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "build:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css",
-    "build:components": "tsc",
-    "dev:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
-    "dev:components": "tsc --watch"
+    "test:coverage": "vitest run --coverage"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -100,9 +95,6 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "@repo/tailwind-config": "workspace:*",
-    "@tailwindcss/cli": "^4.1.14",
-    "@tailwindcss/postcss": "^4.1.14",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
@@ -110,7 +102,6 @@
     "@types/react": "19.2.6",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.0.4",
-    "autoprefixer": "^10.4.20",
     "typescript": "^5.7.2",
     "vitest": "^3.2.4"
   }

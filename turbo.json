@@ -4,7 +4,7 @@
   "globalDependencies": ["tsconfig.json", "turbo.json", "eslint.config.ts"],
   "tasks": {
     "build": {
-      "dependsOn": ["build:styles", "build:components"],
+      "dependsOn": ["build:components"],
       "outputs": ["dist/**", ".next/**", "build/**"],
       "inputs": [
         "src/**",
@@ -14,10 +14,6 @@
         "next.config.ts",
         "tailwind.config.ts"
       ]
-    },
-    "build:styles": {
-      "outputs": ["dist/**"],
-      "inputs": ["src/styles.css", "tailwind.config.js", "postcss.config.js"]
     },
     "build:components": {
       "outputs": ["dist/**"],
@@ -32,12 +28,7 @@
       "dependsOn": ["db:generate"],
       "cache": false,
       "persistent": true,
-      "with": ["dev:styles", "dev:components"]
-    },
-    "dev:styles": {
-      "cache": false,
-      "persistent": true,
-      "outputs": ["dist/**"]
+      "with": ["dev:components"]
     },
     "dev:components": {
       "cache": false,
