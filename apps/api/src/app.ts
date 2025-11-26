@@ -15,6 +15,7 @@ import {
 import { loadEnv } from '@/config/env';
 import type { RateLimitRole } from '@/config/rate-limit';
 import { RATE_LIMIT_CONFIG } from '@/config/rate-limit';
+import { metricsService } from '@/services/metrics.service';
 
 const env = loadEnv();
 
@@ -215,6 +216,8 @@ app.addHook('onRequest', async (request) => {
 app.addHook('onResponse', async (request, reply) => {
   try {
     const responseTime = reply.elapsedTime;
+    metricsService.recordRequest(responseTime, reply.statusCode);
+
     const statusCode = reply.statusCode;
     const isError = statusCode >= 400;
     const logMessage = `${request.method} ${request.url} → ${statusCode} (${responseTime.toFixed(2)}ms)`;
@@ -349,6 +352,13 @@ const { default: uploadsServeRoutes } = await import(
 );
 const { default: accountsRoutes } = await import('@/routes/accounts.js');
 const { default: auditRoutes } = await import('@/routes/audit.js');
+const { default: statsRoutes } = await import('@/routes/stats.js');
+const { default: metricsRoutes } = await import('@/routes/metrics.js');
+const { default: adminSessionsRoutes } = await import(
+  '@/routes/admin-sessions.js'
+);
+
+metricsService.start();
 
 await app.register(uploadsServeRoutes);
 
@@ -361,6 +371,9 @@ await app.register(
     await app.register(uploadsRoutes);
     await app.register(accountsRoutes);
     await app.register(auditRoutes);
+    await app.register(statsRoutes);
+    await app.register(metricsRoutes);
+    await app.register(adminSessionsRoutes);
   },
   { prefix: '/api' }
 );

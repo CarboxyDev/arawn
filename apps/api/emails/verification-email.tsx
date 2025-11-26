@@ -1,7 +1,8 @@
-import { Button, Link, Section, Text } from '@react-email/components';
-import React from 'react';
+import { Button, Link, Text } from '@react-email/components';
+import * as React from 'react';
 
 import { EmailLayout } from './components/email-layout';
+import { emailConfig } from './config';
 
 interface VerificationEmailProps {
   verificationUrl: string;
@@ -9,69 +10,76 @@ interface VerificationEmailProps {
 }
 
 export default function VerificationEmail({
-  verificationUrl,
-  userEmail,
+  verificationUrl = 'https://example.com/verify?token=abc123',
+  userEmail = 'user@example.com',
 }: VerificationEmailProps) {
+  const { appName, primaryColor } = emailConfig;
+
   return (
     <EmailLayout
-      preview="Verify your email address to complete registration"
-      heading="Verify your email address"
+      preview={`Verify your email to get started with ${appName}`}
+      heading="Verify your email"
     >
-      <Text style={paragraph}>Hi there,</Text>
       <Text style={paragraph}>
-        Thanks for signing up! We need to verify your email address (
+        Thanks for signing up! Please verify your email address (
         <strong>{userEmail}</strong>) to complete your registration.
       </Text>
-      <Text style={paragraph}>
-        Click the button below to verify your email address:
-      </Text>
-      <Section style={buttonContainer}>
-        <Button style={button} href={verificationUrl}>
-          Verify Email Address
-        </Button>
-      </Section>
-      <Text style={paragraph}>
-        Or copy and paste this URL into your browser:
-      </Text>
+
+      <Button
+        style={{ ...button, backgroundColor: primaryColor }}
+        href={verificationUrl}
+      >
+        Verify Email Address
+      </Button>
+
+      <Text style={paragraphMuted}>Or copy this link into your browser:</Text>
       <Link href={verificationUrl} style={link}>
         {verificationUrl}
       </Link>
-      <Text style={paragraph}>
-        This verification link will expire in 24 hours for security reasons.
-      </Text>
-      <Text style={paragraph}>
-        If you didn't create an account, you can safely ignore this email.
+
+      <Text style={paragraphSmall}>
+        This link expires in 24 hours. If you didn't create an account, ignore
+        this email.
       </Text>
     </EmailLayout>
   );
 }
 
-const paragraph = {
-  color: '#374151',
-  fontSize: '16px',
+const paragraph: React.CSSProperties = {
+  color: '#334155',
+  fontSize: '15px',
   lineHeight: '24px',
-  margin: '16px 0',
+  margin: '0 0 24px',
 };
 
-const buttonContainer = {
-  padding: '24px 0',
+const paragraphMuted: React.CSSProperties = {
+  color: '#64748b',
+  fontSize: '13px',
+  lineHeight: '20px',
+  margin: '24px 0 8px',
 };
 
-const button = {
-  backgroundColor: '#3b82f6',
-  borderRadius: '6px',
+const paragraphSmall: React.CSSProperties = {
+  color: '#94a3b8',
+  fontSize: '13px',
+  lineHeight: '20px',
+  margin: '24px 0 0',
+};
+
+const button: React.CSSProperties = {
+  borderRadius: '8px',
   color: '#ffffff',
-  fontSize: '16px',
+  fontSize: '15px',
   fontWeight: '600',
   textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'block',
-  padding: '12px 24px',
+  textAlign: 'center',
+  display: 'inline-block',
+  padding: '12px 32px',
 };
 
-const link = {
-  color: '#3b82f6',
-  fontSize: '14px',
+const link: React.CSSProperties = {
+  color: '#2563eb',
+  fontSize: '13px',
   textDecoration: 'underline',
-  wordBreak: 'break-all' as const,
+  wordBreak: 'break-all',
 };

@@ -144,8 +144,9 @@ export const includedFeatures = [
     iconName: 'ShieldCheck' as const,
     title: 'Admin Dashboard',
     pages: [
-      { name: 'Admin overview', href: '/admin' },
+      { name: 'System monitoring', href: '/admin' },
       { name: 'User management', href: '/admin/users' },
+      { name: 'Sessions management', href: '/admin/sessions' },
       { name: 'Audit logs', href: '/admin/audit-logs' },
     ],
   },

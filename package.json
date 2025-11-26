@@ -12,7 +12,7 @@
     "dev:web": "turbo run dev --filter @repo/web",
     "dev:api": "turbo run dev --filter @repo/api",
     "dev:app": "turbo run dev --filter @repo/web --filter @repo/api",
-    "dev:email": "turbo run email:dev",
+    "email": "turbo run email:dev",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
