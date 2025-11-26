@@ -2,6 +2,13 @@
   <img src="assets/logo.svg" alt="Arawn Logo" width="200">
   <h1>Arawn</h1>
   <p>Full-stack TypeScript monorepo with Next.js, Fastify, and Turborepo. From zero to production in minutes.</p>
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-≥9.0.0-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![CI](https://github.com/CarboxyDev/arawn/actions/workflows/ci.yml/badge.svg)](https://github.com/CarboxyDev/arawn/actions/workflows/ci.yml)
+
 </div>
 
 ---
@@ -20,7 +27,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 - **AI pair programming ready**: Comprehensive CLAUDE.md file means AI assistants understand your architecture instantly and can accelerate your development.
 
-## Tech Stackare
+## Tech Stack
 
 **Web:** Next.js, React, TanStack Query, Tailwind CSS
 

@@ -4,6 +4,11 @@ import { Button } from '@repo/packages-ui/button';
 import { Skeleton } from '@repo/packages-ui/skeleton';
 import { UserAvatar } from '@repo/packages-ui/user-avatar';
 import {
+  formatDateTime,
+  formatShortDate,
+  getRelativeTime,
+} from '@repo/packages-utils/date';
+import {
   Calendar,
   Clock,
   KeyRound,
@@ -15,11 +20,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import {
-  formatDateTime,
-  formatShortDate,
-  getRelativeTime,
-} from 'packages/utils/src/date';
 import React from 'react';
 
 import { EmailVerificationBanner } from '@/components/auth/email-verification-banner';
