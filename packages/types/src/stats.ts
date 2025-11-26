@@ -100,3 +100,24 @@ export const HealthCheckResponseSchema = z.object({
 });
 
 export type HealthCheckResponse = z.infer<typeof HealthCheckResponseSchema>;
+
+export const RealtimeMetricsPointSchema = z.object({
+  timestamp: z.number(),
+  memory: z.object({
+    heapUsedMB: z.number(),
+    heapTotalMB: z.number(),
+    rssMB: z.number(),
+  }),
+  cpu: z.object({
+    percentage: z.number(),
+  }),
+  eventLoop: z.object({
+    lagMs: z.number(),
+  }),
+  requests: z.object({
+    perSecond: z.number(),
+    avgResponseTimeMs: z.number(),
+  }),
+});
+
+export type RealtimeMetricsPoint = z.infer<typeof RealtimeMetricsPointSchema>;

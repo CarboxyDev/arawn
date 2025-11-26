@@ -13,6 +13,10 @@ import {
   AuthBreakdownChartSkeleton,
 } from '@/components/admin/charts/auth-breakdown-chart';
 import {
+  RealtimeMetricsChart,
+  RealtimeMetricsChartSkeleton,
+} from '@/components/admin/charts/realtime-metrics-chart';
+import {
   RoleDistributionChart,
   RoleDistributionChartSkeleton,
 } from '@/components/admin/charts/role-distribution-chart';
@@ -67,7 +71,6 @@ export default function AdminDashboardPage() {
         />
       </div>
 
-      {/* Stats Overview */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />)
@@ -101,7 +104,14 @@ export default function AdminDashboardPage() {
         ) : null}
       </div>
 
-      {/* Charts Grid */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {isLoading ? (
+          <RealtimeMetricsChartSkeleton />
+        ) : (
+          <RealtimeMetricsChart />
+        )}
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-2">
         {isLoading ? (
           <>
@@ -130,7 +140,6 @@ export default function AdminDashboardPage() {
         ) : null}
       </div>
 
-      {/* Activity & Health Panel */}
       <div className="grid gap-6 lg:grid-cols-3">
         {isLoading ? (
           <>

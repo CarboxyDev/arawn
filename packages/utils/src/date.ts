@@ -61,3 +61,17 @@ export function getRelativeTime(
 
   return formatDate(d);
 }
+
+export function formatTime(date: Date | string | number): string {
+  const d =
+    typeof date === 'number'
+      ? new Date(date)
+      : typeof date === 'string'
+        ? new Date(date)
+        : date;
+  return d.toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+}
