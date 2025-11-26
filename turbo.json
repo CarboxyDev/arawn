@@ -124,6 +124,10 @@
     "db:seed": {
       "cache": false,
       "outputs": []
+    },
+    "email:dev": {
+      "cache": false,
+      "persistent": true
     }
   }
 }

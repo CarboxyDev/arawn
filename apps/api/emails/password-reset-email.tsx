@@ -1,7 +1,8 @@
-import { Button, Link, Section, Text } from '@react-email/components';
-import React from 'react';
+import { Button, Link, Text } from '@react-email/components';
+import * as React from 'react';
 
 import { EmailLayout } from './components/email-layout';
+import { emailConfig } from './config';
 
 interface PasswordResetEmailProps {
   resetUrl: string;
@@ -9,67 +10,77 @@ interface PasswordResetEmailProps {
 }
 
 export default function PasswordResetEmail({
-  resetUrl,
-  userEmail,
+  resetUrl = 'https://example.com/reset-password?token=abc123',
+  userEmail = 'user@example.com',
 }: PasswordResetEmailProps) {
+  const { primaryColor } = emailConfig;
+
   return (
     <EmailLayout preview="Reset your password" heading="Reset your password">
-      <Text style={paragraph}>Hi there,</Text>
       <Text style={paragraph}>
-        We received a request to reset the password for your account (
-        <strong>{userEmail}</strong>).
+        We received a request to reset the password for{' '}
+        <strong>{userEmail}</strong>.
       </Text>
+
       <Text style={paragraph}>
-        Click the button below to reset your password:
+        Click the button below to choose a new password:
       </Text>
-      <Section style={buttonContainer}>
-        <Button style={button} href={resetUrl}>
-          Reset Password
-        </Button>
-      </Section>
-      <Text style={paragraph}>
-        Or copy and paste this URL into your browser:
-      </Text>
+
+      <Button
+        style={{ ...button, backgroundColor: primaryColor }}
+        href={resetUrl}
+      >
+        Reset Password
+      </Button>
+
+      <Text style={paragraphMuted}>Or copy this link into your browser:</Text>
       <Link href={resetUrl} style={link}>
         {resetUrl}
       </Link>
-      <Text style={paragraph}>
-        This password reset link will expire in 1 hour for security reasons.
-      </Text>
-      <Text style={paragraph}>
-        If you didn't request a password reset, you can safely ignore this
-        email. Your password will not be changed.
+
+      <Text style={paragraphSmall}>
+        This link expires in 1 hour. If you didn't request this, you can safely
+        ignore this email — your password won't be changed.
       </Text>
     </EmailLayout>
   );
 }
 
-const paragraph = {
-  color: '#374151',
-  fontSize: '16px',
+const paragraph: React.CSSProperties = {
+  color: '#334155',
+  fontSize: '15px',
   lineHeight: '24px',
-  margin: '16px 0',
+  margin: '0 0 24px',
 };
 
-const buttonContainer = {
-  padding: '24px 0',
+const paragraphMuted: React.CSSProperties = {
+  color: '#64748b',
+  fontSize: '13px',
+  lineHeight: '20px',
+  margin: '24px 0 8px',
 };
 
-const button = {
-  backgroundColor: '#3b82f6',
-  borderRadius: '6px',
+const paragraphSmall: React.CSSProperties = {
+  color: '#94a3b8',
+  fontSize: '13px',
+  lineHeight: '20px',
+  margin: '24px 0 0',
+};
+
+const button: React.CSSProperties = {
+  borderRadius: '8px',
   color: '#ffffff',
-  fontSize: '16px',
+  fontSize: '15px',
   fontWeight: '600',
   textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'block',
-  padding: '12px 24px',
+  textAlign: 'center',
+  display: 'inline-block',
+  padding: '12px 32px',
 };
 
-const link = {
-  color: '#3b82f6',
-  fontSize: '14px',
+const link: React.CSSProperties = {
+  color: '#2563eb',
+  fontSize: '13px',
   textDecoration: 'underline',
-  wordBreak: 'break-all' as const,
+  wordBreak: 'break-all',
 };

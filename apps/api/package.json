@@ -39,6 +39,7 @@
     "@fastify/swagger-ui": "^5.0.1",
     "@prisma/client": "6.17.1",
     "@react-email/components": "^1.0.1",
+    "@react-email/preview-server": "^5.0.4",
     "@repo/packages-types": "workspace:*",
     "@scalar/fastify-api-reference": "^1.39.3",
     "bcryptjs": "^3.0.2",
