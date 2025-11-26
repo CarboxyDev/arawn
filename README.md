@@ -20,7 +20,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 - **AI pair programming ready**: Comprehensive CLAUDE.md file means AI assistants understand your architecture instantly and can accelerate your development.
 
-## Tech Stack
+## Tech Stackare
 
 **Web:** Next.js, React, TanStack Query, Tailwind CSS
 

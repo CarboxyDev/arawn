@@ -1,5 +1,24 @@
 'use client';
 
+import { Badge } from '@repo/packages-ui/badge';
+import { Button } from '@repo/packages-ui/button';
+import { Input } from '@repo/packages-ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/packages-ui/select';
+import { Skeleton } from '@repo/packages-ui/skeleton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@repo/packages-ui/table';
 import { format } from 'date-fns';
 import { Calendar, Eye, Search, User, UserX } from 'lucide-react';
 import type {
@@ -10,25 +29,6 @@ import type {
 import React, { useState } from 'react';
 
 import { AuditLogDetailsDialog } from '@/components/admin/audit-log-details-dialog';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { useFetchAuditLogs } from '@/hooks/api/use-audit-logs';
 
 function getActionBadgeClasses(action: string): string {
@@ -345,6 +345,6 @@ function AuditLogsContent() {
   );
 }
 
-export default function AuditLogsPage(): React.ReactElement {
+export default function AuditLogsPage() {
   return <AuditLogsContent />;
 }

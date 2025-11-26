@@ -3,11 +3,7 @@
 import type { Role } from '@repo/packages-types/role';
 import { RoleSchema } from '@repo/packages-types/role';
 import type { CreateUser } from '@repo/packages-types/user';
-import { UserPlus } from 'lucide-react';
-import * as React from 'react';
-import { toast } from 'sonner';
-
-import { Button } from '@/components/ui/button';
+import { Button } from '@repo/packages-ui/button';
 import {
   Dialog,
   DialogContent,
@@ -16,16 +12,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@repo/packages-ui/dialog';
+import { Input } from '@repo/packages-ui/input';
+import { Label } from '@repo/packages-ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@repo/packages-ui/select';
+import { UserPlus } from 'lucide-react';
+import * as React from 'react';
+import { toast } from 'sonner';
+
 import { useCreateUser } from '@/hooks/api/use-users';
 
 const INITIAL_FORM_DATA: CreateUser = {

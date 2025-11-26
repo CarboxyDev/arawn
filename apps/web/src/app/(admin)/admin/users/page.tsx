@@ -4,7 +4,7 @@ import React from 'react';
 
 import { UsersManagementTable } from '@/components/admin/users-management-table';
 
-export default function AdminUsersPage(): React.ReactElement {
+export default function AdminUsersPage() {
   return (
     <div className="container mx-auto px-6 py-8">
       <div className="mb-8">

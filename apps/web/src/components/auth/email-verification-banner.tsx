@@ -1,11 +1,11 @@
 'use client';
 
+import { Alert, AlertDescription, AlertTitle } from '@repo/packages-ui/alert';
+import { Button } from '@repo/packages-ui/button';
 import { AlertCircle, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth';
 
 export function EmailVerificationBanner() {

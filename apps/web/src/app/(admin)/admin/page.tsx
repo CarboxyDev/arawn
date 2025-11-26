@@ -22,7 +22,7 @@ const adminCards = [
   },
 ];
 
-export default function AdminDashboardPage(): React.ReactElement {
+export default function AdminDashboardPage() {
   return (
     <div className="container mx-auto px-6 py-8">
       <div className="mb-8">
