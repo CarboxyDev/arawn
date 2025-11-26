@@ -15,7 +15,7 @@ import {
   WifiOff,
   Zap,
 } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Area,
   AreaChart,
@@ -164,10 +164,18 @@ export function RealtimeMetricsChart() {
   const [frozenData, setFrozenData] = useState<RealtimeMetricsPoint[] | null>(
     null
   );
+  const dataRef = useRef(data);
+
+  useLayoutEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   const handleMouseEnter = useCallback(() => {
-    setFrozenData(data);
-  }, [data]);
+    const currentData = dataRef.current;
+    if (currentData.length > 0) {
+      setFrozenData(structuredClone(currentData));
+    }
+  }, []);
 
   const handleMouseLeave = useCallback(() => {
     setFrozenData(null);
@@ -188,7 +196,6 @@ export function RealtimeMetricsChart() {
     }));
   }, [displayData, metricConfig]);
 
-  const latestPoint = data[data.length - 1];
   const displayedLatestPoint = displayData[displayData.length - 1];
 
   const maxValue = useMemo(() => {
@@ -255,11 +262,13 @@ export function RealtimeMetricsChart() {
           </div>
         </div>
 
-        {latestPoint && (
+        {displayedLatestPoint && (
           <div className="text-right">
-            <p className="text-muted-foreground text-[10px]">Last update</p>
+            <p className="text-muted-foreground text-[10px]">
+              {isPaused ? 'Paused at' : 'Last update'}
+            </p>
             <p className="font-mono text-xs tabular-nums">
-              {formatTime(latestPoint.timestamp)}
+              {formatTime(displayedLatestPoint.timestamp)}
             </p>
           </div>
         )}
