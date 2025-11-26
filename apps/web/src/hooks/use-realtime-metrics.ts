@@ -27,7 +27,7 @@ export function useRealtimeMetrics(
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectAttempts = useRef(0);
-  const connectRef = useRef<() => void>();
+  const connectRef = useRef<(() => void) | null>(null);
 
   const connect = useCallback(() => {
     if (eventSourceRef.current) {
