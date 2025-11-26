@@ -1,6 +1,12 @@
 'use client';
 
-import { Button } from '@repo/packages-ui/button';
+import { AnimatedThemeToggler } from '@repo/packages-ui/animated-theme-toggler';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@repo/packages-ui/dropdown-menu';
 import {
   Sidebar,
   SidebarContent,
@@ -17,7 +23,9 @@ import {
   SidebarTrigger,
 } from '@repo/packages-ui/sidebar';
 import { UserAvatar } from '@repo/packages-ui/user-avatar';
+import { motion } from 'framer-motion';
 import {
+  ChevronsUpDown,
   LayoutDashboard,
   LogOut,
   ScrollText,
@@ -70,26 +78,29 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
 
   return (
     <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader className="h-14 border-b px-6 py-0">
-          <div className="flex h-full items-center gap-3">
-            <div className="bg-primary flex size-9 items-center justify-center rounded-lg shadow-sm">
-              <ShieldCheck className="text-primary-foreground size-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold">Admin Dashboard</span>
-              <span className="text-muted-foreground text-xs">
-                Manage Application
-              </span>
-            </div>
-          </div>
+      <Sidebar collapsible="icon">
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                size="lg"
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              >
+                <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                  <ShieldCheck className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Admin Panel</span>
+                  <span className="truncate text-xs">Manage App</span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarHeader>
-        <SidebarContent className="pt-4">
+        <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel className="px-4 text-xs font-semibold uppercase tracking-wider">
-              Navigation
-            </SidebarGroupLabel>
-            <SidebarGroupContent className="mt-2">
+            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+            <SidebarGroupContent>
               <SidebarMenu>
                 {adminNavItems.map((item) => {
                   const Icon = item.icon;
@@ -101,10 +112,48 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
                         asChild
                         isActive={isActive}
                         tooltip={item.title}
+                        className="hover:bg-sidebar-accent/50 relative overflow-visible data-[active=true]:bg-transparent"
                       >
-                        <Link href={item.href}>
-                          <Icon />
-                          <span>{item.title}</span>
+                        <Link href={item.href} className="relative z-20">
+                          {isActive && (
+                            <motion.div
+                              layoutId="active-nav-item"
+                              className="bg-sidebar-primary absolute inset-0 -z-10 rounded-md"
+                              transition={{
+                                type: 'spring',
+                                stiffness: 300,
+                                damping: 30,
+                              }}
+                            />
+                          )}
+                          <motion.span
+                            animate={{
+                              color: isActive
+                                ? 'var(--sidebar-primary-foreground)'
+                                : 'var(--sidebar-foreground)',
+                            }}
+                            transition={{
+                              duration: 0.2,
+                              delay: isActive ? 0.1 : 0,
+                            }}
+                            className="flex items-center justify-center"
+                          >
+                            <Icon className="size-4" />
+                          </motion.span>
+                          <motion.span
+                            animate={{
+                              color: isActive
+                                ? 'var(--sidebar-primary-foreground)'
+                                : 'var(--sidebar-foreground)',
+                            }}
+                            transition={{
+                              duration: 0.2,
+                              delay: isActive ? 0.1 : 0,
+                            }}
+                            className="truncate"
+                          >
+                            {item.title}
+                          </motion.span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -114,40 +163,55 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="border-t p-4">
-          <div className="flex items-center gap-3">
-            <UserAvatar
-              src={session?.user.image}
-              alt={session?.user.name || 'Admin'}
-              fallback={userInitials}
-              className="size-8"
-            />
-            <div className="flex-1 overflow-hidden">
-              <p className="truncate text-sm font-medium">
-                {session?.user.name || 'Admin'}
-              </p>
-              <p className="text-muted-foreground truncate text-xs">
-                {session?.user.email}
-              </p>
-            </div>
-            <Button
-              onClick={handleSignOut}
-              variant="ghost"
-              size="icon"
-              className="size-8 shrink-0"
-              title="Sign out"
-            >
-              <LogOut className="size-4" />
-            </Button>
-          </div>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  >
+                    <UserAvatar
+                      src={session?.user.image}
+                      alt={session?.user.name || 'Admin'}
+                      fallback={userInitials}
+                      className="h-8 w-8 rounded-lg"
+                    />
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {session?.user.name || 'Admin'}
+                      </span>
+                      <span className="truncate text-xs">
+                        {session?.user.email}
+                      </span>
+                    </div>
+                    <ChevronsUpDown className="ml-auto size-4" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                  side="bottom"
+                  align="end"
+                  sideOffset={4}
+                >
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 size-4" />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="border-sidebar-border sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-white px-6 dark:bg-gray-950">
-          <SidebarTrigger />
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
           <div className="flex-1" />
+          <AnimatedThemeToggler />
         </header>
-        <div className="flex-1">{children}</div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
