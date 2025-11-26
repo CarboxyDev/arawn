@@ -107,12 +107,13 @@ export const RealtimeMetricsPointSchema = z.object({
     heapUsedMB: z.number(),
     heapTotalMB: z.number(),
     rssMB: z.number(),
+    usedPercent: z.number(),
   }),
   cpu: z.object({
     percentage: z.number(),
   }),
-  eventLoop: z.object({
-    lagMs: z.number(),
+  errors: z.object({
+    rate: z.number(),
   }),
   requests: z.object({
     perSecond: z.number(),

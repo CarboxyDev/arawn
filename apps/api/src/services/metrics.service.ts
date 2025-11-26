@@ -1,6 +1,5 @@
 import type { RealtimeMetricsPoint } from '@repo/packages-types/stats';
 import { cpus } from 'os';
-import { performance } from 'perf_hooks';
 
 const HISTORY_SIZE = 60;
 const COLLECTION_INTERVAL_MS = 1000;
@@ -8,6 +7,7 @@ const COLLECTION_INTERVAL_MS = 1000;
 interface RequestMetric {
   timestamp: number;
   responseTimeMs: number;
+  isError: boolean;
 }
 
 export class MetricsService {
@@ -17,15 +17,12 @@ export class MetricsService {
   private lastCpuTime = 0;
   private intervalId: NodeJS.Timeout | null = null;
   private subscribers = new Set<(metrics: RealtimeMetricsPoint) => void>();
-  private eventLoopLag = 0;
-  private lastEventLoopCheck = 0;
 
   start() {
     if (this.intervalId) return;
 
     this.lastCpuUsage = process.cpuUsage();
     this.lastCpuTime = Date.now();
-    this.startEventLoopMonitor();
 
     setTimeout(() => {
       this.collectMetrics();
@@ -43,23 +40,13 @@ export class MetricsService {
     }
   }
 
-  private startEventLoopMonitor() {
-    const check = () => {
-      const now = performance.now();
-      if (this.lastEventLoopCheck > 0) {
-        const expectedInterval = 200;
-        const actualInterval = now - this.lastEventLoopCheck;
-        this.eventLoopLag = Math.max(0, actualInterval - expectedInterval);
-      }
-      this.lastEventLoopCheck = now;
-      setTimeout(check, 200);
-    };
-    check();
-  }
-
-  recordRequest(responseTimeMs: number) {
+  recordRequest(responseTimeMs: number, statusCode: number) {
     const now = Date.now();
-    this.requestMetrics.push({ timestamp: now, responseTimeMs });
+    this.requestMetrics.push({
+      timestamp: now,
+      responseTimeMs,
+      isError: statusCode >= 400,
+    });
 
     const cutoff = now - 5000;
     this.requestMetrics = this.requestMetrics.filter(
@@ -86,22 +73,31 @@ export class MetricsService {
 
     const cpuPercentage = this.calculateCpuPercentage();
 
-    const eventLoopLag = this.measureEventLoopLag();
+    const { rps, avgResponseTime, errorRate } =
+      this.calculateRequestMetrics(now);
 
-    const { rps, avgResponseTime } = this.calculateRequestMetrics(now);
+    const heapUsedMB =
+      Math.round((memUsage.heapUsed / 1024 / 1024) * 100) / 100;
+    const heapTotalMB =
+      Math.round((memUsage.heapTotal / 1024 / 1024) * 100) / 100;
+    const usedPercent =
+      heapTotalMB > 0
+        ? Math.round((heapUsedMB / heapTotalMB) * 100 * 100) / 100
+        : 0;
 
     const metrics: RealtimeMetricsPoint = {
       timestamp: now,
       memory: {
-        heapUsedMB: Math.round((memUsage.heapUsed / 1024 / 1024) * 100) / 100,
-        heapTotalMB: Math.round((memUsage.heapTotal / 1024 / 1024) * 100) / 100,
+        heapUsedMB,
+        heapTotalMB,
         rssMB: Math.round((memUsage.rss / 1024 / 1024) * 100) / 100,
+        usedPercent,
       },
       cpu: {
         percentage: cpuPercentage,
       },
-      eventLoop: {
-        lagMs: eventLoopLag,
+      errors: {
+        rate: errorRate,
       },
       requests: {
         perSecond: rps,
@@ -144,13 +140,10 @@ export class MetricsService {
     return Math.max(0.01, rounded);
   }
 
-  private measureEventLoopLag(): number {
-    return Math.round(this.eventLoopLag * 100) / 100;
-  }
-
   private calculateRequestMetrics(now: number): {
     rps: number;
     avgResponseTime: number;
+    errorRate: number;
   } {
     const windowMs = 5000;
     const cutoff = now - windowMs;
@@ -159,7 +152,7 @@ export class MetricsService {
     );
 
     if (recentRequests.length === 0) {
-      return { rps: 0, avgResponseTime: 0 };
+      return { rps: 0, avgResponseTime: 0, errorRate: 0 };
     }
 
     const rps =
@@ -171,7 +164,11 @@ export class MetricsService {
           100
       ) / 100;
 
-    return { rps, avgResponseTime };
+    const errorCount = recentRequests.filter((m) => m.isError).length;
+    const errorRate =
+      Math.round((errorCount / recentRequests.length) * 100 * 100) / 100;
+
+    return { rps, avgResponseTime, errorRate };
   }
 }
 

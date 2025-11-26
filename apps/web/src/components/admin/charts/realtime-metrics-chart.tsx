@@ -7,13 +7,13 @@ import { formatTime } from '@repo/packages-utils/date';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Activity,
+  AlertTriangle,
   Cpu,
   HardDrive,
   Pause,
   Timer,
   Wifi,
   WifiOff,
-  Zap,
 } from 'lucide-react';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -29,7 +29,7 @@ import {
 
 import { useRealtimeMetrics } from '@/hooks/use-realtime-metrics';
 
-type MetricType = 'memory' | 'cpu' | 'requests' | 'responseTime' | 'eventLoop';
+type MetricType = 'memory' | 'cpu' | 'requests' | 'responseTime' | 'errorRate';
 
 interface MetricConfig {
   key: MetricType;
@@ -39,7 +39,7 @@ interface MetricConfig {
   icon: typeof Cpu;
   unit: string;
   getValue: (point: RealtimeMetricsPoint) => number;
-  format: (value: number) => string;
+  format: (value: number, point?: RealtimeMetricsPoint) => string;
 }
 
 const METRICS: MetricConfig[] = [
@@ -49,9 +49,12 @@ const METRICS: MetricConfig[] = [
     color: '#8b5cf6',
     gradientId: 'memoryGradient',
     icon: HardDrive,
-    unit: 'MB',
-    getValue: (p) => p.memory.heapUsedMB,
-    format: (v) => `${v.toFixed(1)} MB`,
+    unit: '%',
+    getValue: (p) => p.memory.usedPercent,
+    format: (v, p) =>
+      p
+        ? `${v.toFixed(1)}% (${p.memory.heapUsedMB.toFixed(0)} MB)`
+        : `${v.toFixed(1)}%`,
   },
   {
     key: 'cpu',
@@ -84,14 +87,14 @@ const METRICS: MetricConfig[] = [
     format: (v) => `${v.toFixed(0)}ms`,
   },
   {
-    key: 'eventLoop',
-    label: 'Event Loop',
-    color: '#ec4899',
-    gradientId: 'eventLoopGradient',
-    icon: Zap,
-    unit: 'ms',
-    getValue: (p) => p.eventLoop.lagMs,
-    format: (v) => `${v.toFixed(2)}ms`,
+    key: 'errorRate',
+    label: 'Error Rate',
+    color: '#ef4444',
+    gradientId: 'errorRateGradient',
+    icon: AlertTriangle,
+    unit: '%',
+    getValue: (p) => p.errors.rate,
+    format: (v) => `${v.toFixed(2)}%`,
   },
 ];
 
@@ -151,7 +154,7 @@ function CustomTooltip({ active, payload, activeMetric }: CustomTooltipProps) {
       <div className="flex items-center gap-2">
         <Icon className="size-4" style={{ color: activeMetric.color }} />
         <span className="font-semibold" style={{ color: activeMetric.color }}>
-          {activeMetric.format(activeMetric.getValue(point))}
+          {activeMetric.format(activeMetric.getValue(point), point)}
         </span>
       </div>
     </motion.div>
@@ -297,7 +300,8 @@ export function RealtimeMetricsChart() {
               </span>
               <span className="font-semibold tabular-nums">
                 {metricConfig.format(
-                  metricConfig.getValue(displayedLatestPoint)
+                  metricConfig.getValue(displayedLatestPoint),
+                  displayedLatestPoint
                 )}
               </span>
             </div>

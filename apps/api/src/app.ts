@@ -216,7 +216,7 @@ app.addHook('onRequest', async (request) => {
 app.addHook('onResponse', async (request, reply) => {
   try {
     const responseTime = reply.elapsedTime;
-    metricsService.recordRequest(responseTime);
+    metricsService.recordRequest(responseTime, reply.statusCode);
 
     const statusCode = reply.statusCode;
     const isError = statusCode >= 400;
