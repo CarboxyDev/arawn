@@ -1,14 +1,13 @@
 'use client';
 
-import { Check, Copy, Info } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
-
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from '@repo/packages-ui/tooltip';
+import { Check, Copy, Info } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface CommandBlockProps {
   command: string;

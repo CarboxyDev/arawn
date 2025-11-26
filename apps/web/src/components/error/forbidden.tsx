@@ -1,8 +1,8 @@
+import { Button } from '@repo/packages-ui/button';
 import { ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 
 import { ErrorCard } from '@/components/error/error-card';
-import { Button } from '@/components/ui/button';
 
 export function Forbidden() {
   return (

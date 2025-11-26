@@ -19,7 +19,7 @@ import {
 } from '@tanstack/react-table';
 import * as React from 'react';
 
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '../skeleton';
 import {
   Table,
   TableBody,
@@ -27,8 +27,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-
+} from '../table';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
 

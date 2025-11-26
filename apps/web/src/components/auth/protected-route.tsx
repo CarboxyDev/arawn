@@ -1,10 +1,10 @@
 'use client';
 
+import { Skeleton } from '@repo/packages-ui/skeleton';
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 
 import { Forbidden } from '@/components/error/forbidden';
-import { Skeleton } from '@/components/ui/skeleton';
 import { authClient } from '@/lib/auth';
 
 interface ProtectedRouteProps {

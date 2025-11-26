@@ -3,6 +3,19 @@
 import type { Role } from '@repo/packages-types/role';
 import { RoleSchema } from '@repo/packages-types/role';
 import type { User } from '@repo/packages-types/user';
+import { Badge } from '@repo/packages-ui/badge';
+import { Button } from '@repo/packages-ui/button';
+import { DataTable } from '@repo/packages-ui/data-table/data-table';
+import { DataTableColumnHeader } from '@repo/packages-ui/data-table/data-table-column-header';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@repo/packages-ui/dropdown-menu';
 import type {
   ColumnDef,
   ColumnFiltersState,
@@ -16,19 +29,6 @@ import * as React from 'react';
 import { UserCreateDialog } from '@/components/admin/user-create-dialog';
 import { UserDeleteDialog } from '@/components/admin/user-delete-dialog';
 import { UserEditDialog } from '@/components/admin/user-edit-dialog';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { DataTable } from '@/components/ui/data-table/data-table';
-import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { useFetchUsers } from '@/hooks/api/use-users';
 
 const getRoleBadgeVariant = (role: Role) => {

@@ -1,12 +1,12 @@
 'use client';
 
+import { Alert } from '@repo/packages-ui/alert';
+import { Button } from '@repo/packages-ui/button';
+import { FileUploadInput } from '@repo/packages-ui/file-upload-input';
 import { FileText, Image, Loader2, Trash2 } from 'lucide-react';
 import { type Upload } from 'packages/types/src/upload';
 import React, { useState } from 'react';
 
-import { Alert } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { FileUploadInput } from '@/components/ui/file-upload-input';
 import {
   useDeleteUpload,
   useFetchUploads,
@@ -14,7 +14,7 @@ import {
   useUploadFile,
 } from '@/hooks/api/use-uploads';
 
-export default function FileUploadExamplePage(): React.ReactElement {
+export default function FileUploadExamplePage() {
   const [selectedFile, setSelectedFile] = useState<globalThis.File | null>(
     null
   );

@@ -1,6 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/packages-ui/button';
+import { Label } from '@repo/packages-ui/label';
+import { PasswordInput } from '@repo/packages-ui/password-input';
 import { ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -9,9 +12,6 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { PasswordInput } from '@/components/ui/password-input';
 import { authClient } from '@/lib/auth';
 
 const resetPasswordSchema = z.object({
@@ -230,7 +230,7 @@ function ResetPasswordContent() {
   );
 }
 
-export default function ResetPasswordPage(): React.ReactElement {
+export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
