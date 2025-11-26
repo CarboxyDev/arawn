@@ -9,6 +9,7 @@ import { EmailService } from '@/services/email.service';
 import { FileStorageService } from '@/services/file-storage.service';
 import { PasswordService } from '@/services/password.service';
 import { SessionsService } from '@/services/sessions.service';
+import { StatsService } from '@/services/stats.service';
 import { UploadsService } from '@/services/uploads.service';
 import { UsersService } from '@/services/users.service';
 
@@ -23,6 +24,7 @@ declare module 'fastify' {
     uploadsService: UploadsService;
     accountsService: AccountsService;
     auditService: AuditService;
+    statsService: StatsService;
   }
 }
 
@@ -41,6 +43,7 @@ const servicesPlugin: FastifyPluginAsync = async (app) => {
   );
   const accountsService = new AccountsService(app.prisma, app.logger);
   const auditService = new AuditService(app.prisma, app.logger);
+  const statsService = new StatsService(app.prisma, app.logger);
 
   app.decorate('env', env);
   app.decorate('emailService', emailService);
@@ -51,6 +54,7 @@ const servicesPlugin: FastifyPluginAsync = async (app) => {
   app.decorate('uploadsService', uploadsService);
   app.decorate('accountsService', accountsService);
   app.decorate('auditService', auditService);
+  app.decorate('statsService', statsService);
 
   app.log.info('[+] Services configured');
 };

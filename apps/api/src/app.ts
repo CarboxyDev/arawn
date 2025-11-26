@@ -349,6 +349,7 @@ const { default: uploadsServeRoutes } = await import(
 );
 const { default: accountsRoutes } = await import('@/routes/accounts.js');
 const { default: auditRoutes } = await import('@/routes/audit.js');
+const { default: statsRoutes } = await import('@/routes/stats.js');
 
 await app.register(uploadsServeRoutes);
 
@@ -361,6 +362,7 @@ await app.register(
     await app.register(uploadsRoutes);
     await app.register(accountsRoutes);
     await app.register(auditRoutes);
+    await app.register(statsRoutes);
   },
   { prefix: '/api' }
 );
