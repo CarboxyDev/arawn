@@ -12,6 +12,8 @@ export const AuditActionSchema = z.enum([
   'user.role_changed',
   'session.revoked',
   'session.revoked_all',
+  'session.admin_revoked',
+  'session.admin_revoked_all',
   'password.changed',
   'account.linked',
   'account.unlinked',

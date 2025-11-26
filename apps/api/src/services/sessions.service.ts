@@ -1,4 +1,10 @@
-import type { PrismaClient } from '@prisma/client';
+import type { Prisma, PrismaClient } from '@prisma/client';
+import type { PaginatedResponse } from '@repo/packages-types/pagination';
+import type {
+  AdminSession,
+  QuerySessions,
+  SessionStats,
+} from '@repo/packages-types/session';
 import { NotFoundError } from '@repo/packages-utils/errors';
 
 export interface SessionInfo {
@@ -78,5 +84,116 @@ export class SessionsService {
         userId,
       },
     });
+  }
+
+  async getAdminSessions(
+    query: QuerySessions
+  ): Promise<PaginatedResponse<AdminSession>> {
+    const { page, limit, search, status, userId, sortBy, sortOrder } = query;
+    const skip = (page - 1) * limit;
+    const now = new Date();
+
+    const where: Prisma.SessionWhereInput = {};
+
+    if (status === 'active') {
+      where.expiresAt = { gt: now };
+    } else if (status === 'expired') {
+      where.expiresAt = { lte: now };
+    }
+
+    if (userId) {
+      where.userId = userId;
+    }
+
+    if (search) {
+      where.user = {
+        OR: [
+          { email: { contains: search, mode: 'insensitive' } },
+          { name: { contains: search, mode: 'insensitive' } },
+        ],
+      };
+    }
+
+    const [sessions, total] = await Promise.all([
+      this.prisma.session.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+        },
+        orderBy: { [sortBy]: sortOrder },
+        skip,
+        take: limit,
+      }),
+      this.prisma.session.count({ where }),
+    ]);
+
+    return {
+      data: sessions,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async getSessionStats(): Promise<SessionStats> {
+    const now = new Date();
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+
+    const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+    const [activeSessions, uniqueUsers, sessionsToday, expiringSoon] =
+      await Promise.all([
+        this.prisma.session.count({
+          where: { expiresAt: { gt: now } },
+        }),
+        this.prisma.session
+          .groupBy({
+            by: ['userId'],
+            where: { expiresAt: { gt: now } },
+          })
+          .then((r) => r.length),
+        this.prisma.session.count({
+          where: { createdAt: { gte: todayStart } },
+        }),
+        this.prisma.session.count({
+          where: {
+            expiresAt: { gt: now, lte: oneDayFromNow },
+          },
+        }),
+      ]);
+
+    return { activeSessions, uniqueUsers, sessionsToday, expiringSoon };
+  }
+
+  async adminRevokeSession(sessionId: string): Promise<void> {
+    const session = await this.prisma.session.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) {
+      throw new NotFoundError('Session not found', { sessionId });
+    }
+
+    await this.prisma.session.delete({
+      where: { id: sessionId },
+    });
+  }
+
+  async adminRevokeUserSessions(userId: string): Promise<number> {
+    const result = await this.prisma.session.deleteMany({
+      where: { userId },
+    });
+    return result.count;
   }
 }

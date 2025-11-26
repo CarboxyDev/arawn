@@ -26,8 +26,9 @@ import { UserAvatar } from '@repo/packages-ui/user-avatar';
 import { motion } from 'framer-motion';
 import {
   ChevronsUpDown,
-  LayoutDashboard,
+  KeyRound,
   LogOut,
+  MonitorCheck,
   ScrollText,
   ShieldCheck,
   Users,
@@ -41,14 +42,19 @@ import { authClient } from '@/lib/auth';
 
 const adminNavItems = [
   {
-    title: 'Dashboard',
+    title: 'System Monitoring',
     href: '/admin',
-    icon: LayoutDashboard,
+    icon: MonitorCheck,
   },
   {
-    title: 'User Management',
+    title: 'Users',
     href: '/admin/users',
     icon: Users,
+  },
+  {
+    title: 'Sessions',
+    href: '/admin/sessions',
+    icon: KeyRound,
   },
   {
     title: 'Audit Logs',

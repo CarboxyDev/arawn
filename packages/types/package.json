@@ -10,6 +10,7 @@
     "./health-check": "./src/health-check.ts",
     "./pagination": "./src/pagination.ts",
     "./role": "./src/role.ts",
+    "./session": "./src/session.ts",
     "./stats": "./src/stats.ts",
     "./upload": "./src/upload.ts",
     "./user": "./src/user.ts"
