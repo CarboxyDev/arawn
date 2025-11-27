@@ -41,7 +41,7 @@ const servicesPlugin: FastifyPluginAsync = async (app) => {
     app.logger,
     authorizationService
   );
-  const sessionsService = new SessionsService(app.prisma);
+  const sessionsService = new SessionsService(app.prisma, authorizationService);
   const passwordService = new PasswordService(app.prisma, sessionsService);
   const uploadsService = new UploadsService(
     app.prisma,

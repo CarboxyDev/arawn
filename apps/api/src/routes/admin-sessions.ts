@@ -58,7 +58,11 @@ const adminSessionsRoutes: FastifyPluginAsync = async (app) => {
     },
     async (request) => {
       const { sessionId } = request.params;
-      await app.sessionsService.adminRevokeSession(sessionId);
+      await app.sessionsService.adminRevokeSession(
+        request.user!.id,
+        request.user!.role as 'user' | 'admin' | 'super_admin',
+        sessionId
+      );
 
       await logAudit(app.auditService, {
         userId: request.user!.id,
@@ -84,7 +88,11 @@ const adminSessionsRoutes: FastifyPluginAsync = async (app) => {
     },
     async (request) => {
       const { userId } = request.params;
-      const count = await app.sessionsService.adminRevokeUserSessions(userId);
+      const count = await app.sessionsService.adminRevokeUserSessions(
+        request.user!.id,
+        request.user!.role as 'user' | 'admin' | 'super_admin',
+        userId
+      );
 
       await logAudit(app.auditService, {
         userId: request.user!.id,
