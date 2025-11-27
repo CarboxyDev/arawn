@@ -90,6 +90,8 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
     async (request) => {
       const before = await app.usersService.getUserById(request.params.id);
       const user = await app.usersService.updateUser(
+        request.user!.id,
+        request.user!.role as 'user' | 'admin' | 'super_admin',
         request.params.id,
         request.body
       );
@@ -123,7 +125,11 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
     },
     async (request) => {
       const before = await app.usersService.getUserById(request.params.id);
-      await app.usersService.deleteUser(request.params.id);
+      await app.usersService.deleteUser(
+        request.user!.id,
+        request.user!.role as 'user' | 'admin' | 'super_admin',
+        request.params.id
+      );
 
       await logAudit(app.auditService, {
         userId: request.user!.id,
