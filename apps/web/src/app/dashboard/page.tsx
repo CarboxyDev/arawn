@@ -37,15 +37,6 @@ function DashboardContent() {
 
   if (!session) return null;
 
-  const userInitials = session.user.name
-    ? session.user.name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
-    : session.user.email?.charAt(0).toUpperCase() || 'U';
-
   const accountCreatedDate = session.user.createdAt
     ? formatShortDate(session.user.createdAt)
     : 'N/A';
@@ -71,8 +62,8 @@ function DashboardContent() {
       <div className="flex items-center gap-4">
         <UserAvatar
           src={session.user.image}
-          alt={session.user.name || 'User avatar'}
-          fallback={userInitials}
+          name={session.user.name}
+          email={session.user.email}
         />
         <div>
           <h1 className="text-3xl font-bold">

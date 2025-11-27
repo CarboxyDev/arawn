@@ -21,18 +21,6 @@ function formatRelativeTime(dateStr: string) {
   return `${diffDays}d ago`;
 }
 
-function getInitials(name: string | null, email: string) {
-  if (name) {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  }
-  return email.charAt(0).toUpperCase();
-}
-
 interface RecentSignupsFeedProps {
   signups: RecentSignup[];
 }
@@ -58,8 +46,9 @@ export function RecentSignupsFeed({ signups }: RecentSignupsFeedProps) {
             >
               <UserAvatar
                 src={signup.image}
-                fallback={getInitials(signup.name, signup.email)}
-                className="size-8"
+                name={signup.name}
+                email={signup.email}
+                size="sm"
               />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">

@@ -84,22 +84,14 @@ const columns: ColumnDef<AdminSession>[] = [
     meta: { label: 'User' },
     cell: ({ row }) => {
       const user = row.original.user;
-      const initials = user.name
-        ? user.name
-            .split(' ')
-            .map((n) => n[0])
-            .join('')
-            .toUpperCase()
-            .slice(0, 2)
-        : user.email.charAt(0).toUpperCase();
 
       return (
         <div className="flex items-center gap-3">
           <UserAvatar
             src={user.image}
-            alt={user.name || user.email}
-            fallback={initials}
-            className="h-8 w-8"
+            name={user.name}
+            email={user.email}
+            size="sm"
           />
           <div>
             <div className="font-medium">{user.name || 'No name'}</div>
