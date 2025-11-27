@@ -1,9 +1,9 @@
-import type { PrismaClient } from '@prisma/client';
 import { createMockLogger } from '@test/helpers/mock-logger';
 import { createMockPrisma } from '@test/helpers/mock-prisma';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LoggerService } from '@/common/logger.service';
+import type { PrismaClient } from '@/generated/client/client.js';
 
 import { UsersService } from './users.service';
 

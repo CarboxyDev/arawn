@@ -1,4 +1,3 @@
-import type { PrismaClient } from '@prisma/client';
 import type {
   AuditAction,
   AuditLog,
@@ -9,6 +8,7 @@ import type {
 import type { PaginatedResponse } from '@repo/packages-types/pagination';
 
 import type { LoggerService } from '@/common/logger.service';
+import type { PrismaClient } from '@/generated/client/client.js';
 
 interface CreateAuditLogInput {
   userId: string;

@@ -1,4 +1,3 @@
-import { type PrismaClient } from '@prisma/client';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware } from 'better-auth/api';
@@ -8,6 +7,7 @@ import fp from 'fastify-plugin';
 
 import { loadEnv } from '@/config/env.js';
 import { RATE_LIMIT_CONFIG } from '@/config/rate-limit.js';
+import { type PrismaClient } from '@/generated/client/client.js';
 import { logAudit } from '@/utils/audit-logger.js';
 
 declare module 'fastify' {

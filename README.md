@@ -51,7 +51,7 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 **API**
 
 - Fastify 5
-- Prisma 6 + PostgreSQL 17
+- Prisma 7 + PostgreSQL 17
 - Better-auth for authentication
 - Pino for logging
 - Scalar API docs

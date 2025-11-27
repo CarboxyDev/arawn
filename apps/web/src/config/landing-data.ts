@@ -77,7 +77,7 @@ export const techStack = {
     items: [
       'Fastify 5',
       'TypeScript',
-      'Prisma',
+      'Prisma 7',
       'PostgreSQL',
       'Better-auth',
       'Zod',
