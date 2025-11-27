@@ -1,6 +1,6 @@
 'use client';
 
-import type { RecentSignup, TopActivityUser } from '@repo/packages-types/stats';
+import type { RecentSignup } from '@repo/packages-types/stats';
 import { ScrollArea } from '@repo/packages-ui/scroll-area';
 import { Skeleton } from '@repo/packages-ui/skeleton';
 import { UserAvatar } from '@repo/packages-ui/user-avatar';
@@ -77,70 +77,6 @@ export function RecentSignupsFeed({ signups }: RecentSignupsFeedProps) {
           {signups.length === 0 && (
             <p className="text-muted-foreground py-8 text-center text-sm">
               No recent signups
-            </p>
-          )}
-        </div>
-      </ScrollArea>
-    </div>
-  );
-}
-
-interface TopActivityUsersFeedProps {
-  users: TopActivityUser[];
-}
-
-export function TopActivityUsersFeed({ users }: TopActivityUsersFeedProps) {
-  const maxCount = Math.max(...users.map((u) => u.actionCount), 1);
-
-  return (
-    <div className="bg-card rounded-xl border p-5">
-      <div className="mb-4">
-        <h3 className="text-sm font-semibold">Most Active Users</h3>
-        <p className="text-muted-foreground text-xs">
-          By actions in last 30 days
-        </p>
-      </div>
-      <ScrollArea className="h-[280px] pr-3">
-        <div className="space-y-3">
-          {users.map((user, index) => (
-            <motion.div
-              key={user.userId}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="space-y-2"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-muted-foreground w-5 text-xs font-medium">
-                  #{index + 1}
-                </span>
-                <UserAvatar
-                  src={user.image}
-                  fallback={getInitials(user.name, user.email)}
-                  className="size-7"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">
-                    {user.name || user.email}
-                  </p>
-                </div>
-                <span className="text-muted-foreground text-xs font-medium">
-                  {user.actionCount} actions
-                </span>
-              </div>
-              <div className="ml-8 h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
-                <motion.div
-                  className="h-full rounded-full bg-blue-500"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(user.actionCount / maxCount) * 100}%` }}
-                  transition={{ delay: index * 0.05 + 0.2, duration: 0.5 }}
-                />
-              </div>
-            </motion.div>
-          ))}
-          {users.length === 0 && (
-            <p className="text-muted-foreground py-8 text-center text-sm">
-              No activity data
             </p>
           )}
         </div>

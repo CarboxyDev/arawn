@@ -34,7 +34,6 @@ model User {
   sessions      Session[]
   accounts      Account[]
   uploads       Upload[]
-  auditLogs     AuditLog[]
 
   @@map("users")
 }
@@ -115,23 +114,3 @@ model Upload {
   @@map("uploads")
 }
 
-// Audit log model for tracking user actions
-model AuditLog {
-  id           String   @id @default(cuid())
-  userId       String
-  action       String // e.g., "user.created", "session.revoked"
-  resourceType String // e.g., "user", "session", "account"
-  resourceId   String? // ID of the affected resource
-  changes      Json? // { before: {...}, after: {...} } or action-specific data
-  ipAddress    String?
-  userAgent    String?
-  createdAt    DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([action])
-  @@index([createdAt])
-  @@index([resourceType])
-  @@map("audit_logs")
-}

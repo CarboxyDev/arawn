@@ -3,7 +3,6 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { requireAuth } from '@/hooks/auth';
-import { logAudit } from '@/utils/audit-logger';
 
 const accountsRoutes: FastifyPluginAsync = async (app) => {
   const server = app.withTypeProvider<ZodTypeProvider>();
@@ -61,15 +60,6 @@ const accountsRoutes: FastifyPluginAsync = async (app) => {
         userId,
         providerId
       );
-
-      await logAudit(app.auditService, {
-        userId,
-        action: 'account.unlinked',
-        resourceType: 'account',
-        resourceId: providerId,
-        changes: { providerId },
-        request,
-      });
 
       return result;
     }

@@ -9,7 +9,6 @@ import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { requireAuth, requireRole } from '@/hooks/auth';
-import { createBeforeAfterChanges, logAudit } from '@/utils/audit-logger';
 
 const usersRoutes: FastifyPluginAsync = async (app) => {
   const server = app.withTypeProvider<ZodTypeProvider>();
@@ -62,15 +61,6 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const user = await app.usersService.createUser(request.body);
 
-      await logAudit(app.auditService, {
-        userId: request.user!.id,
-        action: 'user.created',
-        resourceType: 'user',
-        resourceId: user.id,
-        changes: createBeforeAfterChanges(null, user),
-        request,
-      });
-
       return reply.status(201).send(success(user));
     }
   );
@@ -88,25 +78,12 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request) => {
-      const before = await app.usersService.getUserById(request.params.id);
       const user = await app.usersService.updateUser(
         request.user!.id,
         request.user!.role as 'user' | 'admin' | 'super_admin',
         request.params.id,
         request.body
       );
-
-      const hasRoleChange = before.role !== user.role;
-      const action = hasRoleChange ? 'user.role_changed' : 'user.updated';
-
-      await logAudit(app.auditService, {
-        userId: request.user!.id,
-        action,
-        resourceType: 'user',
-        resourceId: user.id,
-        changes: createBeforeAfterChanges(before, user),
-        request,
-      });
 
       return success(user);
     }
@@ -124,21 +101,11 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request) => {
-      const before = await app.usersService.getUserById(request.params.id);
       await app.usersService.deleteUser(
         request.user!.id,
         request.user!.role as 'user' | 'admin' | 'super_admin',
         request.params.id
       );
-
-      await logAudit(app.auditService, {
-        userId: request.user!.id,
-        action: 'user.deleted',
-        resourceType: 'user',
-        resourceId: request.params.id,
-        changes: createBeforeAfterChanges(before, null),
-        request,
-      });
 
       return message('User deleted successfully');
     }

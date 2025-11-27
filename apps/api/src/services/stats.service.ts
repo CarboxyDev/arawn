@@ -7,7 +7,6 @@ import type {
   StatsOverview,
   SystemHealth,
   SystemStats,
-  TopActivityUser,
   UserGrowthPoint,
 } from '@repo/packages-types/stats';
 
@@ -32,7 +31,6 @@ export class StatsService {
       authBreakdown,
       roleDistribution,
       recentSignups,
-      topActivityUsers,
       systemHealth,
     ] = await Promise.all([
       this.getOverview(),
@@ -41,7 +39,6 @@ export class StatsService {
       this.getAuthBreakdown(),
       this.getRoleDistribution(),
       this.getRecentSignups(),
-      this.getTopActivityUsers(),
       this.getSystemHealth(),
     ]);
 
@@ -52,7 +49,6 @@ export class StatsService {
       authBreakdown,
       roleDistribution,
       recentSignups,
-      topActivityUsers,
       systemHealth,
     };
   }
@@ -225,45 +221,6 @@ export class StatsService {
       image: u.image,
       createdAt: u.createdAt.toISOString(),
     }));
-  }
-
-  private async getTopActivityUsers(): Promise<TopActivityUser[]> {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const activityCounts = await this.prisma.auditLog.groupBy({
-      by: ['userId'],
-      where: { createdAt: { gte: thirtyDaysAgo } },
-      _count: { id: true },
-      orderBy: { _count: { id: 'desc' } },
-      take: 10,
-    });
-
-    if (activityCounts.length === 0) {
-      return [];
-    }
-
-    const userIds = activityCounts.map((a) => a.userId);
-    const users = await this.prisma.user.findMany({
-      where: { id: { in: userIds } },
-      select: { id: true, email: true, name: true, image: true },
-    });
-
-    const userMap = new Map(users.map((u) => [u.id, u]));
-
-    return activityCounts
-      .map((a) => {
-        const user = userMap.get(a.userId);
-        if (!user) return null;
-        return {
-          userId: a.userId,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-          actionCount: a._count.id,
-        };
-      })
-      .filter((item): item is TopActivityUser => item !== null);
   }
 
   private async getSystemHealth(): Promise<SystemHealth> {

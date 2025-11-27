@@ -29,7 +29,6 @@ import {
   KeyRound,
   LogOut,
   MonitorCheck,
-  ScrollText,
   ShieldCheck,
   Users,
 } from 'lucide-react';
@@ -55,11 +54,6 @@ const adminNavItems = [
     title: 'Sessions',
     href: '/admin/sessions',
     icon: KeyRound,
-  },
-  {
-    title: 'Audit Logs',
-    href: '/admin/audit-logs',
-    icon: ScrollText,
   },
 ];
 

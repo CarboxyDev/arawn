@@ -351,7 +351,6 @@ const { default: uploadsServeRoutes } = await import(
   '@/routes/uploads-serve.js'
 );
 const { default: accountsRoutes } = await import('@/routes/accounts.js');
-const { default: auditRoutes } = await import('@/routes/audit.js');
 const { default: statsRoutes } = await import('@/routes/stats.js');
 const { default: metricsRoutes } = await import('@/routes/metrics.js');
 const { default: adminSessionsRoutes } = await import(
@@ -370,7 +369,6 @@ await app.register(
     await app.register(verificationRoutes);
     await app.register(uploadsRoutes);
     await app.register(accountsRoutes);
-    await app.register(auditRoutes);
     await app.register(statsRoutes);
     await app.register(metricsRoutes);
     await app.register(adminSessionsRoutes);

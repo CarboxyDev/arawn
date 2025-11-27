@@ -9,7 +9,6 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import type { z } from 'zod';
 
 import { requireAuth, requireRole } from '@/hooks/auth';
-import { logAudit } from '@/utils/audit-logger';
 
 type RevokeSessionParams = z.infer<typeof RevokeSessionParamsSchema>;
 type RevokeUserSessionsParams = z.infer<typeof RevokeUserSessionsParamsSchema>;
@@ -64,14 +63,6 @@ const adminSessionsRoutes: FastifyPluginAsync = async (app) => {
         sessionId
       );
 
-      await logAudit(app.auditService, {
-        userId: request.user!.id,
-        action: 'session.admin_revoked',
-        resourceType: 'session',
-        resourceId: sessionId,
-        request,
-      });
-
       return message('Session revoked successfully');
     }
   );
@@ -93,15 +84,6 @@ const adminSessionsRoutes: FastifyPluginAsync = async (app) => {
         request.user!.role as 'user' | 'admin' | 'super_admin',
         userId
       );
-
-      await logAudit(app.auditService, {
-        userId: request.user!.id,
-        action: 'session.admin_revoked_all',
-        resourceType: 'session',
-        resourceId: userId,
-        changes: { sessionsRevoked: count },
-        request,
-      });
 
       return message(`Revoked ${count} session(s) for user`);
     }
