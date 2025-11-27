@@ -1,8 +1,7 @@
 import { User } from 'lucide-react';
 
-import { cn } from '@/lib/utils';
-
 import { Avatar, AvatarFallback, AvatarImage } from './avatar';
+import { cn } from './lib/utils';
 
 const colorClasses = [
   'bg-red-500',

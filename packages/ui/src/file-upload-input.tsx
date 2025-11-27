@@ -3,9 +3,8 @@
 import { Upload, X } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 
-import { cn } from '@/lib/utils';
-
 import { Button } from './button';
+import { cn } from './lib/utils';
 
 interface FileUploadInputProps {
   onFileSelect: (file: globalThis.File) => void;

@@ -74,7 +74,7 @@ pnpm db:seed          # Seed database
 - Type Definitions: Prefer `interface` for public-facing types and object shapes, `type` for unions, intersections, and computed types
 - Use descriptive variable names with auxiliary verbs (`isLoading`, `hasError`, `canSubmit`)
 - Favor default exports for pages and named exports for utilities or functions
-- **IMPORTANT**: Always use import aliases for local files
+- **IMPORTANT**: Always use import aliases for files in apps. For packages, use relative imports.
 
 ### Error Handling
 
