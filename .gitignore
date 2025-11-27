@@ -22,3 +22,7 @@ dev-graph.html
 build-plan.json
 .claude
 .cursor
+
+# create-arawn CLI
+create-arawn/dist
+create-arawn/node_modules

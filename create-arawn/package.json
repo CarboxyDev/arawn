@@ -1,0 +1,52 @@
+{
+  "name": "create-arawn",
+  "version": "0.1.0",
+  "description": "Create a production-ready full-stack TypeScript application with Next.js and Fastify",
+  "type": "module",
+  "bin": {
+    "create-arawn": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "template"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "fs-extra": "^11.2.0",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.0.0",
+    "@types/prompts": "^2.4.9",
+    "typescript": "^5.7.2"
+  },
+  "keywords": [
+    "template",
+    "monorepo",
+    "nextjs",
+    "fastify",
+    "typescript",
+    "full-stack",
+    "create-app"
+  ],
+  "homepage": "https://arawn.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CarboxyDev/arawn"
+  },
+  "bugs": {
+    "url": "https://github.com/CarboxyDev/arawn/issues"
+  },
+  "author": "Arman",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

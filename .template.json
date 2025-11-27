@@ -1,0 +1,28 @@
+{
+  "replaceable": [
+    "package.json",
+    "apps/web/package.json",
+    "apps/api/package.json",
+    "apps/web/src/config/site.ts",
+    "apps/web/src/app/layout.tsx",
+    "apps/api/src/plugins/swagger.ts",
+    "README.md",
+    "GETTING_STARTED.md"
+  ],
+  "excludeFromTemplate": [
+    "node_modules/",
+    ".next/",
+    ".turbo/",
+    "dist/",
+    "build/",
+    "coverage/",
+    ".git/",
+    "pnpm-lock.yaml",
+    "*.tsbuildinfo",
+    ".env.local",
+    ".DS_Store",
+    ".temp/",
+    ".claude/",
+    ".cursor/"
+  ]
+}

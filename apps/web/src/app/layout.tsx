@@ -9,8 +9,8 @@ import { isDevelopment } from '@/lib/env';
 import { Providers } from '@/providers';
 
 export const metadata: Metadata = {
-  title: 'Arawn',
-  description: 'Production-ready TypeScript monorepo',
+  title: '{{PROJECT_NAME}}',
+  description: '{{PROJECT_DESCRIPTION}}',
 };
 
 export default function RootLayout({

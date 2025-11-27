@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: 'Arawn',
-  description: 'Production-ready TypeScript monorepo template',
-  github: 'https://github.com/CarboxyDev/arawn',
+  name: '{{PROJECT_NAME}}',
+  description: '{{PROJECT_DESCRIPTION}}',
+  github: 'https://github.com/username/repo',
 } as const;

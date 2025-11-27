@@ -1,9 +1,9 @@
 {
-  "name": "arawn-monorepo",
+  "name": "{{PROJECT_SLUG}}",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Production-ready Full Stack TypeScript monorepo with Next.js and Fastify",
+  "description": "{{PROJECT_DESCRIPTION}}",
   "scripts": {
     "init:project": "node scripts/setup.js",
     "dev": "turbo run dev",
@@ -27,6 +27,11 @@
     "analyze": "turbo run build --dry-run=json > build-plan.json",
     "prepare": "husky"
   },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "create-arawn"
+  ],
   "devDependencies": {
     "@next/eslint-plugin-next": "^16.0.3",
     "@testing-library/jest-dom": "^6.9.1",
