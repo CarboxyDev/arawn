@@ -1,7 +1,13 @@
-import { PrismaClient } from '@prisma/client';
+import 'dotenv-flow/config';
+
+import { PrismaPg } from '@prisma/adapter-pg';
 import { execSync } from 'child_process';
+import { Pool } from 'pg';
+
+import { PrismaClient } from '@/generated/client/client.js';
 
 let prisma: PrismaClient | null = null;
+let pool: Pool | null = null;
 
 /**
  * Get test database URL
@@ -38,13 +44,9 @@ export async function setupTestDatabase(): Promise<void> {
       env: { ...process.env, DATABASE_URL: testDatabaseUrl },
     });
 
-    prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: testDatabaseUrl,
-        },
-      },
-    });
+    pool = new Pool({ connectionString: testDatabaseUrl });
+    const adapter = new PrismaPg(pool);
+    prisma = new PrismaClient({ adapter });
 
     await prisma.$connect();
     console.log('✅ Test database ready');
@@ -65,6 +67,11 @@ export async function cleanupTestDatabase(): Promise<void> {
     prisma = null;
   }
 
+  if (pool) {
+    await pool.end();
+    pool = null;
+  }
+
   if (process.env.KEEP_TEST_DB !== 'true') {
     try {
       const testDatabaseUrl = getTestDatabaseUrl();
@@ -76,15 +83,16 @@ export async function cleanupTestDatabase(): Promise<void> {
 
       console.log('⏳ Cleaning up test database...');
 
-      const adminPrisma = new PrismaClient({
-        datasources: { db: { url: adminUrl } },
-      });
+      const adminPool = new Pool({ connectionString: adminUrl });
+      const adminAdapter = new PrismaPg(adminPool);
+      const adminPrisma = new PrismaClient({ adapter: adminAdapter });
 
       await adminPrisma.$connect();
       await adminPrisma.$executeRawUnsafe(
         `DROP DATABASE IF EXISTS "${dbName}" WITH (FORCE);`
       );
       await adminPrisma.$disconnect();
+      await adminPool.end();
 
       console.log('✅ Test database cleaned up');
     } catch (error) {

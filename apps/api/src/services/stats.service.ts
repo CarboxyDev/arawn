@@ -1,4 +1,3 @@
-import type { PrismaClient } from '@prisma/client';
 import type {
   AuthBreakdown,
   HealthCheckResponse,
@@ -13,6 +12,7 @@ import type {
 } from '@repo/packages-types/stats';
 
 import type { LoggerService } from '@/common/logger.service';
+import type { PrismaClient } from '@/generated/client/client.js';
 
 const SERVER_START_TIME = Date.now();
 

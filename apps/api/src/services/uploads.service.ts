@@ -1,5 +1,4 @@
 import type { MultipartFile } from '@fastify/multipart';
-import type { PrismaClient, Upload } from '@prisma/client';
 import {
   ForbiddenError,
   NotFoundError,
@@ -7,6 +6,7 @@ import {
 } from '@repo/packages-utils/errors';
 
 import type { LoggerService } from '@/common/logger.service';
+import type { PrismaClient, Upload } from '@/generated/client/client.js';
 import {
   generateUniqueFilename,
   MAX_FILE_SIZE,

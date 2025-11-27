@@ -1,6 +1,7 @@
-import type { PrismaClient } from '@prisma/client';
 import { createMockPrisma } from '@test/helpers/mock-prisma';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type { PrismaClient } from '@/generated/client/client.js';
 
 import { SessionsService } from './sessions.service';
 

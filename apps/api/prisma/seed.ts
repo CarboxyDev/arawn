@@ -1,9 +1,16 @@
-import { PrismaClient, Role } from '@prisma/client';
+import 'dotenv-flow/config';
+
+import { PrismaPg } from '@prisma/adapter-pg';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { admin } from 'better-auth/plugins';
+import { Pool } from 'pg';
 
-const prisma = new PrismaClient();
+import { PrismaClient, Role } from '../src/generated/client/client.js';
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -148,4 +155,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });

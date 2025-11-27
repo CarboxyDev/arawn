@@ -1,4 +1,3 @@
-import type { PrismaClient } from '@prisma/client';
 import {
   type PaginatedResponse,
   type QueryUsers,
@@ -11,6 +10,7 @@ import {
 import { NotFoundError } from '@repo/packages-utils/errors';
 
 import type { LoggerService } from '@/common/logger.service';
+import type { PrismaClient } from '@/generated/client/client.js';
 
 export class UsersService {
   constructor(

@@ -1,4 +1,3 @@
-import type { PrismaClient } from '@prisma/client';
 import { render } from '@react-email/components';
 import PasswordResetEmail from 'emails/password-reset-email';
 import VerificationEmail from 'emails/verification-email';
@@ -6,6 +5,7 @@ import { Resend } from 'resend';
 
 import type { LoggerService } from '@/common/logger.service';
 import type { Env } from '@/config/env';
+import type { PrismaClient } from '@/generated/client/client.js';
 
 export class EmailService {
   private resend: Resend | null = null;

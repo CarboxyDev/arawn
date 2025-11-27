@@ -1,4 +1,3 @@
-import type { Prisma, PrismaClient } from '@prisma/client';
 import type { PaginatedResponse } from '@repo/packages-types/pagination';
 import type {
   AdminSession,
@@ -6,6 +5,8 @@ import type {
   SessionStats,
 } from '@repo/packages-types/session';
 import { NotFoundError } from '@repo/packages-utils/errors';
+
+import type { Prisma, PrismaClient } from '@/generated/client/client.js';
 
 export interface SessionInfo {
   id: string;

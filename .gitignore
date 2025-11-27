@@ -13,6 +13,9 @@ coverage
 tsconfig.tsbuildinfo
 *.tsbuildinfo
 
+# Prisma generated client
+apps/api/src/generated/
+
 # File uploads (local storage)
 apps/api/public/uploads/
 

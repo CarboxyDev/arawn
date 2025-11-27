@@ -1,5 +1,6 @@
-import type { PrismaClient } from '@prisma/client';
 import { vi } from 'vitest';
+
+import type { PrismaClient } from '@/generated/client/client.js';
 
 export function createMockPrisma(): PrismaClient {
   return {
