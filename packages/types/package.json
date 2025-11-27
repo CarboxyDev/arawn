@@ -2,8 +2,6 @@
   "name": "@repo/packages-types",
   "version": "1.0.0",
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
   "exports": {
     "./api-response": "./src/api-response.ts",
     "./audit-log": "./src/audit-log.ts",
@@ -27,10 +25,5 @@
   },
   "dependencies": {
     "zod": "^4.1.12"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.5",
-    "typescript": "^5.7.2",
-    "vitest": "^3.2.4"
   }
 }

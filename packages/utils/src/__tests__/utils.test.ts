@@ -1,5 +1,5 @@
 import { groupBy, unique } from '@repo/packages-utils/array';
-import { retry, sleep } from '@repo/packages-utils/async';
+import { sleep } from '@repo/packages-utils/async';
 import {
   formatDate,
   formatDateTime,
@@ -120,35 +120,6 @@ describe('sleep', () => {
     vi.advanceTimersByTime(1000);
     await expect(promise).resolves.toBeUndefined();
     vi.useRealTimers();
-  });
-});
-
-describe('retry', () => {
-  it('should succeed on first attempt', async () => {
-    const fn = vi.fn().mockResolvedValue('success');
-    const result = await retry(fn, 3, 100);
-    expect(result).toBe('success');
-    expect(fn).toHaveBeenCalledTimes(1);
-  });
-
-  it('should retry on failure and eventually succeed', async () => {
-    const fn = vi
-      .fn()
-      .mockRejectedValueOnce(new Error('fail 1'))
-      .mockRejectedValueOnce(new Error('fail 2'))
-      .mockResolvedValue('success');
-
-    const result = await retry(fn, 3, 10);
-    expect(result).toBe('success');
-    expect(fn).toHaveBeenCalledTimes(3);
-  });
-
-  it('should throw error after max attempts', async () => {
-    const error = new Error('always fails');
-    const fn = vi.fn().mockRejectedValue(error);
-
-    await expect(retry(fn, 3, 10)).rejects.toThrow('always fails');
-    expect(fn).toHaveBeenCalledTimes(3);
   });
 });
 

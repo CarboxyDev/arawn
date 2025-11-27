@@ -1,4 +1,3 @@
-import { message } from '@repo/packages-utils/response';
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
@@ -68,7 +67,7 @@ const verificationRoutes: FastifyPluginAsync = async (app) => {
           },
         });
 
-        return message('Verification email sent successfully');
+        return { message: 'Verification email sent successfully' };
       } catch (error) {
         request.log.error(
           {

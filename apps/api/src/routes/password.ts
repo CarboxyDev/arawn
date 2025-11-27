@@ -1,5 +1,4 @@
 import { ValidationError } from '@repo/packages-utils/errors';
-import { message } from '@repo/packages-utils/response';
 import type { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
 
@@ -36,9 +35,10 @@ const passwordRoutes: FastifyPluginAsync = async (app) => {
         newPassword
       );
 
-      return message(
-        'Password changed successfully. All other sessions have been revoked.'
-      );
+      return {
+        message:
+          'Password changed successfully. All other sessions have been revoked.',
+      };
     }
   );
 };

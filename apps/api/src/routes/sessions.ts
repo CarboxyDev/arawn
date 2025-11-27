@@ -1,4 +1,3 @@
-import { message, success } from '@repo/packages-utils/response';
 import type { FastifyPluginAsync } from 'fastify';
 
 import { requireAuth } from '@/hooks/auth';
@@ -13,7 +12,7 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
       const sessions = await app.sessionsService.getUserSessions(
         request.user!.id
       );
-      return success(sessions);
+      return { data: sessions };
     }
   );
 
@@ -30,7 +29,7 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
         request.params.sessionId
       );
 
-      return message('Session revoked successfully');
+      return { message: 'Session revoked successfully' };
     }
   );
 
@@ -46,7 +45,7 @@ const sessionsRoutes: FastifyPluginAsync = async (app) => {
         currentSessionId
       );
 
-      return message('All other sessions revoked successfully');
+      return { message: 'All other sessions revoked successfully' };
     }
   );
 };

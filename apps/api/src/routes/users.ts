@@ -4,7 +4,6 @@ import {
   GetUserByIdSchema,
   UpdateUserSchema,
 } from '@repo/packages-types/user';
-import { message, success } from '@repo/packages-utils/response';
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
@@ -43,7 +42,7 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
     },
     async (request) => {
       const user = await app.usersService.getUserById(request.params.id);
-      return success(user);
+      return { data: user };
     }
   );
 
@@ -61,7 +60,7 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const user = await app.usersService.createUser(request.body);
 
-      return reply.status(201).send(success(user));
+      return reply.status(201).send({ data: user });
     }
   );
 
@@ -85,7 +84,7 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
         request.body
       );
 
-      return success(user);
+      return { data: user };
     }
   );
 
@@ -107,7 +106,7 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
         request.params.id
       );
 
-      return message('User deleted successfully');
+      return { message: 'User deleted successfully' };
     }
   );
 };

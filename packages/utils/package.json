@@ -2,15 +2,12 @@
   "name": "@repo/packages-utils",
   "version": "1.0.0",
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
   "exports": {
     "./array": "./src/array.ts",
     "./async": "./src/async.ts",
     "./date": "./src/date.ts",
     "./errors": "./src/errors.ts",
     "./number": "./src/number.ts",
-    "./response": "./src/response.ts",
     "./string": "./src/string.ts"
   },
   "scripts": {
@@ -22,10 +19,5 @@
     "test:integration": "echo 'No integration tests for packages-utils'",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.5",
-    "typescript": "^5.7.2",
-    "vitest": "^3.2.4"
   }
 }

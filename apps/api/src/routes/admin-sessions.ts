@@ -3,7 +3,6 @@ import {
   RevokeSessionParamsSchema,
   RevokeUserSessionsParamsSchema,
 } from '@repo/packages-types/session';
-import { message } from '@repo/packages-utils/response';
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import type { z } from 'zod';
@@ -63,7 +62,7 @@ const adminSessionsRoutes: FastifyPluginAsync = async (app) => {
         sessionId
       );
 
-      return message('Session revoked successfully');
+      return { message: 'Session revoked successfully' };
     }
   );
 
@@ -85,7 +84,7 @@ const adminSessionsRoutes: FastifyPluginAsync = async (app) => {
         userId
       );
 
-      return message(`Revoked ${count} session(s) for user`);
+      return { message: `Revoked ${count} session(s) for user` };
     }
   );
 };
