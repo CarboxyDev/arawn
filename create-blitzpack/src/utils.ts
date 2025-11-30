@@ -1,5 +1,10 @@
 import chalk from 'chalk';
+import path from 'path';
 import validatePackageName from 'validate-npm-package-name';
+
+export function getCurrentDirName(): string {
+  return path.basename(process.cwd());
+}
 
 export function toSlug(name: string): string {
   return name
@@ -13,6 +18,9 @@ export function validateProjectName(name: string): {
   valid: boolean;
   problems?: string[];
 } {
+  if (name === '.') {
+    return { valid: true };
+  }
   const result = validatePackageName(name);
   if (result.validForNewPackages) {
     return { valid: true };
@@ -34,22 +42,33 @@ export function printSuccess(projectName: string, targetDir: string): void {
   console.log();
   console.log(chalk.bold('  Next steps:'));
   console.log();
-  console.log(chalk.cyan('  1.'), `cd ${targetDir}`);
+
+  let stepNumber = 1;
+  if (targetDir !== '.') {
+    console.log(chalk.cyan(`  ${stepNumber}.`), `cd ${targetDir}`);
+    stepNumber++;
+  }
+
   console.log(
-    chalk.cyan('  2.'),
+    chalk.cyan(`  ${stepNumber}.`),
     'docker compose up -d',
     chalk.dim('  # Start PostgreSQL')
   );
+  stepNumber++;
+
   console.log(
-    chalk.cyan('  3.'),
+    chalk.cyan(`  ${stepNumber}.`),
     'pnpm db:migrate',
     chalk.dim('       # Run database migrations')
   );
+  stepNumber++;
+
   console.log(
-    chalk.cyan('  4.'),
+    chalk.cyan(`  ${stepNumber}.`),
     'pnpm dev',
     chalk.dim('              # Start dev servers')
   );
+
   console.log();
   console.log(
     chalk.dim('  Optional: pnpm db:seed to add test data like admin accounts')

@@ -3,15 +3,13 @@ import { spawn } from 'child_process';
 import fs from 'fs-extra';
 import ora from 'ora';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import prompts from 'prompts';
 
 import { initGit, isGitInstalled } from '../git.js';
 import { getProjectOptions } from '../prompts.js';
-import { copyTemplate } from '../template.js';
+import { downloadAndPrepareTemplate } from '../template.js';
 import { transformFiles } from '../transform.js';
 import { printError, printHeader, printSuccess } from '../utils.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const ENV_FILES = [
   { from: 'apps/web/.env.local.example', to: 'apps/web/.env.local' },
@@ -67,7 +65,7 @@ function printDryRun(options: {
   console.log();
   console.log(chalk.bold('  Would run:'));
   console.log();
-  console.log(`    ${chalk.dim('•')} Copy template files`);
+  console.log(`    ${chalk.dim('•')} Download template from GitHub`);
   console.log(`    ${chalk.dim('•')} Transform package.json files`);
   console.log(`    ${chalk.dim('•')} Create .env.local files`);
   if (!options.skipGit) {
@@ -90,7 +88,9 @@ export async function create(
     return;
   }
 
-  const targetDir = path.resolve(process.cwd(), options.projectName);
+  const targetDir = options.useCurrentDir
+    ? process.cwd()
+    : path.resolve(process.cwd(), options.projectName);
 
   if (flags.dryRun) {
     printDryRun({
@@ -107,26 +107,30 @@ export async function create(
   if (await fs.pathExists(targetDir)) {
     const files = await fs.readdir(targetDir);
     if (files.length > 0) {
-      printError(`Directory "${options.projectName}" is not empty`);
-      return;
+      if (options.useCurrentDir) {
+        const { confirm } = await prompts({
+          type: 'confirm',
+          name: 'confirm',
+          message: `Current directory is not empty. Continue?`,
+          initial: false,
+        });
+
+        if (!confirm) {
+          return;
+        }
+      } else {
+        printError(`Directory "${options.projectName}" is not empty`);
+        return;
+      }
     }
-  }
-
-  const templateDir = path.resolve(__dirname, '..', 'template');
-
-  if (!(await fs.pathExists(templateDir))) {
-    printError(
-      'Template directory not found. This is a bug in create-blitzpack.'
-    );
-    return;
   }
 
   const spinner = ora();
 
   try {
-    spinner.start('Creating project structure...');
-    await copyTemplate(templateDir, targetDir);
-    spinner.succeed('Created project structure');
+    spinner.start('Downloading template from GitHub...');
+    await downloadAndPrepareTemplate(targetDir);
+    spinner.succeed('Downloaded template');
 
     spinner.start('Configuring project...');
     await transformFiles(targetDir, {
@@ -159,7 +163,10 @@ export async function create(
       }
     }
 
-    printSuccess(options.projectName, options.projectName);
+    printSuccess(
+      options.projectName,
+      options.useCurrentDir ? '.' : options.projectName
+    );
   } catch (error) {
     spinner.fail();
     printError(
