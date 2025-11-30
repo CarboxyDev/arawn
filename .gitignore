@@ -28,6 +28,3 @@ build-plan.json
 # AI agents
 .claude
 .cursor
-
-# CLI template build output
-create-blitzpack/template/

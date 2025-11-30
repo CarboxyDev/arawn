@@ -3,15 +3,12 @@ import { spawn } from 'child_process';
 import fs from 'fs-extra';
 import ora from 'ora';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 import { initGit, isGitInstalled } from '../git.js';
 import { getProjectOptions } from '../prompts.js';
-import { copyTemplate } from '../template.js';
+import { downloadAndPrepareTemplate } from '../template.js';
 import { transformFiles } from '../transform.js';
 import { printError, printHeader, printSuccess } from '../utils.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const ENV_FILES = [
   { from: 'apps/web/.env.local.example', to: 'apps/web/.env.local' },
@@ -67,7 +64,7 @@ function printDryRun(options: {
   console.log();
   console.log(chalk.bold('  Would run:'));
   console.log();
-  console.log(`    ${chalk.dim('•')} Copy template files`);
+  console.log(`    ${chalk.dim('•')} Download template from GitHub`);
   console.log(`    ${chalk.dim('•')} Transform package.json files`);
   console.log(`    ${chalk.dim('•')} Create .env.local files`);
   if (!options.skipGit) {
@@ -112,21 +109,12 @@ export async function create(
     }
   }
 
-  const templateDir = path.resolve(__dirname, '..', 'template');
-
-  if (!(await fs.pathExists(templateDir))) {
-    printError(
-      'Template directory not found. This is a bug in create-blitzpack.'
-    );
-    return;
-  }
-
   const spinner = ora();
 
   try {
-    spinner.start('Creating project structure...');
-    await copyTemplate(templateDir, targetDir);
-    spinner.succeed('Created project structure');
+    spinner.start('Downloading template from GitHub...');
+    await downloadAndPrepareTemplate(targetDir);
+    spinner.succeed('Downloaded template');
 
     spinner.start('Configuring project...');
     await transformFiles(targetDir, {

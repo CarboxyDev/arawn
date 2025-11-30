@@ -2,6 +2,7 @@
 
 import { Button } from '@repo/packages-ui/button';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { authClient } from '@/lib/auth';
 
@@ -10,10 +11,22 @@ export function GithubButton() {
 
   const handleGithubSignIn = async () => {
     setIsLoading(true);
-    await authClient.signIn.social({
-      provider: 'github',
-      callbackURL: `${window.location.origin}/dashboard`,
-    });
+    try {
+      const result = await authClient.signIn.social({
+        provider: 'github',
+        callbackURL: `${window.location.origin}/dashboard`,
+      });
+
+      if (result.error) {
+        toast.error(result.error.message || 'Failed to sign in with GitHub');
+        return;
+      }
+    } catch (error) {
+      toast.error('An unexpected error occurred');
+      console.error('GitHub sign-in error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

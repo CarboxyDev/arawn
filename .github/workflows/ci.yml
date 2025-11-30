@@ -153,6 +153,6 @@ jobs:
           PORT: '8080'
           LOG_LEVEL: 'minimal'
           COOKIE_SECRET: 'ci-test-secret-not-for-production'
-          BETTER_AUTH_SECRET: 'ci-test-secret-not-for-production'
+          BETTER_AUTH_SECRET: 'test-secret-minimum-32-characters-long-for-ci'
           BETTER_AUTH_URL: 'http://localhost:8080'
           NEXT_PUBLIC_API_URL: 'http://localhost:8080/api'
