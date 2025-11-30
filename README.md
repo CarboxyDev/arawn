@@ -53,17 +53,6 @@ Optional: Run `pnpm db:seed` to add test data (admin accounts, sample users).
 
 ## Tech Stack
 
-**Web:** Next.js, React, TanStack Query, Tailwind CSS, Recharts
-
-**Backend:** Fastify, Prisma, PostgreSQL
-
-**Monorepo:** Turborepo, pnpm workspaces
-
-<details>
-<summary>Full stack details</summary>
-
-<p>
-
 **Web**
 
 - Next.js 16
@@ -91,8 +80,43 @@ Optional: Run `pnpm db:seed` to add test data (admin accounts, sample users).
 - Vitest for testing
 - Husky and lint-staged for git hooks
 - Shared packages for types, utils, config in `packages/`
-</p>
-</details>
+
+## Project Structure
+
+```
+blitzpack/
+├── apps/
+│   ├── web/                   # Next.js frontend (port 3000)
+│   │   ├── src/
+│   │   │   ├── app/           # Pages and layouts
+│   │   │   ├── components/    # React components
+│   │   │   ├── lib/           # API client, utilities
+│   │   │   ├── hooks/         # Custom React hooks
+│   │   │   └── store/         # Jotai state atoms
+│   │   └── public/            # Static assets
+│   │
+│   └── api/                   # Fastify backend (port 8080)
+│       ├── src/
+│       │   ├── routes/        # API endpoints
+│       │   ├── services/      # Business logic
+│       │   ├── plugins/       # Fastify plugins
+│       │   ├── hooks/         # Request hooks (auth, validation)
+│       │   └── config/        # Configuration files
+│       ├── prisma/            # Database schema & migrations
+│       └── emails/            # React Email templates
+│
+├── packages/
+│   ├── types/                 # Shared types and Zod schemas
+│   ├── utils/                 # Shared utilities
+│   ├── ui/                    # Shared UI components
+│   └── tailwind-config/       # Shared Tailwind configuration
+│
+├── docker-compose.yml         # Development services (PostgreSQL)
+├── docker-compose.prod.yml    # Production deployment
+├── Dockerfile                 # Multi-stage production build
+├── turbo.json                 # Turborepo configuration
+└── pnpm-workspace.yaml        # pnpm workspaces configuration
+```
 
 ## Features
 
