@@ -50,10 +50,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Create .env for Prisma
+        run: echo "DATABASE_URL=postgresql://user:pass@localhost:5432/db" > apps/api/.env
+
       - name: Generate Prisma Client
         run: pnpm --filter @repo/api db:generate
-        env:
-          DATABASE_URL: postgresql://user:pass@localhost:5432/db
 
       - name: Run typecheck
         run: pnpm run typecheck --filter '!@repo/api' # FIXME: Temporary workaround because of prisma v7 issues
