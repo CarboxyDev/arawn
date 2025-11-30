@@ -110,15 +110,20 @@ export const quickStartCommands: Array<{
   tooltip?: string;
 }> = [
   {
-    command: 'pnpm install',
+    command: 'pnpm create blitzpack',
+    tooltip: 'Creates a new project with all dependencies installed',
   },
   {
-    command: 'pnpm init:project',
-    tooltip:
-      'Automated setup: checks prerequisites, creates environment files, starts Docker containers, runs database migrations, and optionally seeds data',
+    command: 'docker compose up -d',
+    tooltip: 'Starts PostgreSQL in the background',
+  },
+  {
+    command: 'pnpm db:migrate',
+    tooltip: 'Creates database tables',
   },
   {
     command: 'pnpm dev',
+    tooltip: 'Starts web (localhost:3000) and API (localhost:8080)',
   },
 ];
 
