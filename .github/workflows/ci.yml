@@ -35,8 +35,6 @@ jobs:
 
   typecheck:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: postgresql://user:pass@localhost:5432/db
     steps:
       - uses: actions/checkout@v4
 
@@ -54,6 +52,8 @@ jobs:
 
       - name: Generate Prisma Client
         run: pnpm --filter @repo/api db:generate
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/db
 
       - name: Run typecheck
         run: pnpm run typecheck --filter '!@repo/api' # FIXME: Temporary workaround because of prisma v7 issues
