@@ -51,16 +51,6 @@ export const RecentSignupSchema = z.object({
 
 export type RecentSignup = z.infer<typeof RecentSignupSchema>;
 
-export const TopActivityUserSchema = z.object({
-  userId: z.string(),
-  email: z.string(),
-  name: z.string().nullable(),
-  image: z.string().nullable(),
-  actionCount: z.number(),
-});
-
-export type TopActivityUser = z.infer<typeof TopActivityUserSchema>;
-
 export const DatabaseHealthSchema = z.enum([
   'connected',
   'degraded',
@@ -85,7 +75,6 @@ export const SystemStatsSchema = z.object({
   authBreakdown: AuthBreakdownSchema,
   roleDistribution: z.array(RoleDistributionItemSchema),
   recentSignups: z.array(RecentSignupSchema),
-  topActivityUsers: z.array(TopActivityUserSchema),
   systemHealth: SystemHealthSchema,
 });
 

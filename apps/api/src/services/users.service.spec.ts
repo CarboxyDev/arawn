@@ -1,9 +1,11 @@
-import type { PrismaClient } from '@prisma/client';
+import { createMockAuthorizationService } from '@test/helpers/mock-authorization';
 import { createMockLogger } from '@test/helpers/mock-logger';
 import { createMockPrisma } from '@test/helpers/mock-prisma';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LoggerService } from '@/common/logger.service';
+import type { PrismaClient } from '@/generated/client/client.js';
+import type { AuthorizationService } from '@/services/authorization.service';
 
 import { UsersService } from './users.service';
 
@@ -11,11 +13,13 @@ describe('UsersService', () => {
   let service: UsersService;
   let prisma: PrismaClient;
   let logger: LoggerService;
+  let authorizationService: AuthorizationService;
 
   beforeEach(() => {
     logger = createMockLogger();
     prisma = createMockPrisma();
-    service = new UsersService(prisma, logger);
+    authorizationService = createMockAuthorizationService();
+    service = new UsersService(prisma, logger, authorizationService);
   });
 
   describe('getUsers', () => {
@@ -189,7 +193,9 @@ describe('UsersService', () => {
       vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser);
       vi.mocked(prisma.user.update).mockResolvedValue(updatedUser);
 
-      const user = await service.updateUser('1', { name: 'Updated Name' });
+      const user = await service.updateUser('actor-id', 'super_admin', '1', {
+        name: 'Updated Name',
+      });
 
       expect(user?.name).toBe('Updated Name');
       expect(user?.id).toBe('1');
@@ -199,7 +205,7 @@ describe('UsersService', () => {
       vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
 
       await expect(
-        service.updateUser('non-existent-id', {
+        service.updateUser('actor-id', 'super_admin', 'non-existent-id', {
           name: 'New Name',
         })
       ).rejects.toThrow('User not found');
@@ -225,7 +231,7 @@ describe('UsersService', () => {
       vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser);
       vi.mocked(prisma.user.delete).mockResolvedValue(mockUser);
 
-      await service.deleteUser('1');
+      await service.deleteUser('actor-id', 'super_admin', '1');
 
       expect(prisma.user.delete).toHaveBeenCalledWith({
         where: { id: '1' },
@@ -235,9 +241,9 @@ describe('UsersService', () => {
     it('should throw NotFoundError when user not found', async () => {
       vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
 
-      await expect(service.deleteUser('non-existent-id')).rejects.toThrow(
-        'User not found'
-      );
+      await expect(
+        service.deleteUser('actor-id', 'super_admin', 'non-existent-id')
+      ).rejects.toThrow('User not found');
     });
   });
 });

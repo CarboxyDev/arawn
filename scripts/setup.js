@@ -1,5 +1,5 @@
 /**
- * Arawn Setup Script
+ * Blitzpack Setup Script
  *
  * Automates the initial setup process for the monorepo.
  * Safe to run multiple times - will skip steps that are already complete.
@@ -441,19 +441,11 @@ ${dim}The script will skip any completed steps automatically.${reset}
 
   if (isDryRun) {
     console.log(`
-${bright}${cyan}┌─────────────────────────────────────────┐
-│                                         │
-│      Arawn Setup Script (DRY RUN)       │
-│                                         │
-└─────────────────────────────────────────┘${reset}
+${bright}${cyan}Blitzpack Setup Script (DRY RUN)${reset}
 `);
   } else {
     console.log(`
-${bright}${cyan}┌─────────────────────────────────────────┐
-│                                         │
-│         Arawn Setup Script              │
-│                                         │
-└─────────────────────────────────────────┘${reset}
+${bright}${cyan}Blitzpack Setup Script${reset}
 `);
   }
 
@@ -485,11 +477,7 @@ ${bright}${cyan}┌────────────────────�
     }
 
     console.log(`
-${green}${bright}┌─────────────────────────────────────────┐
-│                                         │
-│        DRY RUN Complete                  │
-│                                         │
-└─────────────────────────────────────────┘${reset}
+${green}${bright}DRY RUN Complete${reset}
 
 ${bright}To run the actual setup:${reset}
   ${cyan}node scripts/setup.js${reset}
@@ -658,11 +646,7 @@ ${yellow}Troubleshooting:${reset}
   }
 
   console.log(`
-${green}${bright}┌─────────────────────────────────────────┐
-│                                         │
-│           Setup Complete                │
-│                                         │
-└─────────────────────────────────────────┘${reset}
+${green}${bright}Setup Complete${reset}
 
 ${bright}Setup Summary:${reset}
   ${setupState.portsChecked ? green + '✓' : dim + '○'}${reset} Ports available (5432, 3000, 8080)

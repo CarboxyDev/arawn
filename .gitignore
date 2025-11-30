@@ -12,6 +12,10 @@ coverage
 .temp
 tsconfig.tsbuildinfo
 *.tsbuildinfo
+next-env.d.ts
+
+# Prisma
+apps/api/src/generated/
 
 # File uploads (local storage)
 apps/api/public/uploads/
@@ -20,5 +24,7 @@ apps/api/public/uploads/
 graph.html
 dev-graph.html
 build-plan.json
+
+# AI agents
 .claude
 .cursor

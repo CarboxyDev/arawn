@@ -1,11 +1,14 @@
-import type { Prisma, PrismaClient } from '@prisma/client';
 import type { PaginatedResponse } from '@repo/packages-types/pagination';
+import type { Role } from '@repo/packages-types/role';
 import type {
   AdminSession,
   QuerySessions,
   SessionStats,
 } from '@repo/packages-types/session';
-import { NotFoundError } from '@repo/packages-utils/errors';
+import { ForbiddenError, NotFoundError } from '@repo/packages-utils/errors';
+
+import type { Prisma, PrismaClient } from '@/generated/client/client.js';
+import type { AuthorizationService } from '@/services/authorization.service';
 
 export interface SessionInfo {
   id: string;
@@ -18,7 +21,10 @@ export interface SessionInfo {
 }
 
 export class SessionsService {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(
+    private readonly prisma: PrismaClient,
+    private readonly authorizationService?: AuthorizationService
+  ) {}
 
   async getUserSessions(userId: string): Promise<SessionInfo[]> {
     const sessions = await this.prisma.session.findMany({
@@ -176,13 +182,46 @@ export class SessionsService {
     return { activeSessions, uniqueUsers, sessionsToday, expiringSoon };
   }
 
-  async adminRevokeSession(sessionId: string): Promise<void> {
+  async adminRevokeSession(
+    actorId: string,
+    actorRole: Role,
+    sessionId: string
+  ): Promise<void> {
     const session = await this.prisma.session.findUnique({
       where: { id: sessionId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            role: true,
+          },
+        },
+      },
     });
 
     if (!session) {
       throw new NotFoundError('Session not found', { sessionId });
+    }
+
+    // Check if actor can revoke this user's session (role hierarchy check)
+    if (this.authorizationService) {
+      if (actorId === session.userId) {
+        // Allow revoking own sessions
+      } else if (
+        !this.authorizationService.canModifyUser(
+          actorRole,
+          session.user.role as Role
+        )
+      ) {
+        throw new ForbiddenError(
+          `Insufficient permissions to revoke session for user with role: ${session.user.role}`,
+          {
+            requiredLevel: 'higher than target',
+            actorRole,
+            targetRole: session.user.role,
+          }
+        );
+      }
     }
 
     await this.prisma.session.delete({
@@ -190,9 +229,47 @@ export class SessionsService {
     });
   }
 
-  async adminRevokeUserSessions(userId: string): Promise<number> {
+  async adminRevokeUserSessions(
+    actorId: string,
+    actorRole: Role,
+    targetUserId: string
+  ): Promise<number> {
+    // Fetch target user to check their role
+    const targetUser = await this.prisma.user.findUnique({
+      where: { id: targetUserId },
+      select: {
+        id: true,
+        role: true,
+      },
+    });
+
+    if (!targetUser) {
+      throw new NotFoundError('User not found', { userId: targetUserId });
+    }
+
+    // Check if actor can revoke this user's sessions (role hierarchy check)
+    if (this.authorizationService) {
+      if (actorId === targetUserId) {
+        // Allow revoking own sessions
+      } else if (
+        !this.authorizationService.canModifyUser(
+          actorRole,
+          targetUser.role as Role
+        )
+      ) {
+        throw new ForbiddenError(
+          `Insufficient permissions to revoke sessions for user with role: ${targetUser.role}`,
+          {
+            requiredLevel: 'higher than target',
+            actorRole,
+            targetRole: targetUser.role,
+          }
+        );
+      }
+    }
+
     const result = await this.prisma.session.deleteMany({
-      where: { userId },
+      where: { userId: targetUserId },
     });
     return result.count;
   }

@@ -1,8 +1,10 @@
+import { createMockAuthorizationService } from '@test/helpers/mock-authorization';
 import { createMockLogger } from '@test/helpers/mock-logger';
 import { getTestPrisma, resetTestDatabase } from '@test/helpers/test-db';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import type { LoggerService } from '@/common/logger.service';
+import type { AuthorizationService } from '@/services/authorization.service';
 import { UsersService } from '@/services/users.service';
 
 /**
@@ -13,6 +15,7 @@ import { UsersService } from '@/services/users.service';
 describe('UsersService Integration Tests', () => {
   let service: UsersService;
   let logger: LoggerService;
+  let authorizationService: AuthorizationService;
 
   beforeEach(async () => {
     // Reset database between tests
@@ -20,8 +23,9 @@ describe('UsersService Integration Tests', () => {
 
     // Create service with real Prisma client
     logger = createMockLogger();
+    authorizationService = createMockAuthorizationService();
     const prisma = getTestPrisma();
-    service = new UsersService(prisma, logger);
+    service = new UsersService(prisma, logger, authorizationService);
   });
 
   afterEach(async () => {
@@ -59,9 +63,14 @@ describe('UsersService Integration Tests', () => {
       });
 
       // Update user
-      const updatedUser = await service.updateUser(user.id, {
-        name: 'Updated Name',
-      });
+      const updatedUser = await service.updateUser(
+        'actor-id',
+        'super_admin',
+        user.id,
+        {
+          name: 'Updated Name',
+        }
+      );
 
       expect(updatedUser).toBeDefined();
       expect(updatedUser?.name).toBe('Updated Name');
@@ -81,7 +90,7 @@ describe('UsersService Integration Tests', () => {
       });
 
       // Delete user
-      await service.deleteUser(user.id);
+      await service.deleteUser('actor-id', 'super_admin', user.id);
 
       // Verify user is deleted (should throw NotFoundError)
       await expect(service.getUserById(user.id)).rejects.toThrow(
@@ -91,16 +100,16 @@ describe('UsersService Integration Tests', () => {
 
     it('should throw NotFoundError when updating non-existent user', async () => {
       await expect(
-        service.updateUser('non-existent-id', {
+        service.updateUser('actor-id', 'super_admin', 'non-existent-id', {
           name: 'New Name',
         })
       ).rejects.toThrow('User not found');
     });
 
     it('should throw NotFoundError when deleting non-existent user', async () => {
-      await expect(service.deleteUser('non-existent-id')).rejects.toThrow(
-        'User not found'
-      );
+      await expect(
+        service.deleteUser('actor-id', 'super_admin', 'non-existent-id')
+      ).rejects.toThrow('User not found');
     });
   });
 

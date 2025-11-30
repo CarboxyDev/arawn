@@ -1,6 +1,7 @@
-import type { PrismaClient } from '@prisma/client';
 import { createMockPrisma } from '@test/helpers/mock-prisma';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type { PrismaClient } from '@/generated/client/client.js';
 
 import { SessionsService } from './sessions.service';
 
@@ -24,7 +25,6 @@ describe('SessionsService', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         expiresAt: new Date(Date.now() + 86400000),
-        impersonatedBy: null,
       },
       {
         id: 'session-2',
@@ -35,7 +35,6 @@ describe('SessionsService', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         expiresAt: new Date(Date.now() + 86400000),
-        impersonatedBy: null,
       },
     ];
 
@@ -68,7 +67,6 @@ describe('SessionsService', () => {
       userAgent: 'Mozilla/5.0',
       createdAt: new Date(),
       updatedAt: new Date(),
-      impersonatedBy: null,
     };
 
     it('should revoke session successfully', async () => {

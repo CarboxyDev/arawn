@@ -1,21 +1,24 @@
-import type { PrismaClient } from '@prisma/client';
 import {
   type PaginatedResponse,
   type QueryUsers,
 } from '@repo/packages-types/pagination';
+import { type Role } from '@repo/packages-types/role';
 import {
   type CreateUser,
   type UpdateUser,
   type User,
 } from '@repo/packages-types/user';
-import { NotFoundError } from '@repo/packages-utils/errors';
+import { ForbiddenError, NotFoundError } from '@repo/packages-utils/errors';
 
 import type { LoggerService } from '@/common/logger.service';
+import type { PrismaClient } from '@/generated/client/client.js';
+import type { AuthorizationService } from '@/services/authorization.service';
 
 export class UsersService {
   constructor(
     private readonly prisma: PrismaClient,
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
+    private readonly authorizationService: AuthorizationService
   ) {
     this.logger.setContext('UsersService');
   }
@@ -80,43 +83,116 @@ export class UsersService {
     return user as User;
   }
 
-  async updateUser(id: string, updateUser: UpdateUser): Promise<User> {
-    this.logger.info('Updating user', { userId: id });
-
-    const user = await this.prisma.user.findUnique({
-      where: { id },
+  async updateUser(
+    actorId: string,
+    actorRole: Role,
+    targetId: string,
+    updateUser: UpdateUser
+  ): Promise<User> {
+    this.logger.info('Updating user', {
+      actorId,
+      actorRole,
+      targetId,
     });
 
-    if (!user) {
-      this.logger.warn('User not found for update', { userId: id });
-      throw new NotFoundError('User not found', { userId: id });
+    const targetUser = await this.prisma.user.findUnique({
+      where: { id: targetId },
+    });
+
+    if (!targetUser) {
+      this.logger.warn('User not found for update', { userId: targetId });
+      throw new NotFoundError('User not found', { userId: targetId });
+    }
+
+    // Check if actor can modify target user
+    this.authorizationService.assertCanModifyUser(
+      actorId,
+      actorRole,
+      targetId,
+      targetUser.role as Role
+    );
+
+    // Check role change permissions
+    if (updateUser.role && updateUser.role !== targetUser.role) {
+      this.authorizationService.assertCanChangeRole(
+        actorId,
+        actorRole,
+        targetId,
+        targetUser.role as Role,
+        updateUser.role
+      );
+    }
+
+    // Check email change permissions
+    if (updateUser.email && updateUser.email !== targetUser.email) {
+      this.authorizationService.assertCanChangeEmail(actorRole);
     }
 
     const updatedUser = await this.prisma.user.update({
-      where: { id },
+      where: { id: targetId },
       data: updateUser,
     });
 
-    this.logger.info('User updated successfully', { userId: id });
+    this.logger.info('User updated successfully', {
+      actorId,
+      targetId,
+      changes: Object.keys(updateUser),
+    });
     return updatedUser as User;
   }
 
-  async deleteUser(id: string): Promise<void> {
-    this.logger.info('Deleting user', { userId: id });
-
-    const user = await this.prisma.user.findUnique({
-      where: { id },
+  async deleteUser(
+    actorId: string,
+    actorRole: Role,
+    targetId: string
+  ): Promise<void> {
+    this.logger.info('Deleting user', {
+      actorId,
+      actorRole,
+      targetId,
     });
 
-    if (!user) {
-      this.logger.warn('User not found for deletion', { userId: id });
-      throw new NotFoundError('User not found', { userId: id });
+    const targetUser = await this.prisma.user.findUnique({
+      where: { id: targetId },
+    });
+
+    if (!targetUser) {
+      this.logger.warn('User not found for deletion', { userId: targetId });
+      throw new NotFoundError('User not found', { userId: targetId });
+    }
+
+    // Check if actor can delete target user (includes self-deletion check)
+    this.authorizationService.assertCanDeleteUser(
+      actorId,
+      actorRole,
+      targetId,
+      targetUser.role as Role
+    );
+
+    // Prevent deleting the last super_admin
+    if (targetUser.role === 'super_admin') {
+      const superAdminCount = await this.prisma.user.count({
+        where: { role: 'super_admin' },
+      });
+
+      if (superAdminCount <= 1) {
+        this.logger.warn('Attempt to delete last super admin', {
+          actorId,
+          targetId,
+        });
+        throw new ForbiddenError(
+          'Cannot delete the last super admin. Please promote another user to super admin first.'
+        );
+      }
     }
 
     await this.prisma.user.delete({
-      where: { id },
+      where: { id: targetId },
     });
 
-    this.logger.info('User deleted successfully', { userId: id });
+    this.logger.info('User deleted successfully', {
+      actorId,
+      targetId,
+    });
   }
 }

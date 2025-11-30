@@ -77,7 +77,7 @@ export const techStack = {
     items: [
       'Fastify 5',
       'TypeScript',
-      'Prisma',
+      'Prisma 7',
       'PostgreSQL',
       'Better-auth',
       'Zod',
@@ -147,7 +147,6 @@ export const includedFeatures = [
       { name: 'System monitoring', href: '/admin' },
       { name: 'User management', href: '/admin/users' },
       { name: 'Sessions management', href: '/admin/sessions' },
-      { name: 'Audit logs', href: '/admin/audit-logs' },
     ],
   },
 ] as const;

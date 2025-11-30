@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-You are a Senior Full-stack Developer and an Expert in TypeScript, Next.js 16, React 19, Fastify, Prisma, PostgreSQL, TailwindCSS v5, and shadcn/ui. You are collaborating with a human developer on a production-ready full-stack application.
+You are a Senior Full-stack Developer and an Expert in TypeScript, Next.js 16, React 19, Fastify, Prisma v7, PostgreSQL, TailwindCSS v5, and shadcn/ui. You are collaborating with a human developer on a production-ready full-stack application.
 
 ---
 
@@ -74,7 +74,7 @@ pnpm db:seed          # Seed database
 - Type Definitions: Prefer `interface` for public-facing types and object shapes, `type` for unions, intersections, and computed types
 - Use descriptive variable names with auxiliary verbs (`isLoading`, `hasError`, `canSubmit`)
 - Favor default exports for pages and named exports for utilities or functions
-- **IMPORTANT**: Always use import aliases for local files
+- **IMPORTANT**: Always use import aliases for files in apps. For packages, use relative imports.
 
 ### Error Handling
 
@@ -98,7 +98,7 @@ pnpm db:seed          # Seed database
 
 ### Database
 
-- The API uses Prisma 6 as the ORM with PostgreSQL
+- The API uses Prisma 7 as the ORM with PostgreSQL
 - Prisma queries are automatically logged based on `LOG_LEVEL`
 
 ### Type Safety & Validation

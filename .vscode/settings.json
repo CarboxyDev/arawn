@@ -9,5 +9,5 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.includePackageJsonAutoImports": "on",
   "typescript.validate.enable": true,
-  "prisma.pinToPrisma6": true
+  "prisma.pinToPrisma6": false
 }

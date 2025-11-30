@@ -3,13 +3,11 @@ import {
   RevokeSessionParamsSchema,
   RevokeUserSessionsParamsSchema,
 } from '@repo/packages-types/session';
-import { message } from '@repo/packages-utils/response';
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import type { z } from 'zod';
 
 import { requireAuth, requireRole } from '@/hooks/auth';
-import { logAudit } from '@/utils/audit-logger';
 
 type RevokeSessionParams = z.infer<typeof RevokeSessionParamsSchema>;
 type RevokeUserSessionsParams = z.infer<typeof RevokeUserSessionsParamsSchema>;
@@ -58,17 +56,13 @@ const adminSessionsRoutes: FastifyPluginAsync = async (app) => {
     },
     async (request) => {
       const { sessionId } = request.params;
-      await app.sessionsService.adminRevokeSession(sessionId);
+      await app.sessionsService.adminRevokeSession(
+        request.user!.id,
+        request.user!.role as 'user' | 'admin' | 'super_admin',
+        sessionId
+      );
 
-      await logAudit(app.auditService, {
-        userId: request.user!.id,
-        action: 'session.admin_revoked',
-        resourceType: 'session',
-        resourceId: sessionId,
-        request,
-      });
-
-      return message('Session revoked successfully');
+      return { message: 'Session revoked successfully' };
     }
   );
 
@@ -84,18 +78,13 @@ const adminSessionsRoutes: FastifyPluginAsync = async (app) => {
     },
     async (request) => {
       const { userId } = request.params;
-      const count = await app.sessionsService.adminRevokeUserSessions(userId);
+      const count = await app.sessionsService.adminRevokeUserSessions(
+        request.user!.id,
+        request.user!.role as 'user' | 'admin' | 'super_admin',
+        userId
+      );
 
-      await logAudit(app.auditService, {
-        userId: request.user!.id,
-        action: 'session.admin_revoked_all',
-        resourceType: 'session',
-        resourceId: userId,
-        changes: { sessionsRevoked: count },
-        request,
-      });
-
-      return message(`Revoked ${count} session(s) for user`);
+      return { message: `Revoked ${count} session(s) for user` };
     }
   );
 };

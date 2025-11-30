@@ -6,7 +6,6 @@ import { useCallback, useState } from 'react';
 import {
   ActivityFeedSkeleton,
   RecentSignupsFeed,
-  TopActivityUsersFeed,
 } from '@/components/admin/activity-feed';
 import {
   AuthBreakdownChart,
@@ -140,17 +139,15 @@ export default function AdminDashboardPage() {
         ) : null}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-2">
         {isLoading ? (
           <>
-            <ActivityFeedSkeleton />
             <ActivityFeedSkeleton />
             <HealthIndicatorSkeleton />
           </>
         ) : data ? (
           <>
             <RecentSignupsFeed signups={data.recentSignups} />
-            <TopActivityUsersFeed users={data.topActivityUsers} />
             <HealthIndicator health={data.systemHealth} />
           </>
         ) : null}

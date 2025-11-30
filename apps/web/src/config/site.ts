@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: 'Arawn',
+  name: 'Blitzpack',
   description: 'Production-ready TypeScript monorepo template',
-  github: 'https://github.com/CarboxyDev/arawn',
+  github: 'https://github.com/CarboxyDev/blitzpack',
 } as const;
