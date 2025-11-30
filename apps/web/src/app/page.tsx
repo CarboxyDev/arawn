@@ -176,13 +176,6 @@ export default async function Home(): Promise<React.ReactElement> {
                   </span>
                 </a>
               </div>
-              <p className="text-muted-foreground mt-4 text-center text-xs">
-                See{' '}
-                <code className="bg-muted rounded px-1.5 py-0.5 font-mono">
-                  GETTING_STARTED.md
-                </code>
-                for further optional customization.
-              </p>
             </>
           )}
         </div>

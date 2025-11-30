@@ -19,54 +19,17 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 **Ship your next project faster with battle-tested infrastructure already wired up.**
 
-- **Zero-config setup**: Run one command and you're ready to code. Environment files, Docker containers, database migrations—all handled automatically.
+- **Zero-config setup**: Run a few commands and you're ready to code. Environment files, Docker containers, database migrations—all handled automatically.
 
 - **Full-stack type safety**: Zod schemas define your API contracts once in `packages/types`, then flow automatically to web forms, API validation, and database queries. No duplicate validation logic.
 
 - **Production-grade infrastructure**: Better-auth with session management and OAuth ready. Request ID tracing, automatic validation, rate limiting, structured logging, and environment-aware error responses out of the box.
 
-- **AI pair programming ready**: Comprehensive CLAUDE.md file means AI assistants understand your architecture instantly and can accelerate your development.
-
-## Tech Stack
-
-**Web:** Next.js, React, TanStack Query, Tailwind CSS
-
-**Backend:** Fastify, Prisma, PostgreSQL
-
-**Monorepo:** Turborepo, pnpm workspaces
-
-<details>
-<summary>Full stack details</summary>
-
-<p>
-
-**Web**
-
-- Next.js 16 + React 19
-- TanStack Query v5 for server state
-- shadcn/ui + Tailwind CSS v4
-- React Hook Form + Zod validation
-- Jotai for client state
-
-**API**
-
-- Fastify 5
-- Prisma 7 + PostgreSQL 17
-- Better-auth for authentication
-- Pino for logging
-- Scalar API docs
-- Helmet + rate limiting
-
-**Monorepo**
-
-- pnpm workspaces + Turborepo
-- Shared packages for types, utils, config in `packages/`
-- Vitest for testing
-- Husky + lint-staged for pre-commit hooks
-</p>
-</details>
+- **AI pair programming ready**: Comprehensive CLAUDE.md file acts as the perfect starting point for AI assistants to understand your architecture instantly and can accelerate your development.
 
 ## Quick Start
+
+You must have Docker installed and running on your machine.
 
 ```bash
 # Create a new project
@@ -82,36 +45,106 @@ pnpm dev
 
 Optional: Run `pnpm db:seed` to add test data (admin accounts, sample users).
 
-You must have Docker installed and running on your machine.
-
 **What's running:**
 
 - Web: [http://localhost:3000](http://localhost:3000)
 - API: [http://localhost:8080/api](http://localhost:8080/api)
 - API Docs: [http://localhost:8080/docs](http://localhost:8080/docs)
-- Health Check: [http://localhost:8080/health](http://localhost:8080/health)
 
-**Database tools:**
+## Tech Stack
 
-- Prisma Studio: Run `pnpm db:studio` to open [http://localhost:5555](http://localhost:5555) (recommended for data inspection)
+**Web:** Next.js, React, TanStack Query, Tailwind CSS, Recharts
 
-**Built-in pages:**
+**Backend:** Fastify, Prisma, PostgreSQL
 
-- `/examples` - Component examples
-- `/dashboard` - Protected user dashboard
-- `/login` - Sign in page
-- `/signup` - Create new account
-- `/forgot-password` - Forgot password page
-- `/reset-password` - Reset password page
+**Monorepo:** Turborepo, pnpm workspaces
 
-## Project Structure
+<details>
+<summary>Full stack details</summary>
 
-```
-blitzpack/
-├── apps/
-│   ├── web/          # Next.js app
-│   └── api/          # Fastify API
-└── packages/
-    ├── types/        # Zod schemas + inferred types
-    └── utils/        # Shared utilities
-```
+<p>
+
+**Web**
+
+- Next.js 16
+- React 19
+- Tailwind CSS v4 for styling
+- shadcn/ui for UI primitives
+- TanStack Query for server state
+- React Hook Form for forms
+- Recharts for data visualization
+
+**API**
+
+- Fastify 5
+- Prisma 7 and PostgreSQL 17
+- Better-auth for authentication
+- Pino for structured logging
+- Scalar for API docs
+- React Email and Resend for emails
+- AWS S3 for file storage
+
+**Monorepo**
+
+- Turborepo
+- pnpm workspaces
+- Vitest for testing
+- Husky and lint-staged for git hooks
+- Shared packages for types, utils, config in `packages/`
+</p>
+</details>
+
+## Features
+
+### Authentication & Authorization
+
+Production-ready auth system powered by Better Auth:
+
+- **Email/Password Auth**: User signup with email verification, secure password hashing, password reset flow, and password change functionality.
+- **OAuth Integration**: Google and GitHub OAuth providers ready to enable with environment variables.
+- **Role-Based Access Control**: Three user roles (user, admin, super_admin) with role-based route protection and API authorization.
+- **Session Management**: 7-day sessions with automatic refresh, secure cookie-based authentication, and cross-domain support.
+- **User Banning**: Ban users temporarily or permanently with custom reasons and automatic expiration handling.
+- **Email Verification**: Send verification emails on signup with resend capability and verification status tracking.
+
+**Included pages:** `/login`, `/signup`, `/forgot-password`, `/reset-password`
+
+### Admin Dashboard
+
+Complete admin control panel with real-time monitoring and management:
+
+- **System Monitoring**: Real-time metrics dashboard with user growth trends, session activity, role distribution, and system health indicators. Auto-refresh functionality with configurable intervals.
+- **User Management**: Full CRUD operations on users with pagination, sorting, and filtering. Create, edit, ban/unban users with expiration dates, and manage user roles.
+- **Session Management**: View all active sessions across the platform, inspect session details (IP, device, timestamps), and revoke individual or all user sessions.
+
+**Included pages:** `/admin`, `/admin/users`, `/admin/sessions`
+
+### API Infrastructure
+
+Battle-tested API architecture:
+
+- **Comprehensive Routes**: RESTful API endpoints for users, sessions, uploads, stats, metrics, and admin operations.
+- **Validation**: Automatic request/response validation with Zod schemas and type-safe route definitions.
+- **Security**: Helmet security headers, CORS configuration, role-based rate limiting, and cookie signing.
+- **Logging**: Structured logging with Pino featuring 4 verbosity levels, request ID tracing, and performance metrics.
+- **Documentation**: Auto-generated OpenAPI specs with interactive Scalar API documentation.
+- **Scheduled Tasks**: Automatic session cleanup and maintenance tasks.
+
+### Developer Experience
+
+Optimized workflows and tooling:
+
+- **CLI Tool**: `create-blitzpack` interactive setup wizard for instant project scaffolding.
+- **Comprehensive Scripts**: Development, build, test, lint, and database management commands.
+- **Testing Suite**: Vitest-powered unit and integration tests with coverage reporting.
+- **Git Hooks**: Pre-commit linting and formatting, pre-push type checking and testing.
+- **Turborepo**: Smart caching, parallel execution, and dependency tracking.
+- **Production Docker**: Multi-stage builds, health checks, and optimized runtime containers.
+
+### Email System
+
+Transactional email infrastructure with beautiful templates:
+
+- **React Email Templates**: Pre-built email templates for verification, password reset, password change, welcome, and account deletion.
+- **Resend Integration**: Production-ready email sending with Resend API.
+- **Development Preview**: Console logging of emails in development with React Email dev server.
