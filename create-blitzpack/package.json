@@ -1,0 +1,57 @@
+{
+  "name": "create-blitzpack",
+  "version": "0.1.0",
+  "description": "Create a new Blitzpack project - full-stack TypeScript monorepo with Next.js and Fastify",
+  "type": "module",
+  "bin": {
+    "create-blitzpack": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "template"
+  ],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "pnpm run build:template && tsup",
+    "build:template": "node scripts/copy-template.js",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist template"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "fs-extra": "^11.3.0",
+    "ora": "^8.2.0",
+    "prompts": "^2.4.2",
+    "validate-npm-package-name": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.10.5",
+    "@types/prompts": "^2.4.9",
+    "@types/validate-npm-package-name": "^4.0.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.7.2"
+  },
+  "keywords": [
+    "create",
+    "template",
+    "monorepo",
+    "nextjs",
+    "fastify",
+    "typescript",
+    "full-stack",
+    "prisma",
+    "turborepo"
+  ],
+  "author": "CarboxyDev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CarboxyDev/blitzpack"
+  },
+  "homepage": "https://github.com/CarboxyDev/blitzpack",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

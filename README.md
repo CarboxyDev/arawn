@@ -69,19 +69,20 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 ## Quick Start
 
 ```bash
-# Install dependencies
-pnpm install
+# Create a new project
+pnpm create blitzpack
 
-# Automated setup (creates .env files, starts docker, runs migrations)
-pnpm init:project
+# Start PostgreSQL and run migrations
+docker compose up -d
+pnpm db:migrate
 
 # Start development
 pnpm dev
 ```
 
-The setup script handles everything: environment files, docker containers, database migrations, and optional seeding. Safe to run multiple times.
+Optional: Run `pnpm db:seed` to add test data (admin accounts, sample users).
 
-You must have docker installed and running on your machine.
+You must have Docker installed and running on your machine.
 
 **What's running:**
 
