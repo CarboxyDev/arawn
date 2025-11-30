@@ -81,22 +81,21 @@ Optional: Run `pnpm db:seed` to add test data (admin accounts, sample users).
 - Husky and lint-staged for git hooks
 - Shared packages for types, utils, config in `packages/`
 
-<details>
-<summary>Project Structure</summary>
+## Project Structure
 
 ```
 blitzpack/
 ├── apps/
-│   ├── web/                    # Next.js frontend (port 3000)
+│   ├── web/                   # Next.js frontend (port 3000)
 │   │   ├── src/
-│   │   │   ├── app/           # App router pages & layouts
+│   │   │   ├── app/           # Pages and layouts
 │   │   │   ├── components/    # React components
 │   │   │   ├── lib/           # API client, utilities
 │   │   │   ├── hooks/         # Custom React hooks
 │   │   │   └── store/         # Jotai state atoms
 │   │   └── public/            # Static assets
 │   │
-│   └── api/                    # Fastify backend (port 8080)
+│   └── api/                   # Fastify backend (port 8080)
 │       ├── src/
 │       │   ├── routes/        # API endpoints
 │       │   ├── services/      # Business logic
@@ -104,23 +103,20 @@ blitzpack/
 │       │   ├── hooks/         # Request hooks (auth, validation)
 │       │   └── config/        # Configuration files
 │       ├── prisma/            # Database schema & migrations
-│       ├── emails/            # React Email templates
-│       └── public/            # Uploaded files (local storage)
+│       └── emails/            # React Email templates
 │
 ├── packages/
-│   ├── types/                  # Shared Zod schemas & TypeScript types
-│   ├── utils/                  # Shared utilities & error classes
-│   ├── ui/                     # Shared UI components (shadcn/ui)
-│   └── tailwind-config/        # Shared Tailwind configuration
+│   ├── types/                 # Shared types and Zod schemas
+│   ├── utils/                 # Shared utilities
+│   ├── ui/                    # Shared UI components
+│   └── tailwind-config/       # Shared Tailwind configuration
 │
-├── docker-compose.yml          # Development services (PostgreSQL)
-├── docker-compose.prod.yml     # Production deployment
-├── Dockerfile                  # Multi-stage production build
-├── turbo.json                  # Turborepo pipeline configuration
-└── pnpm-workspace.yaml         # pnpm workspace configuration
+├── docker-compose.yml         # Development services (PostgreSQL)
+├── docker-compose.prod.yml    # Production deployment
+├── Dockerfile                 # Multi-stage production build
+├── turbo.json                 # Turborepo configuration
+└── pnpm-workspace.yaml        # pnpm workspaces configuration
 ```
-
-</details>
 
 ## Features
 
