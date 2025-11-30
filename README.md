@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/logo.svg" alt="Blitzpack Logo" width="200">
   <h1>Blitzpack</h1>
-  <p>Full-stack TypeScript monorepo with Next.js, Fastify, and Turborepo. From zero to production in minutes.</p>
+  <p>Full-stack TypeScript monorepo template with Next.js, Fastify, and Turborepo. From zero to production in minutes.</p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
