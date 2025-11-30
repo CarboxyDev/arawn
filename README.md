@@ -1,21 +1,21 @@
 <div align="center">
-  <img src="assets/logo.svg" alt="Arawn Logo" width="200">
-  <h1>Arawn</h1>
+  <img src="assets/logo.svg" alt="Blitzpack Logo" width="200">
+  <h1>Blitzpack</h1>
   <p>Full-stack TypeScript monorepo with Next.js, Fastify, and Turborepo. From zero to production in minutes.</p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-≥9.0.0-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![CI](https://github.com/CarboxyDev/arawn/actions/workflows/ci.yml/badge.svg)](https://github.com/CarboxyDev/arawn/actions/workflows/ci.yml)
+[![CI](https://github.com/CarboxyDev/blitzpack/actions/workflows/ci.yml/badge.svg)](https://github.com/CarboxyDev/blitzpack/actions/workflows/ci.yml)
 
 </div>
 
 ---
 
-## Why Arawn?
+## Why Blitzpack?
 
-Stop wasting days bootstrapping your next project. Most templates hand you a skeleton and leave you to figure out database migrations, API documentation, logging infrastructure, and much more. Arawn ships with all of it configured and working. You just need to run a single script to get started with a production-ready full-stack application.
+Stop wasting days bootstrapping your next project. Most templates hand you a skeleton and leave you to figure out database migrations, API documentation, logging infrastructure, and much more. Blitzpack ships with all of it configured and working. You just need to run a single script to get started with a production-ready full-stack application.
 
 **Ship your next project faster with battle-tested infrastructure already wired up.**
 
@@ -106,7 +106,7 @@ You must have docker installed and running on your machine.
 ## Project Structure
 
 ```
-arawn/
+blitzpack/
 ├── apps/
 │   ├── web/          # Next.js app
 │   └── api/          # Fastify API

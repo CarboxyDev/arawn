@@ -1,4 +1,4 @@
-# Contributing to Arawn
+# Contributing to Blitzpack
 
 Thank you for your interest in contributing! This is a TypeScript monorepo template designed to help developers ship full-stack applications super fast.
 

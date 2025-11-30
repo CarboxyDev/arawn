@@ -1,4 +1,4 @@
-# Template Setup
+# Blitzpack Template Setup
 
 After clicking "Use this template" and cloning your repository:
 
@@ -17,7 +17,7 @@ pnpm dev
 ### Update Branding
 
 - `apps/web/src/config/site.ts` → Project name, description, GitHub URL
-- `README.md` → Replace Arawn README.md with yours
+- `README.md` → Replace Blitzpack README.md with yours
 
 ### Optional: Change Database Credentials
 

@@ -9,7 +9,7 @@ import { isDevelopment } from '@/lib/env';
 import { Providers } from '@/providers';
 
 export const metadata: Metadata = {
-  title: 'Arawn',
+  title: 'Blitzpack',
   description: 'Production-ready TypeScript monorepo',
 };
 

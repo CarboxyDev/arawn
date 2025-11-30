@@ -14,7 +14,7 @@ const swaggerPlugin: FastifyPluginAsync = async (app) => {
   await app.withTypeProvider<ZodTypeProvider>().register(swagger, {
     openapi: {
       info: {
-        title: 'Arawn API',
+        title: 'API',
         description: 'Production-ready TypeScript API built with Fastify',
         version: '1.0.0',
       },
