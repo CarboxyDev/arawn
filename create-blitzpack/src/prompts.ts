@@ -1,7 +1,7 @@
 import prompts from 'prompts';
 
 import { DEFAULT_DESCRIPTION } from './constants.js';
-import { toSlug, validateProjectName } from './utils.js';
+import { getCurrentDirName, toSlug, validateProjectName } from './utils.js';
 
 export interface ProjectOptions {
   projectName: string;
@@ -9,6 +9,7 @@ export interface ProjectOptions {
   projectDescription: string;
   skipGit: boolean;
   skipInstall: boolean;
+  useCurrentDir: boolean;
 }
 
 export async function getProjectOptions(
@@ -59,11 +60,15 @@ export async function getProjectOptions(
     return null;
   }
 
+  const useCurrentDir = projectName === '.';
+  const actualProjectName = useCurrentDir ? getCurrentDirName() : projectName;
+
   return {
-    projectName,
-    projectSlug: toSlug(projectName),
+    projectName: actualProjectName,
+    projectSlug: toSlug(actualProjectName),
     projectDescription: response.projectDescription || DEFAULT_DESCRIPTION,
     skipGit: flags.skipGit || false,
     skipInstall: flags.skipInstall || false,
+    useCurrentDir,
   };
 }

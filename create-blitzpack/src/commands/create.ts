@@ -3,6 +3,7 @@ import { spawn } from 'child_process';
 import fs from 'fs-extra';
 import ora from 'ora';
 import path from 'path';
+import prompts from 'prompts';
 
 import { initGit, isGitInstalled } from '../git.js';
 import { getProjectOptions } from '../prompts.js';
@@ -87,7 +88,9 @@ export async function create(
     return;
   }
 
-  const targetDir = path.resolve(process.cwd(), options.projectName);
+  const targetDir = options.useCurrentDir
+    ? process.cwd()
+    : path.resolve(process.cwd(), options.projectName);
 
   if (flags.dryRun) {
     printDryRun({
@@ -104,8 +107,21 @@ export async function create(
   if (await fs.pathExists(targetDir)) {
     const files = await fs.readdir(targetDir);
     if (files.length > 0) {
-      printError(`Directory "${options.projectName}" is not empty`);
-      return;
+      if (options.useCurrentDir) {
+        const { confirm } = await prompts({
+          type: 'confirm',
+          name: 'confirm',
+          message: `Current directory is not empty. Continue?`,
+          initial: false,
+        });
+
+        if (!confirm) {
+          return;
+        }
+      } else {
+        printError(`Directory "${options.projectName}" is not empty`);
+        return;
+      }
     }
   }
 
@@ -147,7 +163,10 @@ export async function create(
       }
     }
 
-    printSuccess(options.projectName, options.projectName);
+    printSuccess(
+      options.projectName,
+      options.useCurrentDir ? '.' : options.projectName
+    );
   } catch (error) {
     spinner.fail();
     printError(
