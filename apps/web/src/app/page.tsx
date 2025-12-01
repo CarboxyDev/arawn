@@ -36,7 +36,7 @@ export default async function Home(): Promise<React.ReactElement> {
       <div className="w-full max-w-5xl space-y-12">
         <div className="space-y-6 text-center">
           <div className="flex justify-center">
-            <Logo className="h-20 w-auto" />
+            <Logo />
           </div>
           <div className="space-y-3">
             <h1 className="text-foreground text-5xl font-semibold tracking-tight">
