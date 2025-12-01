@@ -87,10 +87,6 @@ export const techStack = {
       'CORS',
     ],
   },
-  sharedPackages: {
-    title: 'Shared Packages',
-    items: ['Zod Schemas', 'Utility Functions', 'Type Definitions'],
-  },
   devOps: {
     title: 'DevOps',
     items: [
