@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@repo/tailwind-config/theme.css';
+
+@config '../../tailwind.config.ts';
+
+@source '../../../../packages/ui/src/**/*.{ts,tsx}';
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+

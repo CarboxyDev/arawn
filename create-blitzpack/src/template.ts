@@ -8,6 +8,7 @@ const POST_DOWNLOAD_EXCLUDES = [
   'create-blitzpack',
   'scripts/setup.js',
   '.github',
+  'apps/marketing',
 ];
 
 async function cleanupExcludes(targetDir: string): Promise<void> {
