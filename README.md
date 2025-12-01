@@ -1,5 +1,9 @@
 <div align="center">
-  <img src="assets/logo.svg" alt="Blitzpack Logo" width="200">
+  <picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/logo-light.svg">
+  <img src="assets/logo-light.svg" alt="Blitzpack Logo" style="max-height: 200px; width: auto;">
+  </picture>
   <h1>Blitzpack</h1>
   <p>Full-stack TypeScript monorepo template with Next.js, Fastify, and Turborepo. From zero to production in minutes.</p>
 

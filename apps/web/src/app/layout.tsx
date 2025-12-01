@@ -6,7 +6,8 @@ import React from 'react';
 
 import { Footer } from '@/components/layout/footer';
 import { isDevelopment } from '@/lib/env';
-import { Providers } from '@/providers';
+
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: 'Blitzpack',
