@@ -1,6 +1,5 @@
 'use client';
 
-import { AnimatedThemeToggler } from '@repo/packages-ui/animated-theme-toggler';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +21,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@repo/packages-ui/sidebar';
+import { ThemeToggle } from '@repo/packages-ui/theme-toggle';
 import { UserAvatar } from '@repo/packages-ui/user-avatar';
 import { motion } from 'framer-motion';
 import {
@@ -201,7 +201,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
           <div className="flex-1" />
-          <AnimatedThemeToggler />
+          <ThemeToggle />
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>

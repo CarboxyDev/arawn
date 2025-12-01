@@ -1,6 +1,6 @@
-import { AnimatedThemeToggler } from '@repo/packages-ui/animated-theme-toggler';
 import { Button } from '@repo/packages-ui/button';
 import { GitHubIcon } from '@repo/packages-ui/icons/brand-icons';
+import { ThemeToggle } from '@repo/packages-ui/theme-toggle';
 import { ArrowRight, Boxes, PackageCheck, Terminal } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
@@ -31,7 +31,7 @@ export default async function Home(): Promise<React.ReactElement> {
         <Button asChild variant="default">
           <Link href="/login">Sign In</Link>
         </Button>
-        <AnimatedThemeToggler />
+        <ThemeToggle />
       </div>
       <div className="w-full max-w-5xl space-y-12">
         <div className="space-y-6 text-center">

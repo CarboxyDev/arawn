@@ -5,7 +5,7 @@
   "exports": {
     "./alert-dialog": "./src/alert-dialog.tsx",
     "./alert": "./src/alert.tsx",
-    "./animated-theme-toggler": "./src/animated-theme-toggler.tsx",
+    "./theme-toggle": "./src/theme-toggle.tsx",
     "./avatar": "./src/avatar.tsx",
     "./badge": "./src/badge.tsx",
     "./button": "./src/button.tsx",
