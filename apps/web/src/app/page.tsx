@@ -1,6 +1,5 @@
 'use client';
 
-import { Badge } from '@repo/packages-ui/badge';
 import { Button } from '@repo/packages-ui/button';
 import {
   Card,
@@ -12,9 +11,9 @@ import { GitHubIcon } from '@repo/packages-ui/icons/brand-icons';
 import { ThemeToggle } from '@repo/packages-ui/theme-toggle';
 import { useQuery } from '@tanstack/react-query';
 import {
+  Activity,
   ArrowRight,
   CheckCircle2,
-  Database,
   ExternalLink,
   KeyRound,
   LayoutDashboard,
@@ -23,9 +22,8 @@ import {
   ShieldCheck,
   UserPlus,
   XCircle,
+  Zap,
 } from 'lucide-react';
-import Link from 'next/link';
-import React from 'react';
 
 import { Logo } from '@/components/logo';
 import { env } from '@/lib/env';
@@ -57,44 +55,45 @@ function useHealthCheck() {
   });
 }
 
-function StatusIndicator({
-  status,
+function StatusRow({
+  label,
+  value,
+  isOk,
   isLoading,
 }: {
-  status: 'ok' | 'error' | undefined;
+  label: string;
+  value: { ok: string; error: string };
+  isOk: boolean;
   isLoading: boolean;
 }) {
-  if (isLoading) {
-    return (
-      <div className="flex items-center gap-2">
-        <Loader2 className="text-muted-foreground h-4 w-4 animate-spin" />
-        <span className="text-muted-foreground text-sm">Checking...</span>
-      </div>
-    );
-  }
-
-  if (status === 'ok') {
-    return (
-      <div className="flex items-center gap-2">
-        <span className="relative flex h-3 w-3">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-          <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500"></span>
-        </span>
-        <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-          All systems operational
-        </span>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex items-center gap-2">
-      <span className="relative flex h-3 w-3">
-        <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
-      </span>
-      <span className="text-sm font-medium text-red-600 dark:text-red-400">
-        Connection issues
-      </span>
+    <div className="flex items-center justify-between py-2">
+      <span className="text-muted-foreground text-sm">{label}</span>
+      <div className="flex items-center gap-2">
+        {isLoading ? (
+          <>
+            <Loader2 className="text-muted-foreground h-3.5 w-3.5 animate-spin" />
+            <span className="text-muted-foreground text-xs">Checking...</span>
+          </>
+        ) : isOk ? (
+          <>
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+            </span>
+            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              {value.ok}
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="relative flex h-2 w-2 rounded-full bg-red-500"></span>
+            <span className="text-xs font-medium text-red-600 dark:text-red-400">
+              {value.error}
+            </span>
+          </>
+        )}
+      </div>
     </div>
   );
 }
@@ -118,7 +117,7 @@ function ChecklistItem({
         <XCircle className="text-destructive h-5 w-5" />
       )}
       <span
-        className={`text-sm ${checked ? 'text-foreground' : 'text-muted-foreground'}`}
+        className={`text-sm ${isLoading ? 'text-muted-foreground' : checked ? 'text-foreground' : 'text-muted-foreground'}`}
       >
         {label}
       </span>
@@ -132,32 +131,28 @@ const quickLinks = [
     description: 'View your user dashboard',
     href: '/dashboard',
     icon: LayoutDashboard,
-    requiresAuth: true,
   },
   {
     title: 'Admin Panel',
     description: 'System monitoring and user management',
     href: '/admin',
     icon: ShieldCheck,
-    requiresAuth: true,
   },
   {
     title: 'Sign In',
     description: 'Access your account',
     href: '/login',
     icon: KeyRound,
-    requiresAuth: false,
   },
   {
     title: 'Sign Up',
     description: 'Create a new account',
     href: '/signup',
     icon: UserPlus,
-    requiresAuth: false,
   },
 ];
 
-export default function Home(): React.ReactElement {
+export default function Home() {
   const { data: health, isLoading, error } = useHealthCheck();
 
   const isDatabaseConnected = health?.database === 'connected';
@@ -175,20 +170,26 @@ export default function Home(): React.ReactElement {
           <div className="flex justify-center">
             <Logo className="h-20 w-auto" />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <h1 className="text-foreground text-4xl font-semibold tracking-tight">
-              Welcome to Your Project
+              Your Project is Ready
             </h1>
-            <p className="text-muted-foreground mx-auto max-w-xl text-lg">
-              Your development environment is ready. Explore the features below
-              to get started.
+            <p className="text-muted-foreground mx-auto max-w-xl text-base">
+              Everything is set up and ready to go. Start building your
+              application with the features below.
             </p>
-          </div>
-          <div className="flex justify-center pt-2">
-            <StatusIndicator
-              status={hasError ? 'error' : health?.status}
-              isLoading={isLoading}
-            />
+            <div className="text-muted-foreground flex items-center justify-center gap-1.5 pt-1 text-sm">
+              <Zap className="h-3.5 w-3.5" />
+              <span>Powered by</span>
+              <a
+                href="https://github.com/CarboxyDev/blitzpack"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground font-medium underline-offset-4 hover:underline"
+              >
+                Blitzpack
+              </a>
+            </div>
           </div>
         </div>
 
@@ -227,49 +228,28 @@ export default function Home(): React.ReactElement {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <Database className="h-4 w-4" />
+                <Activity className="h-4 w-4" />
                 System Status
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground text-sm">
-                    API Status
-                  </span>
-                  <Badge variant={isApiHealthy ? 'default' : 'destructive'}>
-                    {isLoading
-                      ? 'Checking...'
-                      : isApiHealthy
-                        ? 'Healthy'
-                        : 'Unhealthy'}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground text-sm">
-                    Database
-                  </span>
-                  <Badge
-                    variant={isDatabaseConnected ? 'default' : 'destructive'}
-                  >
-                    {isLoading
-                      ? 'Checking...'
-                      : isDatabaseConnected
-                        ? 'Connected'
-                        : 'Disconnected'}
-                  </Badge>
-                </div>
-                {health?.timestamp && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground text-sm">
-                      Last Check
-                    </span>
-                    <span className="text-muted-foreground text-xs">
-                      {new Date(health.timestamp).toLocaleTimeString()}
-                    </span>
-                  </div>
-                )}
-              </div>
+            <CardContent className="space-y-1">
+              <StatusRow
+                label="API Server"
+                value={{ ok: 'Healthy', error: 'Unhealthy' }}
+                isOk={!hasError && isApiHealthy}
+                isLoading={isLoading}
+              />
+              <StatusRow
+                label="Database"
+                value={{ ok: 'Connected', error: 'Disconnected' }}
+                isOk={!hasError && isDatabaseConnected}
+                isLoading={isLoading}
+              />
+              {hasError && (
+                <p className="text-destructive mt-2 text-xs">
+                  Make sure your API server is running on the correct port.
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -280,7 +260,7 @@ export default function Home(): React.ReactElement {
             {quickLinks.map((link) => {
               const Icon = link.icon;
               return (
-                <Link
+                <a
                   key={link.href}
                   href={link.href}
                   className="border-border bg-card hover:bg-accent group rounded-lg border p-4 transition-colors"
@@ -295,52 +275,49 @@ export default function Home(): React.ReactElement {
                   <p className="text-muted-foreground mt-1 text-xs">
                     {link.description}
                   </p>
-                </Link>
+                </a>
               );
             })}
           </div>
         </div>
 
-        <Card className="border-border/50 bg-card/50">
-          <CardContent className="py-6">
-            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
-              <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-lg">
-                <ExternalLink className="text-muted-foreground h-6 w-6" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-foreground font-medium">
-                  Built with Blitzpack
-                </h3>
-                <p className="text-muted-foreground mt-1 text-sm">
-                  This project was scaffolded with Blitzpack. Check out the
-                  documentation for guides, API reference, and more.
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button asChild variant="outline" size="sm">
-                  <a
-                    href="https://github.com/CarboxyDev/blitzpack"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2"
-                  >
-                    <GitHubIcon className="h-4 w-4" />
-                    GitHub
-                  </a>
-                </Button>
-                <Button asChild size="sm">
-                  <a
-                    href="https://github.com/CarboxyDev/blitzpack#readme"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View Docs
-                  </a>
-                </Button>
-              </div>
+        <div className="border-border bg-card rounded-lg border p-6">
+          <div className="flex flex-col items-center gap-6 text-center">
+            <div className="space-y-2">
+              <h3 className="text-foreground text-lg font-medium">
+                Need help getting started?
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                Check out the Blitzpack documentation for guides, API reference,
+                and best practices.
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button asChild variant="outline">
+                <a
+                  href="https://github.com/CarboxyDev/blitzpack"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  <GitHubIcon className="h-4 w-4" />
+                  View on GitHub
+                </a>
+              </Button>
+              <Button asChild>
+                <a
+                  href="https://github.com/CarboxyDev/blitzpack#readme"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Read Documentation
+                </a>
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );
