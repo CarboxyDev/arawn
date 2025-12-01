@@ -146,7 +146,7 @@ The web app uses Better Auth for authentication with modern patterns:
 - Use Framer Motion for animations, Lucide React for icons
 - Prefer using `Skeleton` components for loading states instead of spinners (especially for data fetching components)
 - Always create a proper loading state for data fetching components.
-- Always use `cn` helper for class name merging
+- Always use `cn` helper for dynamic classnames
 - Never write svg code. Always use existing icons from code or Lucide.
 
 ---
