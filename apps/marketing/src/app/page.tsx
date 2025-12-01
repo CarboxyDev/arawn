@@ -46,13 +46,15 @@ export default function Home(): React.ReactElement {
           <div className="flex justify-center">
             <Logo />
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <h1 className="text-foreground text-5xl font-semibold tracking-tight">
               Ship production apps faster
             </h1>
             <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-              Production-ready full-stack TypeScript monorepo with Next.js,
-              Fastify, Turborepo and other modern technologies.
+              Production-ready TypeScript monorepo with Next.js, Fastify, and
+              Turborepo. Authentication, admin dashboards, API infrastructure,
+              and battle-tested features already configured and working out of
+              the box.
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
