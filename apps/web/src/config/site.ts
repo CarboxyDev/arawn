@@ -1,5 +1,4 @@
 export const siteConfig = {
-  name: 'Blitzpack',
-  description: 'Production-ready TypeScript monorepo template',
-  github: 'https://github.com/CarboxyDev/blitzpack',
+  name: 'My Project',
+  description: 'A project built with Blitzpack',
 } as const;

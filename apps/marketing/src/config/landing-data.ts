@@ -131,27 +131,17 @@ export const includedFeatures = [
   {
     iconName: 'Lock' as const,
     title: 'Authentication System',
-    pages: [
-      { name: 'Sign in', href: '/login' },
-      { name: 'Sign up', href: '/signup' },
-      { name: 'Forgot password', href: '/forgot-password' },
-    ],
+    description:
+      'Complete auth with email/password, OAuth, and session management',
   },
   {
     iconName: 'LayoutDashboard' as const,
     title: 'User Dashboard',
-    pages: [
-      { name: 'Dashboard', href: '/dashboard' },
-      { name: 'Change password', href: '/dashboard/change-password' },
-    ],
+    description: 'User dashboard with profile and password management',
   },
   {
     iconName: 'ShieldCheck' as const,
     title: 'Admin Dashboard',
-    pages: [
-      { name: 'System monitoring', href: '/admin' },
-      { name: 'User management', href: '/admin/users' },
-      { name: 'Sessions management', href: '/admin/sessions' },
-    ],
+    description: 'System monitoring, user management, and session controls',
   },
 ] as const;

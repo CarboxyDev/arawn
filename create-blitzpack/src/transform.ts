@@ -28,8 +28,7 @@ function transformSiteConfig(content: string, vars: TemplateVariables): string {
     .replace(
       /description: ['"].*['"]/,
       `description: '${vars.projectDescription}'`
-    )
-    .replace(/github: ['"].*['"]/, `github: ''`);
+    );
 }
 
 function transformLayout(content: string, vars: TemplateVariables): string {

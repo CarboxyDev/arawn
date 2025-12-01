@@ -1,184 +1,346 @@
+'use client';
+
+import { Badge } from '@repo/packages-ui/badge';
 import { Button } from '@repo/packages-ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@repo/packages-ui/card';
 import { GitHubIcon } from '@repo/packages-ui/icons/brand-icons';
 import { ThemeToggle } from '@repo/packages-ui/theme-toggle';
-import { ArrowRight, Boxes, PackageCheck, Terminal } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import {
+  ArrowRight,
+  CheckCircle2,
+  Database,
+  ExternalLink,
+  KeyRound,
+  LayoutDashboard,
+  Loader2,
+  Settings,
+  ShieldCheck,
+  UserPlus,
+  XCircle,
+} from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
-import { CommandBlock } from '@/components/landing/command-block';
-import { FeatureCard } from '@/components/landing/feature-card';
-import { IncludedFeatureCard } from '@/components/landing/included-feature-card';
-import { TechBadge } from '@/components/landing/tech-badge';
 import { Logo } from '@/components/logo';
-import {
-  features,
-  includedFeatures,
-  quickStartCommands,
-  techStack,
-} from '@/config/landing-data';
-import { siteConfig } from '@/config/site';
+import { env } from '@/lib/env';
 
-export default async function Home(): Promise<React.ReactElement> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-  const isLocalDev =
-    apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
+interface HealthResponse {
+  status: 'ok' | 'error';
+  timestamp: string;
+  database: 'connected' | 'disconnected';
+}
 
-  const backendPort = new URL(apiUrl).port || '8080';
+function getBaseApiUrl(): string {
+  const apiUrl = env.apiUrl;
+  return apiUrl.replace(/\/api\/?$/, '');
+}
+
+function useHealthCheck() {
+  return useQuery({
+    queryKey: ['health'],
+    queryFn: async () => {
+      const baseUrl = getBaseApiUrl();
+      const response = await fetch(`${baseUrl}/health`);
+      if (!response.ok) {
+        throw new Error('Health check failed');
+      }
+      return response.json() as Promise<HealthResponse>;
+    },
+    refetchInterval: 30000,
+    retry: 1,
+  });
+}
+
+function StatusIndicator({
+  status,
+  isLoading,
+}: {
+  status: 'ok' | 'error' | undefined;
+  isLoading: boolean;
+}) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2">
+        <Loader2 className="text-muted-foreground h-4 w-4 animate-spin" />
+        <span className="text-muted-foreground text-sm">Checking...</span>
+      </div>
+    );
+  }
+
+  if (status === 'ok') {
+    return (
+      <div className="flex items-center gap-2">
+        <span className="relative flex h-3 w-3">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+          <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500"></span>
+        </span>
+        <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+          All systems operational
+        </span>
+      </div>
+    );
+  }
 
   return (
-    <main className="bg-background relative flex flex-1 flex-col items-center justify-center p-8 pb-0">
+    <div className="flex items-center gap-2">
+      <span className="relative flex h-3 w-3">
+        <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
+      </span>
+      <span className="text-sm font-medium text-red-600 dark:text-red-400">
+        Connection issues
+      </span>
+    </div>
+  );
+}
+
+function ChecklistItem({
+  label,
+  checked,
+  isLoading,
+}: {
+  label: string;
+  checked: boolean;
+  isLoading: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-3 py-2">
+      {isLoading ? (
+        <Loader2 className="text-muted-foreground h-5 w-5 animate-spin" />
+      ) : checked ? (
+        <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+      ) : (
+        <XCircle className="text-destructive h-5 w-5" />
+      )}
+      <span
+        className={`text-sm ${checked ? 'text-foreground' : 'text-muted-foreground'}`}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
+const quickLinks = [
+  {
+    title: 'Dashboard',
+    description: 'View your user dashboard',
+    href: '/dashboard',
+    icon: LayoutDashboard,
+    requiresAuth: true,
+  },
+  {
+    title: 'Admin Panel',
+    description: 'System monitoring and user management',
+    href: '/admin',
+    icon: ShieldCheck,
+    requiresAuth: true,
+  },
+  {
+    title: 'Sign In',
+    description: 'Access your account',
+    href: '/login',
+    icon: KeyRound,
+    requiresAuth: false,
+  },
+  {
+    title: 'Sign Up',
+    description: 'Create a new account',
+    href: '/signup',
+    icon: UserPlus,
+    requiresAuth: false,
+  },
+];
+
+export default function Home(): React.ReactElement {
+  const { data: health, isLoading, error } = useHealthCheck();
+
+  const isDatabaseConnected = health?.database === 'connected';
+  const isApiHealthy = health?.status === 'ok';
+  const hasError = !!error;
+
+  return (
+    <main className="bg-background relative flex flex-1 flex-col items-center p-8">
       <div className="absolute right-8 top-8 flex items-center gap-2">
-        <Button asChild variant="default">
-          <Link href="/login">Sign In</Link>
-        </Button>
         <ThemeToggle />
       </div>
-      <div className="w-full max-w-5xl space-y-12">
-        <div className="space-y-6 text-center">
+
+      <div className="w-full max-w-4xl space-y-8 pt-8">
+        <div className="space-y-4 text-center">
           <div className="flex justify-center">
-            <Logo />
+            <Logo className="h-20 w-auto" />
           </div>
-          <div className="space-y-3">
-            <h1 className="text-foreground text-5xl font-semibold tracking-tight">
-              Ship production apps faster
+          <div className="space-y-2">
+            <h1 className="text-foreground text-4xl font-semibold tracking-tight">
+              Welcome to Your Project
             </h1>
-            <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-              Production-ready full-stack TypeScript monorepo with Next.js,
-              Fastify, Turborepo and other modern technologies.
+            <p className="text-muted-foreground mx-auto max-w-xl text-lg">
+              Your development environment is ready. Explore the features below
+              to get started.
             </p>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <Button
-              asChild
-              size="lg"
-              className="group shadow-lg transition-all hover:scale-105 hover:shadow-xl"
-            >
-              <Link href="#quick-start" className="flex items-center gap-2">
-                Quick Start
-                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="group transition-all hover:scale-105"
-            >
-              <a
-                href={siteConfig.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
-              >
-                <GitHubIcon className="size-4" />
-                GitHub
-              </a>
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          {features.map((feature) => (
-            <FeatureCard
-              key={feature.title}
-              iconName={feature.iconName}
-              title={feature.title}
-              description={feature.description}
+          <div className="flex justify-center pt-2">
+            <StatusIndicator
+              status={hasError ? 'error' : health?.status}
+              isLoading={isLoading}
             />
-          ))}
+          </div>
         </div>
 
-        <div className="border-border bg-card rounded-lg border p-8">
-          <h2 className="text-card-foreground mb-8 flex items-center gap-2 text-xl font-medium">
-            <PackageCheck className="text-foreground h-5 w-5" />
-            <span>Out of the Box</span>
-          </h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {includedFeatures.map((feature) => (
-              <IncludedFeatureCard
-                key={feature.title}
-                iconName={feature.iconName}
-                title={feature.title}
-                pages={feature.pages}
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Settings className="h-4 w-4" />
+                Setup Checklist
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <ChecklistItem
+                label="API server running"
+                checked={isApiHealthy && !hasError}
+                isLoading={isLoading}
               />
-            ))}
-          </div>
-        </div>
-
-        <div className="border-border bg-card rounded-lg border p-8">
-          <h2 className="text-card-foreground mb-8 flex items-center gap-2 text-xl font-medium">
-            <Boxes className="text-foreground h-5 w-5" />
-            <span>Tech Stack</span>
-          </h2>
-          <div className="space-y-8">
-            {Object.values(techStack).map((stack) => (
-              <div key={stack.title}>
-                <h3 className="text-card-foreground mb-4 text-sm font-medium">
-                  {stack.title}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {stack.items.map((item) => (
-                    <TechBadge key={item}>{item}</TechBadge>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div
-          id="quick-start"
-          className="border-border bg-card border-l-primary rounded-lg border border-l-8 p-8"
-        >
-          <div className="mb-6 flex items-center gap-3">
-            <Terminal className="text-foreground h-5 w-5" />
-            <h2 className="text-foreground text-xl font-medium">Quick Start</h2>
-          </div>
-          <div className="space-y-3">
-            {quickStartCommands.map((cmd) => (
-              <CommandBlock
-                key={cmd.command}
-                command={cmd.command}
-                tooltipContent={cmd.tooltip}
+              <ChecklistItem
+                label="Database connected"
+                checked={isDatabaseConnected}
+                isLoading={isLoading}
               />
-            ))}
-          </div>
-          {isLocalDev && (
-            <>
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-                <span className="text-muted-foreground text-xs">Services:</span>
-                <a
-                  href="http://localhost:3000"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
-                >
-                  Web <span className="text-muted-foreground">:3000</span>
-                </a>
-                <a
-                  href={`http://localhost:${backendPort}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
-                >
-                  API{' '}
-                  <span className="text-muted-foreground">:{backendPort}</span>
-                </a>
-                <a
-                  href={`http://localhost:${backendPort}/docs`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border-border hover:border-foreground/30 hover:bg-accent bg-background inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
-                >
-                  API Docs
-                  <span className="text-muted-foreground">
-                    :{backendPort}/docs
+              <ChecklistItem
+                label="Environment configured"
+                checked={!hasError}
+                isLoading={isLoading}
+              />
+              {hasError && (
+                <p className="text-destructive mt-2 text-xs">
+                  Make sure your API server is running on the correct port.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Database className="h-4 w-4" />
+                System Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground text-sm">
+                    API Status
                   </span>
-                </a>
+                  <Badge variant={isApiHealthy ? 'default' : 'destructive'}>
+                    {isLoading
+                      ? 'Checking...'
+                      : isApiHealthy
+                        ? 'Healthy'
+                        : 'Unhealthy'}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground text-sm">
+                    Database
+                  </span>
+                  <Badge
+                    variant={isDatabaseConnected ? 'default' : 'destructive'}
+                  >
+                    {isLoading
+                      ? 'Checking...'
+                      : isDatabaseConnected
+                        ? 'Connected'
+                        : 'Disconnected'}
+                  </Badge>
+                </div>
+                {health?.timestamp && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground text-sm">
+                      Last Check
+                    </span>
+                    <span className="text-muted-foreground text-xs">
+                      {new Date(health.timestamp).toLocaleTimeString()}
+                    </span>
+                  </div>
+                )}
               </div>
-            </>
-          )}
+            </CardContent>
+          </Card>
         </div>
+
+        <div className="space-y-4">
+          <h2 className="text-foreground text-lg font-medium">Quick Links</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {quickLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="border-border bg-card hover:bg-accent group rounded-lg border p-4 transition-colors"
+                >
+                  <div className="flex items-start justify-between">
+                    <Icon className="text-muted-foreground group-hover:text-foreground h-5 w-5 transition-colors" />
+                    <ArrowRight className="text-muted-foreground h-4 w-4 opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100" />
+                  </div>
+                  <h3 className="text-foreground mt-3 font-medium">
+                    {link.title}
+                  </h3>
+                  <p className="text-muted-foreground mt-1 text-xs">
+                    {link.description}
+                  </p>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        <Card className="border-border/50 bg-card/50">
+          <CardContent className="py-6">
+            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
+              <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-lg">
+                <ExternalLink className="text-muted-foreground h-6 w-6" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-foreground font-medium">
+                  Built with Blitzpack
+                </h3>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  This project was scaffolded with Blitzpack. Check out the
+                  documentation for guides, API reference, and more.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button asChild variant="outline" size="sm">
+                  <a
+                    href="https://github.com/CarboxyDev/blitzpack"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <GitHubIcon className="h-4 w-4" />
+                    GitHub
+                  </a>
+                </Button>
+                <Button asChild size="sm">
+                  <a
+                    href="https://github.com/CarboxyDev/blitzpack#readme"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View Docs
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </main>
   );
