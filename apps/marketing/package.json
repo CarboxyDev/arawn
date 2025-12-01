@@ -8,7 +8,9 @@
     "start": "next start --port 3001",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "vercel-build": "cd ../.. && turbo build --filter=@repo/marketing",
+    "vercel-ignore-build": "npx turbo-ignore --fallback=HEAD^1"
   },
   "dependencies": {
     "@repo/packages-ui": "workspace:*",
