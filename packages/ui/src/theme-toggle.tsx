@@ -2,7 +2,7 @@
 
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { cn } from './lib/utils';
@@ -18,20 +18,29 @@ export const ThemeToggle = ({
 }: ThemeToggleProps) => {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [displayedTheme, setDisplayedTheme] = useState<string | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (mounted && resolvedTheme && !displayedTheme) {
+      setDisplayedTheme(resolvedTheme);
+    }
+  }, [mounted, resolvedTheme, displayedTheme]);
+
   const toggleTheme = useCallback(async () => {
-    if (!buttonRef.current || !mounted) return;
+    if (!mounted) return;
 
     const isDark = resolvedTheme === 'dark';
     const newTheme = isDark ? 'light' : 'dark';
 
     if (!document.startViewTransition) {
       setTheme(newTheme);
+      setDisplayedTheme(newTheme);
       return;
     }
 
@@ -43,21 +52,11 @@ export const ThemeToggle = ({
 
     await transition.ready;
 
-    const { top, left, width, height } =
-      buttonRef.current.getBoundingClientRect();
-    const x = left + width / 2;
-    const y = top + height / 2;
-    const maxRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
-
-    document.documentElement.animate(
+    const animation = document.documentElement.animate(
       {
-        clipPath: [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${maxRadius}px at ${x}px ${y}px)`,
-        ],
+        clipPath: isDark
+          ? ['inset(100% 0 0 0)', 'inset(0 0 0 0)']
+          : ['inset(0 0 100% 0)', 'inset(0 0 0 0)'],
       },
       {
         duration,
@@ -65,7 +64,13 @@ export const ThemeToggle = ({
         pseudoElement: '::view-transition-new(root)',
       }
     );
+
+    animation.onfinish = () => {
+      setDisplayedTheme(newTheme);
+    };
   }, [resolvedTheme, setTheme, mounted, duration]);
+
+  const showDarkIcon = displayedTheme === 'dark';
 
   if (!mounted) {
     return (
@@ -76,6 +81,7 @@ export const ThemeToggle = ({
           'border-border border',
           'rounded-md p-2',
           'transition-colors duration-200',
+          'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
           className
         )}
         disabled
@@ -87,11 +93,8 @@ export const ThemeToggle = ({
     );
   }
 
-  const isDark = resolvedTheme === 'dark';
-
   return (
     <button
-      ref={buttonRef}
       onClick={toggleTheme}
       className={cn(
         'group relative cursor-pointer',
@@ -100,6 +103,7 @@ export const ThemeToggle = ({
         'rounded-md p-2',
         'transition-all duration-200',
         'hover:scale-105 active:scale-95',
+        'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         className
       )}
       {...props}
@@ -107,16 +111,16 @@ export const ThemeToggle = ({
       <div className="relative flex h-5 w-5 items-center justify-center">
         <Sun
           className={cn(
-            'absolute h-5 w-5 transition-all duration-300',
-            isDark
+            'absolute h-5 w-5 transition-all duration-200',
+            showDarkIcon
               ? 'rotate-90 scale-0 opacity-0'
               : 'rotate-0 scale-100 opacity-100'
           )}
         />
         <Moon
           className={cn(
-            'absolute h-5 w-5 transition-all duration-300',
-            isDark
+            'absolute h-5 w-5 transition-all duration-200',
+            showDarkIcon
               ? 'rotate-0 scale-100 opacity-100'
               : '-rotate-90 scale-0 opacity-0'
           )}

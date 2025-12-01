@@ -8,8 +8,8 @@ import React from 'react';
 import { CommandBlock } from '@/components/landing/command-block';
 import { FeatureCard } from '@/components/landing/feature-card';
 import { IncludedFeatureCard } from '@/components/landing/included-feature-card';
-import { Logo } from '@/components/landing/logo';
 import { TechBadge } from '@/components/landing/tech-badge';
+import { Logo } from '@/components/logo';
 import {
   features,
   includedFeatures,
