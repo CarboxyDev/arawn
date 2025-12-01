@@ -1,9 +1,12 @@
 import {
   LayoutDashboard,
   Lock,
+  Mail,
+  Server,
   Shield,
   ShieldCheck,
   Users,
+  Wrench,
 } from 'lucide-react';
 
 const iconMap = {
@@ -12,6 +15,9 @@ const iconMap = {
   ShieldCheck,
   LayoutDashboard,
   Users,
+  Server,
+  Mail,
+  Wrench,
 } as const;
 
 type IconName = keyof typeof iconMap;

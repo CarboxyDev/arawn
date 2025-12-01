@@ -144,4 +144,22 @@ export const includedFeatures = [
     title: 'Admin Dashboard',
     description: 'System monitoring, user management, and session controls',
   },
+  {
+    iconName: 'Server' as const,
+    title: 'API Infrastructure',
+    description:
+      'RESTful endpoints, Zod validation, security headers, structured logging, and auto-generated API docs',
+  },
+  {
+    iconName: 'Mail' as const,
+    title: 'Email System',
+    description:
+      'React Email templates with Resend integration for verification, password reset, and transactional emails',
+  },
+  {
+    iconName: 'Wrench' as const,
+    title: 'Developer Tooling',
+    description:
+      'CLI setup wizard, Vitest testing suite, git hooks, and production Docker configuration',
+  },
 ] as const;
