@@ -20,6 +20,7 @@ interface TerminalCommand {
   command: string;
   output: string[];
   spinner: boolean;
+  intermediateSteps?: string[];
 }
 
 interface AnimatedTerminalProps {
@@ -36,16 +37,18 @@ interface TerminalState {
   showReplayButton: boolean;
   isPaused: boolean;
   spinnerFrame: number;
+  currentStepIndex: number;
 }
 
 const ANIMATION_CONFIG = {
-  typeSpeed: 80,
-  commandDelay: 300,
-  outputLineDelay: 200,
+  typeSpeed: 60,
+  commandDelay: 400,
+  outputLineDelay: 250,
   spinnerDuration: 1200,
-  pauseBetweenCommands: 800,
+  pauseBetweenCommands: 1000,
   enterFlashDuration: 150,
   spinnerFrameDuration: 80,
+  intermediateStepDuration: 1000,
 } as const;
 
 // Terminal-style spinner frames
@@ -55,6 +58,11 @@ const TERMINAL_COMMANDS: TerminalCommand[] = [
   {
     command: 'pnpm create blitzpack',
     spinner: true,
+    intermediateSteps: [
+      'Scaffolding project structure...',
+      'Installing dependencies...',
+      'Initializing git repository...',
+    ],
     output: [
       '✓ Project created successfully',
       '✓ Dependencies installed',
@@ -64,6 +72,10 @@ const TERMINAL_COMMANDS: TerminalCommand[] = [
   {
     command: 'docker compose up -d && pnpm db:migrate',
     spinner: true,
+    intermediateSteps: [
+      'Starting PostgreSQL container...',
+      'Running database migrations...',
+    ],
     output: [
       '✓ PostgreSQL started on port 5432',
       '✓ Database migrations applied',
@@ -97,6 +109,7 @@ export function AnimatedTerminal({
     showReplayButton: prefersReducedMotion ? true : false,
     isPaused: false,
     spinnerFrame: 0,
+    currentStepIndex: 0,
   });
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -123,6 +136,7 @@ export function AnimatedTerminal({
       showReplayButton: false,
       isPaused: false,
       spinnerFrame: 0,
+      currentStepIndex: 0,
     });
   }, [clearTimer]);
 
@@ -174,7 +188,12 @@ export function AnimatedTerminal({
     if (state.phase === 'waiting') {
       timeoutRef.current = setTimeout(() => {
         if (currentCommand.spinner) {
-          setState((prev) => ({ ...prev, phase: 'spinner', spinnerFrame: 0 }));
+          setState((prev) => ({
+            ...prev,
+            phase: 'spinner',
+            spinnerFrame: 0,
+            currentStepIndex: 0,
+          }));
         } else {
           setState((prev) => ({ ...prev, phase: 'output' }));
         }
@@ -183,20 +202,44 @@ export function AnimatedTerminal({
     }
 
     if (state.phase === 'spinner') {
-      spinnerIntervalRef.current = setInterval(() => {
-        setState((prev) => ({
-          ...prev,
-          spinnerFrame: (prev.spinnerFrame + 1) % SPINNER_FRAMES.length,
-        }));
-      }, ANIMATION_CONFIG.spinnerFrameDuration);
+      // Only create spinner interval if it doesn't exist (prevents multiple intervals)
+      if (!spinnerIntervalRef.current) {
+        spinnerIntervalRef.current = setInterval(() => {
+          setState((prev) => ({
+            ...prev,
+            spinnerFrame: (prev.spinnerFrame + 1) % SPINNER_FRAMES.length,
+          }));
+        }, ANIMATION_CONFIG.spinnerFrameDuration);
+      }
 
-      timeoutRef.current = setTimeout(() => {
-        if (spinnerIntervalRef.current) {
-          clearInterval(spinnerIntervalRef.current);
-          spinnerIntervalRef.current = null;
-        }
-        setState((prev) => ({ ...prev, phase: 'output' }));
-      }, ANIMATION_CONFIG.spinnerDuration);
+      const intermediateSteps = currentCommand.intermediateSteps || [];
+      const hasSteps = intermediateSteps.length > 0;
+
+      if (hasSteps && state.currentStepIndex < intermediateSteps.length - 1) {
+        // Cycle through intermediate steps
+        timeoutRef.current = setTimeout(() => {
+          setState((prev) => ({
+            ...prev,
+            currentStepIndex: prev.currentStepIndex + 1,
+          }));
+        }, ANIMATION_CONFIG.intermediateStepDuration);
+      } else {
+        // Final step or no intermediate steps - move to output
+        const totalDuration = hasSteps
+          ? intermediateSteps.length * ANIMATION_CONFIG.intermediateStepDuration
+          : ANIMATION_CONFIG.spinnerDuration;
+
+        timeoutRef.current = setTimeout(
+          () => {
+            if (spinnerIntervalRef.current) {
+              clearInterval(spinnerIntervalRef.current);
+              spinnerIntervalRef.current = null;
+            }
+            setState((prev) => ({ ...prev, phase: 'output' }));
+          },
+          hasSteps ? ANIMATION_CONFIG.intermediateStepDuration : totalDuration
+        );
+      }
       return;
     }
 
@@ -247,6 +290,7 @@ export function AnimatedTerminal({
     state.phase,
     state.currentCommandIndex,
     state.currentCharIndex,
+    state.currentStepIndex,
     state.isPaused,
     autoPlay,
     prefersReducedMotion,
@@ -395,15 +439,30 @@ export function AnimatedTerminal({
                 )}
               </div>
 
-              {/* Show spinner */}
+              {/* Show spinner with intermediate steps */}
               {showSpinner && (
                 <div className="mt-2 flex items-center gap-2 pl-6">
                   <span className="text-primary text-base">
                     {SPINNER_FRAMES[state.spinnerFrame]}
                   </span>
-                  <span className="text-muted-foreground text-xs">
-                    Running...
-                  </span>
+                  {currentCommand.intermediateSteps &&
+                  state.currentStepIndex <
+                    currentCommand.intermediateSteps.length ? (
+                    <motion.span
+                      key={state.currentStepIndex}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-muted-foreground text-xs"
+                    >
+                      {currentCommand.intermediateSteps[state.currentStepIndex]}
+                    </motion.span>
+                  ) : (
+                    <span className="text-muted-foreground text-xs">
+                      Running...
+                    </span>
+                  )}
                 </div>
               )}
 
