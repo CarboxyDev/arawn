@@ -44,11 +44,11 @@ export function FeatureCard({
 
   return (
     <motion.div
-      className="border-border bg-card rounded-lg border p-6 transition-colors"
+      className="border-border bg-card hover:border-primary/50 group rounded-lg border p-6 transition-all hover:shadow-lg"
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
     >
-      <Icon className="text-foreground mb-3 h-5 w-5" />
+      <Icon className="text-primary mb-3 h-5 w-5 transition-transform group-hover:scale-110" />
       <h3 className="text-card-foreground mb-2 text-base font-medium">
         {title}
       </h3>

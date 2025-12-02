@@ -12,9 +12,14 @@ import { toast } from 'sonner';
 interface CommandBlockProps {
   command: string;
   tooltipContent?: string;
+  step?: number;
 }
 
-export function CommandBlock({ command, tooltipContent }: CommandBlockProps) {
+export function CommandBlock({
+  command,
+  tooltipContent,
+  step,
+}: CommandBlockProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -26,9 +31,16 @@ export function CommandBlock({ command, tooltipContent }: CommandBlockProps) {
 
   return (
     <div className="border-border bg-card text-card-foreground flex items-center justify-between gap-3 rounded-md border px-4 py-3">
-      <span className="font-mono text-sm">
-        <span className="text-muted-foreground">$</span> {command}
-      </span>
+      <div className="flex items-center gap-3">
+        {step !== undefined && (
+          <div className="bg-primary/10 text-primary flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium">
+            {step}
+          </div>
+        )}
+        <span className="font-mono text-sm">
+          <span className="text-muted-foreground">$</span> {command}
+        </span>
+      </div>
       <div className="flex items-center gap-2">
         {tooltipContent && (
           <Tooltip>
