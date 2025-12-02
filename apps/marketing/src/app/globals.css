@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import '@repo/tailwind-config/theme.css';
+@import './theme.css';
 
 @config '../../tailwind.config.ts';
 
@@ -11,4 +11,3 @@
   animation: none;
   mix-blend-mode: normal;
 }
-
