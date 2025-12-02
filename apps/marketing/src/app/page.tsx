@@ -2,6 +2,7 @@ import { ThemeToggle } from '@repo/packages-ui/theme-toggle';
 import { Boxes, PackageCheck, Terminal } from 'lucide-react';
 import React from 'react';
 
+import { GitHubStarButton } from '@/components/github-star-button';
 import { CommandBlock } from '@/components/landing/command-block';
 import { FAQSection } from '@/components/landing/faq-section';
 import { FeatureCard } from '@/components/landing/feature-card';
@@ -219,25 +220,21 @@ const QUICK_START_STEPS: Array<{
   },
 ];
 
-export default function Home(): React.ReactElement {
+export default function Home() {
   return (
     <main className="bg-background relative flex min-h-screen flex-col">
-      {/* Theme Toggle */}
-      <div className="absolute right-8 top-8 z-10">
+      <div className="absolute right-8 top-8 z-10 flex items-center gap-2">
+        <GitHubStarButton />
         <ThemeToggle />
       </div>
-
-      {/* Hero Section */}
       <SectionContainer className="pt-28">
         <HeroSection />
       </SectionContainer>
 
-      {/* Why Blitzpack Section */}
       <SectionContainer variant="card">
         <WhySection />
       </SectionContainer>
 
-      {/* Features Section */}
       <SectionContainer>
         <div className="space-y-8">
           <div className="text-center">
@@ -261,7 +258,6 @@ export default function Home(): React.ReactElement {
         </div>
       </SectionContainer>
 
-      {/* What's Included Section */}
       <SectionContainer variant="card">
         <div className="space-y-8">
           <div className="text-center">
@@ -287,7 +283,6 @@ export default function Home(): React.ReactElement {
         </div>
       </SectionContainer>
 
-      {/* Quick Start Section */}
       <SectionContainer id="quick-start">
         <div className="border-border bg-card border-l-primary rounded-lg border border-l-8 p-8 lg:p-12">
           <div className="mb-8 flex items-center gap-3">
@@ -332,7 +327,6 @@ export default function Home(): React.ReactElement {
         </div>
       </SectionContainer>
 
-      {/* Tech Stack Section */}
       <SectionContainer variant="card">
         <div className="space-y-8">
           <div className="text-center">
@@ -360,13 +354,9 @@ export default function Home(): React.ReactElement {
           </div>
         </div>
       </SectionContainer>
-
-      {/* FAQs Section */}
       <SectionContainer>
         <FAQSection />
       </SectionContainer>
-
-      {/* Footer */}
       <Footer />
     </main>
   );
