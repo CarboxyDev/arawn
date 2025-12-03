@@ -1,5 +1,5 @@
 import { ThemeToggle } from '@repo/packages-ui/theme-toggle';
-import { Boxes, PackageCheck, Terminal } from 'lucide-react';
+import { Boxes, Terminal } from 'lucide-react';
 import React from 'react';
 
 import { GitHubStarButton } from '@/components/github-star-button';
@@ -8,91 +8,10 @@ import { FAQSection } from '@/components/landing/faq-section';
 import { FeaturesSection } from '@/components/landing/features-section';
 import { Footer } from '@/components/landing/footer';
 import { HeroSection } from '@/components/landing/hero-section';
-import { IncludedFeatureCard } from '@/components/landing/included-feature-card';
+import { IncludedSection } from '@/components/landing/included-section';
 import { SectionContainer } from '@/components/landing/section-container';
 import { TechBadge } from '@/components/landing/tech-badge';
 import { WhySection } from '@/components/landing/why-section';
-
-const INCLUDED_FEATURES = [
-  {
-    iconName: 'Lock' as const,
-    title: 'Authentication System',
-    description:
-      'Not just a login form—full auth flow with email verification, password reset, OAuth, and session management.',
-    features: [
-      'Email & password authentication',
-      'Google & GitHub OAuth ready',
-      'Session management with refresh',
-      'Email verification flow',
-      'Password reset system',
-    ],
-  },
-  {
-    iconName: 'LayoutDashboard' as const,
-    title: 'User Dashboard',
-    description:
-      'Complete user portal with profile management and account settings.',
-    features: [
-      'Profile editing',
-      'Password change',
-      'Session management',
-      'Account preferences',
-    ],
-  },
-  {
-    iconName: 'ShieldCheck' as const,
-    title: 'Admin Dashboard',
-    description:
-      'Full control panel for system monitoring and user management.',
-    features: [
-      'Real-time metrics',
-      'User management',
-      'Session controls',
-      'Ban/unban users',
-      'System health monitoring',
-    ],
-  },
-  {
-    iconName: 'Server' as const,
-    title: 'API Infrastructure',
-    description:
-      'Production-grade REST API with everything you need before going live.',
-    features: [
-      'RESTful endpoints',
-      'Zod validation',
-      'Security headers',
-      'Structured logging',
-      'Auto-generated API docs',
-      'Rate limiting',
-    ],
-  },
-  {
-    iconName: 'Mail' as const,
-    title: 'Email System',
-    description:
-      'Beautiful transactional emails with React Email and Resend integration.',
-    features: [
-      'Email verification',
-      'Password reset',
-      'Welcome emails',
-      'React Email templates',
-      'Resend API integration',
-    ],
-  },
-  {
-    iconName: 'Wrench' as const,
-    title: 'Developer Tooling',
-    description:
-      'Everything you need for a smooth development and deployment experience.',
-    features: [
-      'CLI setup wizard',
-      'Vitest testing suite',
-      'Git hooks (Husky)',
-      'Production Docker',
-      'CI/CD with GitHub Actions',
-    ],
-  },
-] as const;
 
 const TECH_STACK = {
   web: {
@@ -183,28 +102,7 @@ export default function Home() {
       </SectionContainer>
 
       <SectionContainer variant="card">
-        <div className="space-y-8">
-          <div className="text-center">
-            <h2 className="text-foreground mb-4 flex items-center justify-center gap-3 text-3xl font-semibold tracking-tight lg:text-4xl">
-              <PackageCheck className="h-8 w-8" />
-              <span>What's Included</span>
-            </h2>
-            <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-              Production-ready features configured and working out of the box
-            </p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {INCLUDED_FEATURES.map((feature) => (
-              <IncludedFeatureCard
-                key={feature.title}
-                iconName={feature.iconName}
-                title={feature.title}
-                description={feature.description}
-                features={feature.features}
-              />
-            ))}
-          </div>
-        </div>
+        <IncludedSection />
       </SectionContainer>
 
       <SectionContainer id="quick-start">

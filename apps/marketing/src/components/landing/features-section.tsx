@@ -142,9 +142,9 @@ export function FeaturesSection() {
           Built for Real Projects
         </h2>
         <p className="text-muted-foreground mx-auto max-w-2xl text-lg leading-relaxed">
-          Not just boilerplate. Blitzpack offers a complete foundation with the
-          infrastructure and patterns you need to build production-grade
-          applications
+          Beyond just boilerplate. Blitzpack offers a complete foundation with
+          the infrastructure and patterns you need to build production-grade
+          applications.
         </p>
       </div>
 
