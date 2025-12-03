@@ -179,13 +179,13 @@ function FeatureCard({ feature }: FeatureCardProps) {
                 whileHover={{ scale: 1.15 }}
                 transition={{ duration: 0.2 }}
                 className={cn(
-                  'bg-primary/10 border-primary/20 group-hover:bg-primary/15 group-hover:border-primary/30 flex shrink-0 items-center justify-center rounded-full border transition-all',
+                  'flex shrink-0 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10 transition-all group-hover:border-emerald-500/30 group-hover:bg-emerald-500/15',
                   featured ? 'h-6 w-6' : 'h-5 w-5'
                 )}
               >
                 <Check
                   className={cn(
-                    'text-primary',
+                    'text-emerald-600',
                     featured ? 'h-3.5 w-3.5' : 'h-3 w-3'
                   )}
                   strokeWidth={3}

@@ -50,9 +50,32 @@ export function QuickStartSection() {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: '-100px' }}
-      className="space-y-12"
+      className="relative space-y-12"
     >
-      <motion.div variants={item} className="text-center">
+      <div className="pointer-events-none absolute -inset-x-20 -inset-y-16 z-0 overflow-hidden rounded-2xl">
+        <motion.div
+          className="absolute inset-0"
+          animate={{
+            backgroundPosition: ['0px 0px', '40px 40px'],
+          }}
+          transition={{
+            duration: 12,
+            ease: 'linear',
+            repeat: Infinity,
+          }}
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgb(156 163 175 / 0.15) 1px, transparent 1px),
+              linear-gradient(to bottom, rgb(156 163 175 / 0.15) 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px',
+          }}
+        />
+        {/* Edge fade overlay for subtle fade effect */}
+        <div className="from-background/80 to-background/80 absolute inset-0 bg-gradient-to-r via-transparent" />
+        <div className="from-background/80 to-background/80 absolute inset-0 bg-gradient-to-b via-transparent" />
+      </div>
+      <motion.div variants={item} className="relative z-10 text-center">
         <div className="mb-4 flex items-center justify-center gap-3">
           <Terminal className="text-primary h-7 w-7 lg:h-8 lg:w-8" />
           <h2 className="text-foreground text-3xl font-semibold tracking-tight lg:text-5xl">
@@ -64,7 +87,7 @@ export function QuickStartSection() {
         </p>
       </motion.div>
 
-      <motion.div variants={item} className="flex justify-center">
+      <motion.div variants={item} className="relative z-10 flex justify-center">
         <motion.div
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           className="group relative w-full max-w-3xl"
@@ -85,8 +108,8 @@ export function QuickStartSection() {
                 className={cn(
                   'group/btn relative flex h-12 w-40 cursor-pointer items-center justify-center gap-2.5 rounded-xl font-semibold shadow-lg transition-all duration-300',
                   copied
-                    ? 'bg-emerald-500 text-white shadow-emerald-500/50'
-                    : 'bg-primary text-primary-foreground shadow-primary/30 hover:shadow-primary/50'
+                    ? 'bg-emerald-500 text-white shadow-emerald-500/50 hover:bg-emerald-500/90'
+                    : 'bg-primary text-primary-foreground shadow-primary/30 hover:bg-primary/90 hover:shadow-primary/50'
                 )}
               >
                 <motion.div
