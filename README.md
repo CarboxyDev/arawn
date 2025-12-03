@@ -99,7 +99,7 @@ blitzpack/
 │   │   │   └── store/         # Jotai state atoms
 │   │   └── public/            # Static assets
 │   │
-│   └── api/                   # Fastify backend (port 8080)
+│   └── api/                   # Fastify API (port 8080)
 │       ├── src/
 │       │   ├── routes/        # API endpoints
 │       │   ├── services/      # Business logic
@@ -156,7 +156,6 @@ Battle-tested API architecture:
 - **Security**: Helmet security headers, CORS configuration, role-based rate limiting, and cookie signing.
 - **Logging**: Structured logging with Pino featuring 4 verbosity levels, request ID tracing, and performance metrics.
 - **Documentation**: Auto-generated OpenAPI specs with interactive Scalar API documentation.
-- **Scheduled Tasks**: Automatic session cleanup and maintenance tasks.
 
 ### Developer Experience
 

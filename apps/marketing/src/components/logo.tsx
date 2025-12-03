@@ -6,19 +6,37 @@ interface LogoProps {
 
 export function Logo({ className = 'h-28 w-auto' }: LogoProps) {
   return (
-    <>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/logo-light.svg"
-        alt="Blitzpack Logo"
-        className={cn(className, 'dark:hidden')}
+    <div className="relative inline-block">
+      <svg
+        width="358"
+        height="490"
+        viewBox="0 0 358 490"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={cn('text-foreground', className)}
+        aria-label="Blitzpack Logo"
+      >
+        <path
+          d="M190.013 73.7863H21.8626V388.061H108.356L102.468 409.924H0V51.9237H206.646L190.013 73.7863Z"
+          fill="currentColor"
+        />
+        <path
+          d="M358 409.924H162.611L179.105 388.061H336.137V73.7863H254.317L260.311 51.9237H358V409.924Z"
+          fill="currentColor"
+        />
+        <path
+          d="M57.3893 268.5L261.668 0L201.546 219.309H294.462L90.8664 489.176L150.305 268.5H57.3893Z"
+          className="fill-primary"
+        />
+      </svg>
+      <div
+        className="animate-shine pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%)',
+          backgroundSize: '200% 100%',
+        }}
       />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/logo-dark.svg"
-        alt="Blitzpack Logo"
-        className={cn(className, 'hidden dark:block')}
-      />
-    </>
+    </div>
   );
 }
