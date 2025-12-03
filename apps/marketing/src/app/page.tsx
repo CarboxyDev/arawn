@@ -11,10 +11,14 @@ import { QuickStartSection } from '@/components/landing/quick-start-section';
 import { SectionContainer } from '@/components/landing/section-container';
 import { TechStackSection } from '@/components/landing/tech-stack-section';
 import { WhySection } from '@/components/landing/why-section';
+import { StructuredData } from '@/components/structured-data';
 
 export default function Home() {
   return (
     <main className="bg-background relative flex min-h-screen flex-col">
+      <StructuredData type="software" />
+      <StructuredData type="organization" />
+      <StructuredData type="website" />
       <div className="absolute right-4 top-4 z-10 flex items-center gap-2 sm:right-6 sm:top-6 md:right-8 md:top-8 lg:fixed">
         <GitHubStarButton />
         <ThemeToggle />
