@@ -1,13 +1,15 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@repo/packages-ui/accordion';
-import { HelpCircle } from 'lucide-react';
-import React from 'react';
+'use client';
 
-const FAQ_ITEMS = [
+import { motion } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
+
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+const FAQ_ITEMS: FAQ[] = [
   {
     question: 'How is this different from other templates?',
     answer:
@@ -43,39 +45,112 @@ const FAQ_ITEMS = [
     answer:
       'Check the tech stack and "What\'s Included" sections. Built on modern, stable technologies: Next.js 16, React 19, Fastify 5, Prisma 7, PostgreSQL. OAuth ready (Google, GitHub), email system with React Email and Resend, S3 integration for uploads, session management, and more.',
   },
-] as const;
+];
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+    },
+  },
+};
+
+interface FAQItemProps {
+  faq: FAQ;
+  isOpen: boolean;
+  onToggle: () => void;
+}
+
+function FAQItem({ faq, isOpen, onToggle }: FAQItemProps) {
+  return (
+    <motion.div variants={item} className="border-border group border-b">
+      <button
+        onClick={onToggle}
+        className="flex w-full cursor-pointer items-start justify-between gap-4 py-5 text-left transition-all"
+      >
+        <div className="flex-1">
+          <h3 className="text-foreground text-base font-medium">
+            {faq.question}
+          </h3>
+          <motion.div
+            initial={false}
+            animate={{
+              height: isOpen ? 'auto' : 0,
+              opacity: isOpen ? 1 : 0,
+              marginTop: isOpen ? 12 : 0,
+            }}
+            transition={{
+              duration: 0.3,
+              ease: [0.4, 0, 0.2, 1],
+            }}
+            className="overflow-hidden"
+          >
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {faq.answer}
+            </p>
+          </motion.div>
+        </div>
+
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          className="text-muted-foreground group-hover:text-primary flex shrink-0 transition-colors"
+        >
+          <ChevronDown className="h-4 w-4" strokeWidth={2.5} />
+        </motion.div>
+      </button>
+    </motion.div>
+  );
+}
 
 export function FAQSection(): React.ReactElement {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const handleToggle = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       <div className="text-center">
-        <div className="mb-4 flex justify-center">
-          <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-full">
-            <HelpCircle className="h-6 w-6" />
-          </div>
-        </div>
-        <h2 className="text-foreground mb-4 text-3xl font-semibold tracking-tight lg:text-4xl">
-          Frequently Asked Questions
+        <h2 className="text-foreground mb-4 flex items-center justify-center gap-3 text-3xl font-semibold tracking-tight lg:text-5xl">
+          <span>Frequently Asked Questions</span>
         </h2>
-        <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
+        <p className="text-muted-foreground mx-auto max-w-2xl text-lg leading-relaxed">
           Everything you need to know about Blitzpack
         </p>
       </div>
 
-      <div className="mx-auto max-w-3xl">
-        <Accordion type="single" collapsible className="w-full">
-          {FAQ_ITEMS.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-foreground text-left">
-                {faq.question}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground">
-                {faq.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: '-100px' }}
+        className="mx-auto max-w-3xl"
+      >
+        {FAQ_ITEMS.map((faq, index) => (
+          <FAQItem
+            key={index}
+            faq={faq}
+            isOpen={openIndex === index}
+            onToggle={() => handleToggle(index)}
+          />
+        ))}
+      </motion.div>
     </div>
   );
 }
