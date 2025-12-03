@@ -24,7 +24,7 @@ export function SectionContainer({
         className
       )}
     >
-      <div className="mx-auto max-w-5xl px-8">{children}</div>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 md:px-8">{children}</div>
     </section>
   );
 }

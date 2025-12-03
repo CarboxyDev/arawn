@@ -95,10 +95,10 @@ export function QuickStartSection() {
           <div className="bg-card/50 border-primary/20 relative overflow-hidden rounded-2xl border backdrop-blur-xl">
             <div className="from-primary/5 to-primary/5 absolute inset-0 bg-gradient-to-br via-transparent" />
 
-            <div className="relative flex flex-col items-center gap-6 p-8 lg:flex-row lg:justify-between lg:p-10">
-              <div className="flex items-center gap-4 font-mono text-lg lg:text-xl">
+            <div className="relative flex flex-col items-center gap-6 p-6 sm:p-8 lg:flex-row lg:justify-between lg:p-10">
+              <div className="flex items-center gap-3 font-mono text-base sm:gap-4 sm:text-lg lg:text-xl">
                 <span className="text-primary font-bold">$</span>
-                <span className="text-foreground font-semibold tracking-wide">
+                <span className="text-foreground break-all font-semibold tracking-wide sm:break-normal">
                   {COMMAND}
                 </span>
               </div>

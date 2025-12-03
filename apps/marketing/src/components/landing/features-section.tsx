@@ -153,10 +153,10 @@ export function FeaturesSection() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: '-100px' }}
-        className="grid auto-rows-fr gap-6 md:grid-cols-3 lg:gap-8"
+        className="grid auto-rows-fr grid-cols-1 gap-6 md:grid-cols-3 lg:gap-8"
       >
         {CORE_FEATURES.map((feature) => (
-          <motion.div key={feature.title} variants={item} className="flex">
+          <motion.div key={feature.title} variants={item}>
             <FeatureCard
               icon={feature.icon}
               title={feature.title}

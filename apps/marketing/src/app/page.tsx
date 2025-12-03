@@ -15,7 +15,7 @@ import { WhySection } from '@/components/landing/why-section';
 export default function Home() {
   return (
     <main className="bg-background relative flex min-h-screen flex-col">
-      <div className="absolute right-8 top-8 z-10 flex items-center gap-2 lg:fixed">
+      <div className="absolute right-4 top-4 z-10 flex items-center gap-2 sm:right-6 sm:top-6 md:right-8 md:top-8 lg:fixed">
         <GitHubStarButton />
         <ThemeToggle />
       </div>

@@ -225,14 +225,13 @@ export function IncludedSection() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: '-100px' }}
-        className="grid auto-rows-fr gap-6 md:grid-cols-3 lg:grid-cols-6 lg:gap-x-6 lg:gap-y-8"
+        className="grid auto-rows-fr grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-6 lg:gap-x-6 lg:gap-y-8"
       >
         {FEATURES.map((feature) => (
           <motion.div
             key={feature.title}
             variants={item}
             className={cn(
-              'flex',
               feature.featured
                 ? 'col-span-full md:col-span-3 lg:col-span-3'
                 : 'col-span-full md:col-span-3 lg:col-span-2'

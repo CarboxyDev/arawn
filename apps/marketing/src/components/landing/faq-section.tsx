@@ -50,14 +50,9 @@ const FAQ_ITEMS: FAQ[] = [
     ),
   },
   {
-    question: 'How do I run the project in development mode?',
-    answer:
-      'You can run the project in development mode by running `pnpm dev`. This will start the web and API servers and start the development server.',
-  },
-  {
     question: 'Do AI agents work well with Blitzpack?',
     answer:
-      "Yes, AI agents work extremely well with Blitzpack.  We've carefully picked the tech stack so it works seamlessly with AI agents. We have a bundled CLAUDE.md file that you can use to get started instantly. In case you use any agent besides Claude Code, you can reuse the content of this file to get started.",
+      "Yes, AI agents work extremely well with Blitzpack.  We've carefully picked the tech stack so it works seamlessly with them. We've bundled a CLAUDE.md file that is automatically used by Claude Code. In case you wish to use any other agent besides Claude Code, you can reuse the content of this file.",
   },
 ];
 
