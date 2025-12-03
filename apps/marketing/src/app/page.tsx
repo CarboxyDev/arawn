@@ -223,7 +223,7 @@ const QUICK_START_STEPS: Array<{
 export default function Home() {
   return (
     <main className="bg-background relative flex min-h-screen flex-col">
-      <div className="absolute right-8 top-8 z-10 flex items-center gap-2">
+      <div className="absolute right-8 top-8 z-10 flex items-center gap-2 lg:fixed">
         <GitHubStarButton />
         <ThemeToggle />
       </div>

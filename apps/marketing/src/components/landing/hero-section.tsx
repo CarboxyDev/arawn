@@ -27,10 +27,10 @@ export function HeroSection() {
               </span>
               , not months
             </h1>
-            <p className="text-muted-foreground mx-auto max-w-xl text-center text-base leading-relaxed lg:mx-0 lg:text-left lg:text-lg xl:text-xl">
-              Stop wasting days on boilerplate. Blitzpack ships with
-              authentication, API infrastructure, and battle-tested features
-              already configured.
+            <p className="text-muted-foreground mx-auto max-w-xl text-center text-base leading-relaxed lg:mx-0 lg:text-left lg:text-lg">
+              Stop wasting weeks on setting up your next project. Blitzpack
+              ships with auth, API infrastructure, and battle-tested features
+              already configured and working.
             </p>
           </div>
 

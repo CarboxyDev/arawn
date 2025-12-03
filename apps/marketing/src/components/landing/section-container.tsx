@@ -20,7 +20,7 @@ export function SectionContainer({
       id={id}
       className={cn(
         'w-full py-20 lg:py-28',
-        variant === 'card' && 'bg-card',
+        variant === 'card' && '',
         className
       )}
     >

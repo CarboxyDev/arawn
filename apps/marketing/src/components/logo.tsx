@@ -25,7 +25,7 @@ export function Logo({ className = 'h-28 w-auto' }: LogoProps) {
       />
       <path
         d="M57.3893 268.5L261.668 0L201.546 219.309H294.462L90.8664 489.176L150.305 268.5H57.3893Z"
-        fill="currentColor"
+        className="fill-primary"
       />
     </svg>
   );

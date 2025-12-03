@@ -1,131 +1,139 @@
+'use client';
+
+import { motion } from 'framer-motion';
 import {
-  Check,
-  Clock,
-  Copy,
-  Database,
-  LayoutDashboard,
+  Hammer,
+  InfinityIcon,
+  type LucideIcon,
   Rocket,
-  Server,
-  Settings,
-  ShieldCheck,
-  X,
+  Zap,
 } from 'lucide-react';
 import React from 'react';
 
-const iconMap = {
-  Clock,
-  Copy,
-  Database,
-  Settings,
-  ShieldCheck,
-  Server,
-  LayoutDashboard,
-  Rocket,
-} as const;
+interface Differentiator {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
 
-const WHY_SECTION = {
-  kicker: 'From zero to production in 4 commands',
-  problems: [
-    {
-      text: 'Days wasted on boilerplate setup',
-      iconName: 'Clock' as const,
+const DIFFERENTIATORS: Differentiator[] = [
+  {
+    icon: Hammer,
+    title: 'We Made the Hard Choices',
+    description:
+      'We made the architectural decisions. You get battle-tested patterns for auth, API design, state management, and database queries. No more reinventing the wheel.',
+  },
+  {
+    icon: Zap,
+    title: 'No Assembly Required',
+    description:
+      'Auth flows, email system, admin dashboard, and other core features are already wired up and ready to use. No more wasting time setting up from scratch.',
+  },
+  {
+    icon: Rocket,
+    title: 'Truly Production-Ready',
+    description:
+      'Auth flows, rate limiting, structured logging, testing infrastructure and more are configured for production from day one.',
+  },
+  {
+    icon: InfinityIcon,
+    title: 'Built for Zero Friction',
+    description:
+      'Unified tooling, shared packages and full TypeScript support ensures that all components work seamlessly together.',
+  },
+];
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
     },
-    {
-      text: 'Copy-pasting auth for the 10th time',
-      iconName: 'Copy' as const,
+  },
+};
+
+const item = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      duration: 0.4,
     },
-    {
-      text: 'Yet another database migration setup',
-      iconName: 'Database' as const,
-    },
-    {
-      text: 'Fighting with monorepo configurations',
-      iconName: 'Settings' as const,
-    },
-  ],
-  solutions: [
-    {
-      text: 'Fully configured authentication system',
-      iconName: 'ShieldCheck' as const,
-    },
-    {
-      text: 'Production-ready API with logging, security, docs',
-      iconName: 'Server' as const,
-    },
-    {
-      text: 'Working admin dashboard on day one',
-      iconName: 'LayoutDashboard' as const,
-    },
-    {
-      text: 'Just add your features and ship',
-      iconName: 'Rocket' as const,
-    },
-  ],
-} as const;
+  },
+};
+
+interface DifferentiatorCardProps {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
+function DifferentiatorCard({
+  icon: Icon,
+  title,
+  description,
+}: DifferentiatorCardProps) {
+  return (
+    <motion.div
+      variants={item}
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.2 }}
+      className="bg-card/50 border-border hover:border-primary/20 group relative overflow-hidden rounded-xl border p-6 backdrop-blur-sm transition-all lg:p-8"
+      style={{
+        filter: 'drop-shadow(0 0 0px transparent)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.filter =
+          'drop-shadow(0 0 20px hsl(var(--primary) / 0.15))';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.filter = 'drop-shadow(0 0 0px transparent)';
+      }}
+    >
+      <div className="space-y-4">
+        <div className="bg-primary/10 text-primary group-hover:bg-primary/20 flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300">
+          <Icon className="h-6 w-6" />
+        </div>
+        <h3 className="text-foreground text-xl font-semibold leading-tight lg:text-2xl">
+          {title}
+        </h3>
+        <p className="text-muted-foreground leading-relaxed">{description}</p>
+      </div>
+    </motion.div>
+  );
+}
 
 export function WhySection(): React.ReactElement {
   return (
     <div className="space-y-12">
       <div className="text-center">
-        <h2 className="text-foreground mb-4 text-3xl font-semibold tracking-tight lg:text-4xl">
+        <h2 className="text-foreground mb-4 text-3xl font-semibold tracking-tight lg:text-5xl">
           Why Blitzpack?
         </h2>
-        <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-          Stop repeating the same setup tasks. Start building features that
-          matter.
+        <p className="text-muted-foreground mx-auto max-w-2xl text-lg leading-relaxed">
+          This is not your average template. It's a production-ready template
+          with core features already wired up and ready to use.
         </p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        {/* Problems Column */}
-        <div className="border-border bg-destructive/5 border-l-destructive/50 space-y-6 rounded-lg border border-l-8 p-8">
-          <div className="flex items-center gap-3">
-            <div className="bg-destructive/10 text-destructive flex h-10 w-10 items-center justify-center rounded-full">
-              <X className="h-5 w-5" />
-            </div>
-            <h3 className="text-foreground text-xl font-medium">The Problem</h3>
-          </div>
-          <ul className="space-y-4">
-            {WHY_SECTION.problems.map((problem) => {
-              const Icon = iconMap[problem.iconName];
-              return (
-                <li key={problem.text} className="flex items-start gap-3">
-                  <Icon className="text-muted-foreground mt-1 h-5 w-5 flex-shrink-0" />
-                  <span className="text-foreground">{problem.text}</span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-
-        {/* Solutions Column */}
-        <div className="border-border bg-primary/5 border-l-primary space-y-6 rounded-lg border border-l-8 p-8">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-full">
-              <Check className="h-5 w-5" />
-            </div>
-            <h3 className="text-foreground text-xl font-medium">
-              The Solution
-            </h3>
-          </div>
-          <ul className="space-y-4">
-            {WHY_SECTION.solutions.map((solution) => {
-              const Icon = iconMap[solution.iconName];
-              return (
-                <li key={solution.text} className="flex items-start gap-3">
-                  <Icon className="text-muted-foreground mt-1 h-5 w-5 flex-shrink-0" />
-                  <span className="text-foreground">{solution.text}</span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </div>
-
-      {/* Kicker */}
-      <div className="text-center">
-        <p className="text-primary text-xl font-medium">{WHY_SECTION.kicker}</p>
-      </div>
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: '-100px' }}
+        className="grid gap-6 md:grid-cols-2 lg:gap-8"
+      >
+        {DIFFERENTIATORS.map((diff) => (
+          <DifferentiatorCard
+            key={diff.title}
+            icon={diff.icon}
+            title={diff.title}
+            description={diff.description}
+          />
+        ))}
+      </motion.div>
     </div>
   );
 }
