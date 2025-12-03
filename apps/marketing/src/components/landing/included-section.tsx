@@ -95,7 +95,7 @@ const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
       delayChildren: 0.1,
     },
   },
@@ -107,7 +107,7 @@ const item = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
+      duration: 0.4,
     },
   },
 };
@@ -120,15 +120,10 @@ function FeatureCard({ feature }: FeatureCardProps) {
   const { icon: Icon, title, description, highlights, featured } = feature;
 
   return (
-    <motion.div
-      variants={item}
-      whileHover={{ scale: 1.02, y: -4 }}
-      transition={{ duration: 0.2 }}
+    <div
       className={cn(
-        'bg-card border-border hover:border-primary/30 group relative flex flex-col overflow-hidden rounded-xl border transition-all',
-        featured
-          ? 'col-span-full p-8 md:col-span-3 lg:col-span-3 lg:p-10'
-          : 'col-span-full p-6 md:col-span-3 lg:col-span-2 lg:p-7'
+        'bg-card border-border hover:border-primary/30 group relative flex h-full flex-col overflow-hidden rounded-xl border transition-all',
+        featured ? 'p-8 lg:p-10' : 'p-6 lg:p-7'
       )}
       style={{
         filter: 'drop-shadow(0 0 0px transparent)',
@@ -161,7 +156,7 @@ function FeatureCard({ feature }: FeatureCardProps) {
           <h3
             className={cn(
               'text-foreground font-semibold leading-tight',
-              featured ? 'text-xl lg:text-2xl' : 'text-lg'
+              featured ? 'text-lg lg:text-xl' : 'text-lg'
             )}
           >
             {title}
@@ -177,24 +172,23 @@ function FeatureCard({ feature }: FeatureCardProps) {
         </div>
 
         <ul className="border-border space-y-2.5 border-t pt-4">
-          {highlights.map((highlight, index) => (
-            <motion.li
-              key={highlight}
-              initial={{ x: 0 }}
-              whileHover={{ x: 4 }}
-              transition={{ delay: index * 0.03, duration: 0.2 }}
-              className="flex items-start gap-2.5"
-            >
+          {highlights.map((highlight) => (
+            <motion.li key={highlight} className="flex items-start gap-3">
               <motion.div
                 initial={{ scale: 1 }}
-                whileHover={{ scale: 1.2, rotate: 5 }}
+                whileHover={{ scale: 1.15 }}
                 transition={{ duration: 0.2 }}
+                className={cn(
+                  'bg-primary/10 border-primary/20 group-hover:bg-primary/15 group-hover:border-primary/30 flex shrink-0 items-center justify-center rounded-full border transition-all',
+                  featured ? 'h-6 w-6' : 'h-5 w-5'
+                )}
               >
                 <Check
                   className={cn(
-                    'text-primary flex-shrink-0',
-                    featured ? 'mt-0.5 h-5 w-5' : 'mt-0.5 h-4 w-4'
+                    'text-primary',
+                    featured ? 'h-3.5 w-3.5' : 'h-3 w-3'
                   )}
+                  strokeWidth={3}
                 />
               </motion.div>
               <span
@@ -209,7 +203,7 @@ function FeatureCard({ feature }: FeatureCardProps) {
           ))}
         </ul>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -231,10 +225,21 @@ export function IncludedSection() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: '-100px' }}
-        className="grid auto-rows-fr gap-6 md:grid-cols-3 lg:grid-cols-6 lg:gap-8"
+        className="grid auto-rows-fr gap-6 md:grid-cols-3 lg:grid-cols-6 lg:gap-x-6 lg:gap-y-8"
       >
         {FEATURES.map((feature) => (
-          <FeatureCard key={feature.title} feature={feature} />
+          <motion.div
+            key={feature.title}
+            variants={item}
+            className={cn(
+              'flex',
+              feature.featured
+                ? 'col-span-full md:col-span-3 lg:col-span-3'
+                : 'col-span-full md:col-span-3 lg:col-span-2'
+            )}
+          >
+            <FeatureCard feature={feature} />
+          </motion.div>
         ))}
       </motion.div>
     </div>
