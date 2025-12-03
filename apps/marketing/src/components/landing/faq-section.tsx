@@ -6,44 +6,58 @@ import React, { useState } from 'react';
 
 interface FAQ {
   question: string;
-  answer: string;
+  answer: React.ReactNode;
 }
 
 const FAQ_ITEMS: FAQ[] = [
   {
     question: 'How is this different from other templates?',
     answer:
-      "Most templates give you a skeleton and leave you to configure everything. Blitzpack ships with battle-tested features already working: authentication with OAuth, admin dashboard, email system, API documentation, and more. It's not just setup—it's production-ready infrastructure.",
+      'Most templates hand you a basic skeleton and expect you to wire everything up yourself. With Blitzpack, you get authentication, OAuth, admin dashboard, email infrastructure, and much more - all configured and working out of the box. You can expect signifcantly less friction when developing and deploying your product.',
   },
   {
-    question: 'Do I need to eject or can I customize everything?',
+    question: 'Can I modify everything in the codebase?',
     answer:
-      "You have full control. Blitzpack isn't a framework—it's your code. Modify anything, add features, remove what you don't need. No proprietary abstractions, no lock-in. Just clean, well-organized TypeScript you can understand and extend.",
+      'You have full control. Blitzpack is fully open source and you can do whatever you want with the codebase. You can modify any part of the codebase to your liking.',
   },
   {
-    question: "What if I don't need all these features?",
-    answer:
-      "Every feature is modular and can be removed. Don't need authentication? Delete the auth routes. Don't want the admin dashboard? Remove that package. The monorepo structure makes it easy to strip out what you don't need without breaking everything else.",
+    question: 'What if I want to selectively choose which features to include?',
+    answer: `As of now, we ship the whole template as-is with all the features. We're planning on adding support for selective feature inclusion in the future.`,
   },
   {
-    question: 'Is this production-ready or just a starter?',
+    question: 'Do I need Docker to run the project?',
     answer:
-      'Production-ready. Security headers configured, rate limiting in place, structured logging with Pino, environment validation with Zod, Docker configs, and CI/CD workflows. This is what you want before deploying, not after.',
+      'Yes, Docker is required to run PostgreSQL for development. Make sure Docker is installed and running before starting.',
   },
   {
-    question: "How do I get help if I'm stuck?",
+    question: 'Do I need any third-party services or API keys?',
     answer:
-      'Comprehensive documentation in the README, inline code comments for complex logic, and CLAUDE.md for AI assistant context. For bugs or feature requests, open an issue on GitHub. The codebase is designed to be self-explanatory.',
+      'Some features like the email system and OAuth require API keys. However, these are optional and are only enabled if you provide the necessary keys in the environment variables.',
   },
   {
-    question: "What's the license? Can I use this commercially?",
-    answer:
-      'MIT License. Use it for anything—personal projects, commercial products, client work. No restrictions, no attribution required (though appreciated). Build and ship without legal concerns.',
+    question: 'How do I deploy Blitzpack to production?',
+    answer: (
+      <>
+        Blitzpack includes production-ready Docker configs with multi-stage
+        builds and docker-compose.prod.yml for deployment. You can deploy to any
+        platform that supports Docker (AWS, GCP, DigitalOcean, Railway, etc.).
+        <br />
+        <br />
+        <span className="text-primary font-medium">
+          We recommend using Railway for deployment.
+        </span>
+      </>
+    ),
   },
   {
-    question: 'Does this support [specific feature]?',
+    question: 'How do I run the project in development mode?',
     answer:
-      'Check the tech stack and "What\'s Included" sections. Built on modern, stable technologies: Next.js 16, React 19, Fastify 5, Prisma 7, PostgreSQL. OAuth ready (Google, GitHub), email system with React Email and Resend, S3 integration for uploads, session management, and more.',
+      'You can run the project in development mode by running `pnpm dev`. This will start the web and API servers and start the development server.',
+  },
+  {
+    question: 'Do AI agents work well with Blitzpack?',
+    answer:
+      "Yes, AI agents work extremely well with Blitzpack.  We've carefully picked the tech stack so it works seamlessly with AI agents. We have a bundled CLAUDE.md file that you can use to get started instantly. In case you use any agent besides Claude Code, you can reuse the content of this file to get started.",
   },
 ];
 

@@ -43,7 +43,7 @@ const TECH_STACK = {
     title: 'DevOps',
     items: [
       'Turborepo',
-      'pnpm Workspaces',
+      'Docker',
       'Vitest',
       'GitHub Actions CI',
       'ESLint',
