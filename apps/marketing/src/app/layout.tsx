@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import React from 'react';
 
-import { Providers } from './providers';
+import { Providers } from '@/app/providers';
 
 const inter = Inter({
   subsets: ['latin'],

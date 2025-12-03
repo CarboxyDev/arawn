@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Pause, Play } from 'lucide-react';
+import { Button } from 'packages/ui/src/button';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -48,7 +49,7 @@ const ANIMATION_CONFIG = {
   pauseBetweenCommands: 1000,
   enterFlashDuration: 150,
   spinnerFrameDuration: 80,
-  intermediateStepDuration: 1000,
+  intermediateStepDuration: 1400,
 } as const;
 
 // Terminal-style spinner frames
@@ -61,33 +62,24 @@ const TERMINAL_COMMANDS: TerminalCommand[] = [
     intermediateSteps: [
       'Scaffolding project structure...',
       'Installing dependencies...',
+      'Configuring workspace...',
       'Initializing git repository...',
     ],
     output: [
       '✓ Project created successfully',
       '✓ Dependencies installed',
+      '✓ Workspace configured',
       '✓ Git initialized',
     ],
   },
   {
-    command: 'docker compose up -d && pnpm db:migrate',
-    spinner: true,
-    intermediateSteps: [
-      'Starting PostgreSQL container...',
-      'Running database migrations...',
-    ],
-    output: [
-      '✓ PostgreSQL started on port 5432',
-      '✓ Database migrations applied',
-    ],
-  },
-  {
     command: 'pnpm dev',
-    spinner: false,
+    spinner: true,
+    intermediateSteps: ['Watching for changes...'],
     output: [
       '✓ Web: http://localhost:3000',
       '✓ API: http://localhost:8080',
-      '🚀 Ready in 1.2s',
+      '🚀 Ready in 501ms',
     ],
   },
 ];
@@ -105,7 +97,7 @@ export function AnimatedTerminal({
     phase: prefersReducedMotion ? 'complete' : 'idle',
     currentCommandIndex: 0,
     currentCharIndex: 0,
-    completedCommands: prefersReducedMotion ? [0, 1, 2] : [],
+    completedCommands: prefersReducedMotion ? [0, 1] : [],
     showReplayButton: prefersReducedMotion ? true : false,
     isPaused: false,
     spinnerFrame: 0,
@@ -359,7 +351,6 @@ export function AnimatedTerminal({
           className
         )}
       >
-        {/* Terminal Header */}
         <div className="border-border flex h-10 shrink-0 items-center justify-between border-b px-4">
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-[#ff5f56]" />
@@ -370,12 +361,14 @@ export function AnimatedTerminal({
             blitzpack
           </div>
           {!prefersReducedMotion && state.phase !== 'complete' && (
-            <button
+            <Button
+              size="icon"
+              variant="ghost"
               onClick={(e) => {
                 e.stopPropagation();
                 togglePause();
               }}
-              className="hover:bg-muted/80 text-muted-foreground flex size-6 items-center justify-center rounded transition-colors"
+              className="hover:bg-muted/80 text-muted-foreground flex size-6 cursor-pointer items-center justify-center rounded transition-colors"
               aria-label={
                 state.isPaused ? 'Resume animation' : 'Pause animation'
               }
@@ -385,13 +378,11 @@ export function AnimatedTerminal({
               ) : (
                 <Pause className="size-3.5" />
               )}
-            </button>
+            </Button>
           )}
         </div>
 
-        {/* Terminal Body */}
         <div className="flex-1 overflow-auto px-4 py-4 font-mono text-sm leading-relaxed lg:px-6 lg:py-5">
-          {/* Render completed commands */}
           {state.completedCommands.map((cmdIndex) => {
             const cmd = TERMINAL_COMMANDS[cmdIndex];
             return (
