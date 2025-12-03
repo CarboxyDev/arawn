@@ -6,14 +6,7 @@ import { Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { siteConfig } from '@/config/site';
-
-interface GitHubStarButtonProps {
-  variant?: 'default' | 'outline';
-}
-
-export function GitHubStarButton({
-  variant = 'default',
-}: GitHubStarButtonProps) {
+export function GitHubStarButton() {
   const [stars, setStars] = useState<number | null>(null);
 
   useEffect(() => {
@@ -28,7 +21,7 @@ export function GitHubStarButton({
   }, []);
 
   return (
-    <Button asChild variant={variant}>
+    <Button asChild>
       <a
         href={siteConfig.github}
         target="_blank"
