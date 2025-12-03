@@ -120,7 +120,7 @@ function FeatureCard({ feature }: FeatureCardProps) {
   const { icon: Icon, title, description, highlights, featured } = feature;
 
   return (
-    <div
+    <motion.div
       className={cn(
         'bg-card border-border hover:border-primary/30 group relative flex h-full flex-col overflow-hidden rounded-xl border transition-all',
         featured ? 'p-8 lg:p-10' : 'p-6 lg:p-7'
@@ -203,7 +203,7 @@ function FeatureCard({ feature }: FeatureCardProps) {
           ))}
         </ul>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

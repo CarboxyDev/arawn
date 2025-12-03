@@ -1,14 +1,14 @@
 import { ThemeToggle } from '@repo/packages-ui/theme-toggle';
-import { Boxes, Terminal } from 'lucide-react';
+import { Boxes } from 'lucide-react';
 import React from 'react';
 
 import { GitHubStarButton } from '@/components/github-star-button';
-import { CommandBlock } from '@/components/landing/command-block';
 import { FAQSection } from '@/components/landing/faq-section';
 import { FeaturesSection } from '@/components/landing/features-section';
 import { Footer } from '@/components/landing/footer';
 import { HeroSection } from '@/components/landing/hero-section';
 import { IncludedSection } from '@/components/landing/included-section';
+import { QuickStartSection } from '@/components/landing/quick-start-section';
 import { SectionContainer } from '@/components/landing/section-container';
 import { TechBadge } from '@/components/landing/tech-badge';
 import { WhySection } from '@/components/landing/why-section';
@@ -60,28 +60,6 @@ const TECH_STACK = {
   },
 } as const;
 
-const QUICK_START_STEPS: Array<{
-  command: string;
-  tooltip?: string;
-}> = [
-  {
-    command: 'pnpm create blitzpack',
-    tooltip: 'Creates a new project with all dependencies installed',
-  },
-  {
-    command: 'docker compose up -d',
-    tooltip: 'Starts PostgreSQL in the background',
-  },
-  {
-    command: 'pnpm db:migrate',
-    tooltip: 'Creates database tables',
-  },
-  {
-    command: 'pnpm dev',
-    tooltip: 'Starts web (localhost:3000) and API (localhost:8080)',
-  },
-];
-
 export default function Home() {
   return (
     <main className="bg-background relative flex min-h-screen flex-col">
@@ -106,47 +84,7 @@ export default function Home() {
       </SectionContainer>
 
       <SectionContainer id="quick-start">
-        <div className="border-border bg-card border-l-primary rounded-lg border border-l-8 p-8 lg:p-12">
-          <div className="mb-8 flex items-center gap-3">
-            <Terminal className="text-foreground h-6 w-6" />
-            <h2 className="text-foreground text-2xl font-semibold lg:text-3xl">
-              Quick Start
-            </h2>
-          </div>
-          <div className="space-y-3">
-            {QUICK_START_STEPS.map((cmd, index) => (
-              <CommandBlock
-                key={cmd.command}
-                command={cmd.command}
-                tooltipContent={cmd.tooltip}
-                step={index + 1}
-              />
-            ))}
-          </div>
-          <div className="border-border mt-8 border-t pt-6">
-            <h3 className="text-foreground mb-4 text-sm font-medium">
-              What happens next?
-            </h3>
-            <ul className="text-muted-foreground space-y-2 text-sm">
-              <li className="flex items-start gap-2">
-                <span className="text-primary">•</span>
-                <span>Web app runs on localhost:3000</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary">•</span>
-                <span>API runs on localhost:8080</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary">•</span>
-                <span>API docs available at localhost:8080/docs</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary">•</span>
-                <span>Start building your features and ship!</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <QuickStartSection />
       </SectionContainer>
 
       <SectionContainer variant="card">
