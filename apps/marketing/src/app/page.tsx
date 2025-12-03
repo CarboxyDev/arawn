@@ -19,11 +19,12 @@ export default function Home() {
         <GitHubStarButton />
         <ThemeToggle />
       </div>
+
       <SectionContainer className="pt-28">
         <HeroSection />
       </SectionContainer>
 
-      <SectionContainer variant="card">
+      <SectionContainer>
         <WhySection />
       </SectionContainer>
 
@@ -31,7 +32,7 @@ export default function Home() {
         <FeaturesSection />
       </SectionContainer>
 
-      <SectionContainer variant="card">
+      <SectionContainer>
         <IncludedSection />
       </SectionContainer>
 
@@ -39,12 +40,14 @@ export default function Home() {
         <QuickStartSection />
       </SectionContainer>
 
-      <SectionContainer variant="card">
+      <SectionContainer>
         <TechStackSection />
       </SectionContainer>
+
       <SectionContainer>
         <FAQSection />
       </SectionContainer>
+
       <Footer />
     </main>
   );
