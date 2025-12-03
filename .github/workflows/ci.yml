@@ -56,7 +56,7 @@ jobs:
           DATABASE_URL: postgresql://user:pass@localhost:5432/db
 
       - name: Run typecheck
-        run: pnpm run typecheck --filter '!@repo/api' # FIXME: Temporary workaround because of prisma v7 issues
+        run: pnpm run typecheck
 
   # Tests and build run after lint/typecheck pass
   test:
