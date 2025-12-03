@@ -5,70 +5,13 @@ import React from 'react';
 import { GitHubStarButton } from '@/components/github-star-button';
 import { CommandBlock } from '@/components/landing/command-block';
 import { FAQSection } from '@/components/landing/faq-section';
-import { FeatureCard } from '@/components/landing/feature-card';
+import { FeaturesSection } from '@/components/landing/features-section';
 import { Footer } from '@/components/landing/footer';
 import { HeroSection } from '@/components/landing/hero-section';
 import { IncludedFeatureCard } from '@/components/landing/included-feature-card';
 import { SectionContainer } from '@/components/landing/section-container';
 import { TechBadge } from '@/components/landing/tech-badge';
 import { WhySection } from '@/components/landing/why-section';
-
-const CORE_FEATURES = [
-  {
-    iconName: 'Rocket' as const,
-    title: 'Production-Ready Infrastructure',
-    description:
-      'Security headers, rate limiting, CORS, and CI/CD configured. Deploy with confidence, not configuration.',
-  },
-  {
-    iconName: 'Zap' as const,
-    title: 'Lightning-Fast Development',
-    description:
-      'Turborepo caching and pnpm workspaces mean changes rebuild in milliseconds, not minutes.',
-  },
-  {
-    iconName: 'Shield' as const,
-    title: 'Type-Safe Across the Stack',
-    description:
-      'Zod schemas validate once, protect everywhere. From API requests to database queries to UI forms.',
-  },
-  {
-    iconName: 'Code2' as const,
-    title: 'Modern UI Out of the Box',
-    description:
-      'Beautiful, accessible components with shadcn/ui, Tailwind v4, dark mode, and smooth animations.',
-  },
-  {
-    iconName: 'Workflow' as const,
-    title: 'Database Without the Headaches',
-    description:
-      'Prisma ORM with PostgreSQL, migrations handled, and Docker setup that just works.',
-  },
-  {
-    iconName: 'Lock' as const,
-    title: 'Authentication That Works',
-    description:
-      'Complete auth flow with email/password, OAuth, and session management. Not just a login form.',
-  },
-  {
-    iconName: 'TestTube' as const,
-    title: 'Ship with Confidence',
-    description:
-      'Comprehensive testing with Vitest. Unit and integration tests across all packages.',
-  },
-  {
-    iconName: 'PackageOpen' as const,
-    title: 'Code Reuse Made Easy',
-    description:
-      'Shared types and utilities across web and backend. Define once, use everywhere.',
-  },
-  {
-    iconName: 'Bot' as const,
-    title: 'AI Pair Programming Ready',
-    description:
-      'CLAUDE.md documentation enables instant context for AI assistants. Your AI copilot understands the architecture.',
-  },
-] as const;
 
 const INCLUDED_FEATURES = [
   {
@@ -236,26 +179,7 @@ export default function Home() {
       </SectionContainer>
 
       <SectionContainer>
-        <div className="space-y-8">
-          <div className="text-center">
-            <h2 className="text-foreground mb-4 text-3xl font-semibold tracking-tight lg:text-4xl">
-              Features
-            </h2>
-            <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-              Everything you need to build and ship production apps
-            </p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {CORE_FEATURES.map((feature) => (
-              <FeatureCard
-                key={feature.title}
-                iconName={feature.iconName}
-                title={feature.title}
-                description={feature.description}
-              />
-            ))}
-          </div>
-        </div>
+        <FeaturesSection />
       </SectionContainer>
 
       <SectionContainer variant="card">
