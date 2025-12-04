@@ -26,21 +26,55 @@ function getTestDatabaseUrl(): string {
 }
 
 /**
+ * Execute a database operation using admin connection to postgres database
+ * Used for operations that need to be performed outside the test database
+ */
+async function executeAsAdmin(
+  operation: (prisma: PrismaClient) => Promise<void>
+): Promise<void> {
+  const testDatabaseUrl = getTestDatabaseUrl();
+  const adminUrl = new URL(testDatabaseUrl);
+  adminUrl.pathname = '/postgres';
+
+  const adminPool = new Pool({ connectionString: adminUrl.toString() });
+  const adminAdapter = new PrismaPg(adminPool);
+  const adminPrisma = new PrismaClient({ adapter: adminAdapter });
+
+  try {
+    await adminPrisma.$connect();
+    await operation(adminPrisma);
+  } finally {
+    await adminPrisma.$disconnect();
+    await adminPool.end();
+  }
+}
+
+/**
  * Setup test database before running tests
- * - Sets up test database URL
+ * - Drops and recreates test database for clean slate
  * - Runs migrations
  * - Creates Prisma client instance
  */
 export async function setupTestDatabase(): Promise<void> {
   const testDatabaseUrl = getTestDatabaseUrl();
+  const url = new URL(testDatabaseUrl);
+  const testDbName = url.pathname.slice(1);
 
   process.env.DATABASE_URL = testDatabaseUrl;
 
   try {
-    // Run migrations on test database
-    console.log('⏳ Running test database migrations...');
+    console.log('Resetting test database...');
+
+    await executeAsAdmin(async (adminPrisma) => {
+      await adminPrisma.$executeRawUnsafe(
+        `DROP DATABASE IF EXISTS "${testDbName}" WITH (FORCE);`
+      );
+      await adminPrisma.$executeRawUnsafe(`CREATE DATABASE "${testDbName}";`);
+    });
+
+    console.log('Running database migrations...');
     execSync('npx prisma migrate deploy', {
-      stdio: 'inherit',
+      stdio: 'pipe',
       env: { ...process.env, DATABASE_URL: testDatabaseUrl },
     });
 
@@ -49,9 +83,9 @@ export async function setupTestDatabase(): Promise<void> {
     prisma = new PrismaClient({ adapter });
 
     await prisma.$connect();
-    console.log('✅ Test database ready');
+    console.log('Test database ready');
   } catch (error) {
-    console.error('❌ Failed to setup test database:', error);
+    console.error('Failed to setup test database:', error);
     throw error;
   }
 }
@@ -74,29 +108,20 @@ export async function cleanupTestDatabase(): Promise<void> {
 
   if (process.env.KEEP_TEST_DB !== 'true') {
     try {
-      const testDatabaseUrl = getTestDatabaseUrl();
-      const url = new URL(testDatabaseUrl);
+      const url = new URL(getTestDatabaseUrl());
       const dbName = url.pathname.slice(1);
 
-      url.pathname = '/postgres';
-      const adminUrl = url.toString();
+      console.log('Cleaning up test database...');
 
-      console.log('⏳ Cleaning up test database...');
+      await executeAsAdmin(async (adminPrisma) => {
+        await adminPrisma.$executeRawUnsafe(
+          `DROP DATABASE IF EXISTS "${dbName}" WITH (FORCE);`
+        );
+      });
 
-      const adminPool = new Pool({ connectionString: adminUrl });
-      const adminAdapter = new PrismaPg(adminPool);
-      const adminPrisma = new PrismaClient({ adapter: adminAdapter });
-
-      await adminPrisma.$connect();
-      await adminPrisma.$executeRawUnsafe(
-        `DROP DATABASE IF EXISTS "${dbName}" WITH (FORCE);`
-      );
-      await adminPrisma.$disconnect();
-      await adminPool.end();
-
-      console.log('✅ Test database cleaned up');
+      console.log('Test database cleaned up');
     } catch (error) {
-      console.warn('⚠️ Test database cleanup failed (usually okay)');
+      console.warn('Test database cleanup failed (non-critical)');
     }
   }
 }
@@ -113,13 +138,25 @@ export function getTestPrisma(): PrismaClient {
 /**
  * Reset test database between tests
  * Truncates all tables while preserving schema
+ * Automatically discovers all tables from the database
  */
 export async function resetTestDatabase(): Promise<void> {
   const client = getTestPrisma();
 
-  // Disable foreign key checks and truncate all tables at once
-  // This is more efficient and avoids deadlocks
-  await client.$executeRaw`
-    TRUNCATE TABLE "verifications", "sessions", "accounts", "users" RESTART IDENTITY CASCADE;
+  // Get all table names from the database
+  const tables = await client.$queryRaw<{ tablename: string }[]>`
+    SELECT tablename
+    FROM pg_tables
+    WHERE schemaname = 'public';
   `;
+
+  if (tables.length === 0) return;
+
+  // Build the TRUNCATE statement with all tables
+  const tableNames = tables.map((t) => `"${t.tablename}"`).join(', ');
+
+  // Truncate all tables at once with CASCADE to handle foreign keys
+  await client.$executeRawUnsafe(
+    `TRUNCATE TABLE ${tableNames} RESTART IDENTITY CASCADE;`
+  );
 }
