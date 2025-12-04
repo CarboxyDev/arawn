@@ -7,9 +7,10 @@ const GITHUB_REPO = 'github:CarboxyDev/blitzpack';
 
 const POST_DOWNLOAD_EXCLUDES = [
   'create-blitzpack',
-  'scripts/setup.js',
   '.github',
   'apps/marketing',
+  'Dockerfile',
+  'docker-compose.prod.yml',
 ];
 
 async function cleanupExcludes(targetDir: string): Promise<void> {
