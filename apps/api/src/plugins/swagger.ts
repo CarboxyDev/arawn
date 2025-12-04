@@ -15,7 +15,8 @@ const swaggerPlugin: FastifyPluginAsync = async (app) => {
     openapi: {
       info: {
         title: 'API',
-        description: 'Production-ready TypeScript API built with Fastify',
+        description:
+          'Production-ready TypeScript API built with Fastify. Includes authentication, user management, file uploads, and admin capabilities.',
         version: '1.0.0',
       },
       servers: [
@@ -30,6 +31,8 @@ const swaggerPlugin: FastifyPluginAsync = async (app) => {
             type: 'apiKey',
             in: 'cookie',
             name: 'better-auth.session_token',
+            description:
+              'Session cookie automatically set by Better Auth after successful authentication. Used for all authenticated endpoints.',
           },
         },
       },
@@ -43,7 +46,19 @@ const swaggerPlugin: FastifyPluginAsync = async (app) => {
         { name: 'Users', description: 'User management endpoints' },
         {
           name: 'Auth',
-          description: 'Authentication endpoints (handled by Better Auth)',
+          description:
+            'Authentication endpoints powered by Better Auth. ' +
+            'Available at /api/auth/*: ' +
+            'sign-in/email (POST - login), ' +
+            'sign-up/email (POST - register), ' +
+            'sign-out (POST - logout), ' +
+            'session (GET - current session), ' +
+            'forget-password (POST - request reset), ' +
+            'reset-password (POST - reset with token), ' +
+            'verify-email (GET - verify email), ' +
+            'sign-in/social (GET - OAuth login), ' +
+            'callback/:provider (GET - OAuth callback). ' +
+            'All endpoints manage session cookies automatically.',
         },
         { name: 'Sessions', description: 'Session management endpoints' },
         { name: 'Password', description: 'Password management endpoints' },
