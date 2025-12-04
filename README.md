@@ -5,7 +5,7 @@
   <img src="assets/logo-light.svg" alt="Blitzpack Logo" height="200">
   </picture>
   <h1>Blitzpack</h1>
-  <p>Full-stack TypeScript monorepo template with Next.js, Fastify, and Turborepo. From zero to production in minutes.</p>
+  <p>Full-stack TypeScript monorepo template with Next.js, Fastify, and Turborepo. From zero to production in hours.</p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
@@ -18,18 +18,25 @@
 
 ## Why Blitzpack?
 
-Stop wasting days bootstrapping your next project. Most templates hand you a skeleton and leave you to figure out database migrations, API documentation, logging infrastructure, and much more. Blitzpack ships with all of it configured and working. You just need to run a single script to get started with a production-ready full-stack application.
+Most full-stack templates give you a folder structure and routing. Blitzpack gives you a complete, production-ready application with authentication, admin controls, API infrastructure, observability and several more battle-tested features. You get a solid frictionless foundation to build your next product on.
 
-**Ship your next project faster with battle-tested infrastructure already wired up.**
+What normally takes 2-3 weeks of infrastructure work is ready in a single command.
 
+- **Truly Production-Ready**: Auth flows, rate limiting, structured logging, testing infrastructure and more are configured for production from day one.
 
-- **Minimal-config setup**: Run a few commands and you're ready to code. Blitzpack's CLI setup automatically handles all environment files, Docker containers, database migrations, etc.
+- **Built for Zero Friction**: Unified tooling, shared packages, monorepo structure and full TypeScript support ensures that all components work seamlessly together.
+  
+- **No Assembly Required**: Auth flows, email system, admin dashboard, and other core features are already wired up and ready to use. No more wasting time setting up from scratch.
 
-- **Full-stack type safety**: Define your API contracts just once in Zod and then they flow automatically to web forms, API validation, and database queries. No duplicate logic.
+- **True full-stack type safety**: Zod schemas validate once, protect everywhere. From API requests to database queries to UI forms.
 
-- **Production-grade infrastructure**: Better-auth with session management and OAuth ready. Request ID tracing, automatic validation, rate limiting, structured logging, and environment-aware error responses out of the box. 
+- **Authentication Made Easy**: Login, Sign-up, Email verification, password reset, OAuth (Google/GitHub), role-based access control, session management, and user banning. All wired up and working. Not TODOs but actual implementations.
+  
+- **Modern UI out of the box** - You get beautiful components with shadcn/ui, Tailwind v4, dark/light mode, theme support and smooth animations.
 
-- **AI pair programming ready**: Comprehensive CLAUDE.md file acts as the perfect starting point for AI assistants to understand your architecture instantly and accelerate your development.
+- **Hassle-Free Database** - Prisma ORM with PostgreSQL, easy migrations and Docker setup that just works.
+
+- **AI Agent Ready**: The bundled CLAUDE.md documentation gives AI agents instant context about the structure. Ship faster with AI that understands your whole stack.
 
 ## Quick Start
 
