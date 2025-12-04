@@ -36,46 +36,99 @@ export function printHeader(): void {
   console.log();
 }
 
-export function printSuccess(projectName: string, targetDir: string): void {
+export function printSuccess(
+  projectName: string,
+  targetDir: string,
+  ranAutomaticSetup: boolean = false
+): void {
   console.log();
   console.log(chalk.green('✔'), chalk.bold(`Created ${projectName}`));
   console.log();
-  console.log(chalk.bold('  Next steps:'));
-  console.log();
 
-  let stepNumber = 1;
-  if (targetDir !== '.') {
-    console.log(chalk.cyan(`  ${stepNumber}.`), `cd ${targetDir}`);
+  if (ranAutomaticSetup) {
+    console.log(
+      chalk.green('✔'),
+      chalk.dim('Database setup complete! Ready to start developing.')
+    );
+    console.log();
+    console.log(chalk.bold('  Next steps:'));
+    console.log();
+
+    let stepNumber = 1;
+    if (targetDir !== '.') {
+      console.log(
+        chalk.cyan(`  ${stepNumber}.`),
+        chalk.bold(`cd ${targetDir}`)
+      );
+      stepNumber++;
+    }
+
+    console.log(chalk.cyan(`  ${stepNumber}.`), chalk.bold('pnpm dev'));
+    console.log(chalk.dim('      Start development servers (web + api)'));
+
+    console.log();
+    console.log(chalk.dim('  Optional commands:'));
+    console.log(
+      chalk.dim(
+        '    • pnpm db:seed       Add test data (admin accounts, users)'
+      )
+    );
+    console.log(
+      chalk.dim('    • pnpm db:studio     Open Prisma Studio to view data')
+    );
+  } else {
+    console.log(
+      chalk.dim('  Setup complete! Follow these steps to start developing:')
+    );
+    console.log();
+
+    let stepNumber = 1;
+    if (targetDir !== '.') {
+      console.log(
+        chalk.cyan(`  ${stepNumber}.`),
+        chalk.bold(`cd ${targetDir}`)
+      );
+      stepNumber++;
+    }
+
+    console.log(
+      chalk.cyan(`  ${stepNumber}.`),
+      chalk.bold('docker compose up -d')
+    );
+    console.log(chalk.dim('      Start PostgreSQL database (requires Docker)'));
+    console.log();
     stepNumber++;
+
+    console.log(chalk.cyan(`  ${stepNumber}.`), chalk.bold('pnpm db:migrate'));
+    console.log(chalk.dim('      Run database migrations and setup schema'));
+    console.log();
+    stepNumber++;
+
+    console.log(chalk.cyan(`  ${stepNumber}.`), chalk.bold('pnpm dev'));
+    console.log(chalk.dim('      Start development servers (web + api)'));
+
+    console.log();
+    console.log(chalk.dim('  Optional commands:'));
+    console.log(
+      chalk.dim(
+        '    • pnpm db:seed       Add test data (admin accounts, users)'
+      )
+    );
+    console.log(
+      chalk.dim('    • pnpm db:studio     Open Prisma Studio to view data')
+    );
   }
 
-  console.log(
-    chalk.cyan(`  ${stepNumber}.`),
-    'docker compose up -d',
-    chalk.dim('  # Start PostgreSQL')
-  );
-  stepNumber++;
-
-  console.log(
-    chalk.cyan(`  ${stepNumber}.`),
-    'pnpm db:migrate',
-    chalk.dim('       # Run database migrations')
-  );
-  stepNumber++;
-
-  console.log(
-    chalk.cyan(`  ${stepNumber}.`),
-    'pnpm dev',
-    chalk.dim('              # Start dev servers')
-  );
-
   console.log();
+  console.log(chalk.bold('  Your app will be running at:'));
   console.log(
-    chalk.dim('  Optional: pnpm db:seed to add test data like admin accounts')
+    chalk.dim('    • Web:      ') + chalk.cyan('http://localhost:3000')
   );
-  console.log();
   console.log(
-    chalk.dim('  Web: http://localhost:3000 | API: http://localhost:8080')
+    chalk.dim('    • API:      ') + chalk.cyan('http://localhost:8080/api')
+  );
+  console.log(
+    chalk.dim('    • API Docs: ') + chalk.cyan('http://localhost:8080/docs')
   );
   console.log();
 }
