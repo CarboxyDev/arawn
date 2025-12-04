@@ -106,8 +106,6 @@ blitzpack/
 │   └── tailwind-config/       # Shared Tailwind configuration
 │
 ├── docker-compose.yml         # Development services (PostgreSQL)
-├── docker-compose.prod.yml    # Production deployment
-├── Dockerfile                 # Multi-stage production build
 ├── turbo.json                 # Turborepo configuration
 └── pnpm-workspace.yaml        # pnpm workspaces configuration
 ```
@@ -156,7 +154,7 @@ Optimized workflows and tooling:
 - **Testing Suite**: Vitest-powered unit and integration tests with coverage reporting.
 - **Git Hooks**: Pre-commit linting and formatting, pre-push type checking and testing.
 - **Turborepo**: Smart caching, parallel execution, and dependency tracking.
-- **Production Docker**: Multi-stage builds, health checks, and optimized runtime containers.
+- **Docker Compose**: PostgreSQL database containerized for consistent local development.
 
 ### Email System
 

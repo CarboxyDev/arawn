@@ -85,7 +85,7 @@ const FEATURES: Feature[] = [
       'Vitest testing suite',
       'Git hooks & GitHub Actions CI',
       'ESLint and Prettier configured',
-      'Docker setup',
+      'Local Docker setup',
     ],
   },
 ];

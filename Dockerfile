@@ -1,5 +1,5 @@
-# Multi-stage Dockerfile for API deployment
-# Optimized for pnpm monorepo with Prisma
+# Dockerfile for API (@repo/api) deployment
+# Multi-stage build optimized for pnpm monorepo with Prisma
 
 # Stage 1: Dependencies
 FROM node:22-alpine AS deps
@@ -64,15 +64,11 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder --chown=fastify:nodejs /app/apps/api/dist ./apps/api/dist
 COPY --from=builder --chown=fastify:nodejs /app/apps/api/package.json ./apps/api/
 COPY --from=builder --chown=fastify:nodejs /app/apps/api/prisma ./apps/api/prisma
-COPY --from=builder --chown=fastify:nodejs /app/apps/api/start.sh ./apps/api/
 COPY --from=builder --chown=fastify:nodejs /app/packages ./packages
 COPY --from=builder --chown=fastify:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=fastify:nodejs /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=builder --chown=fastify:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=fastify:nodejs /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
-
-# Make start script executable
-RUN chmod +x /app/apps/api/start.sh
 
 # Switch to non-root user
 USER fastify
@@ -86,5 +82,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD node -e "require('http').get('http://localhost:8080/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# Start command (handles database wake-up, runs migrations, then starts server)
-CMD ["/app/apps/api/start.sh"]
+# Start command - run migrations then start server
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main.js"]
