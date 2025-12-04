@@ -4,13 +4,13 @@ const config: Config = {
   theme: {
     extend: {
       animation: {
-        shine: 'shine 15s ease-in-out infinite',
+        'shine-sweep': 'shine-sweep 6s cubic-bezier(0.4, 0, 0.2, 1) infinite',
       },
       keyframes: {
-        shine: {
-          '0%': { backgroundPosition: '200% 0' },
-          '20%': { backgroundPosition: '-200% 0' },
-          '100%': { backgroundPosition: '-200% 0' },
+        'shine-sweep': {
+          '0%': { transform: 'translateX(0)' },
+          '30%': { transform: 'translateX(760px)' },
+          '100%': { transform: 'translateX(760px)' },
         },
       },
     },
