@@ -57,7 +57,7 @@ await app.register(helmet, {
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'"],
       imgSrc: ["'self'", 'data:', 'https:'],
     },
   },

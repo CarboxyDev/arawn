@@ -123,6 +123,14 @@ const COMMON_COMMANDS = [
 
 const QUICK_LINKS = [
   {
+    title: 'API Documentation',
+    description: 'Interactive OpenAPI documentation',
+    href: `${getBaseApiUrl()}/docs`,
+    icon: FileCode,
+    external: true,
+    disabled: false,
+  },
+  {
     title: 'Dashboard',
     description: 'View your user dashboard',
     href: '/dashboard',
@@ -136,14 +144,6 @@ const QUICK_LINKS = [
     href: '/admin',
     icon: ShieldCheck,
     external: false,
-    disabled: false,
-  },
-  {
-    title: 'API Documentation',
-    description: 'Interactive OpenAPI documentation',
-    href: `${getBaseApiUrl()}/docs`,
-    icon: FileCode,
-    external: true,
     disabled: false,
   },
   {
