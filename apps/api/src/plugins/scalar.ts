@@ -2,8 +2,16 @@ import apiReference from '@scalar/fastify-api-reference';
 import type { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 
+import { loadEnv } from '@/config/env';
+
 const scalarPlugin: FastifyPluginAsync = async (app) => {
-  // Register route to serve OpenAPI spec
+  const env = loadEnv();
+
+  if (env.NODE_ENV === 'production') {
+    app.log.info('[!] API docs disabled in production');
+    return;
+  }
+
   app.get('/docs/json', async () => app.swagger());
 
   await app.register(apiReference, {
