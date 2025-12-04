@@ -36,7 +36,8 @@
       "outputs": ["dist/**"]
     },
     "db:generate": {
-      "cache": false
+      "cache": false,
+      "env": ["DATABASE_URL"]
     },
     "lint": {
       "dependsOn": [],
@@ -111,19 +112,23 @@
     },
     "db:migrate": {
       "cache": false,
-      "outputs": []
+      "outputs": [],
+      "env": ["DATABASE_URL"]
     },
     "db:push": {
       "cache": false,
-      "outputs": []
+      "outputs": [],
+      "env": ["DATABASE_URL"]
     },
     "db:studio": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["DATABASE_URL"]
     },
     "db:seed": {
       "cache": false,
-      "outputs": []
+      "outputs": [],
+      "env": ["DATABASE_URL"]
     },
     "email:dev": {
       "cache": false,

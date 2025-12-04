@@ -38,7 +38,6 @@
     "@fastify/swagger": "^9.3.0",
     "@fastify/swagger-ui": "^5.0.1",
     "@prisma/adapter-pg": "^7.0.1",
-    "@prisma/client": "7.0.1",
     "@react-email/components": "^1.0.1",
     "@react-email/preview-server": "^5.0.4",
     "@repo/packages-types": "workspace:*",
@@ -62,6 +61,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@prisma/client": "7.1.0",
     "@repo/packages-utils": "workspace:*",
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^22.10.5",
@@ -74,7 +74,7 @@
     "dotenv-cli": "^10.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.1.8",
-    "prisma": "7.0.1",
+    "prisma": "7.1.0",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.20.6",
     "typescript": "^5.7.2",

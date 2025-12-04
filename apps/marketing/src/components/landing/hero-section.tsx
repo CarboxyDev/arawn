@@ -20,7 +20,7 @@ export function HeroSection() {
         <div className="flex flex-col justify-center space-y-6 lg:space-y-8">
           <div className="space-y-4 lg:space-y-5">
             <h1 className="text-foreground text-center text-4xl font-bold leading-tight tracking-tight lg:text-left lg:text-5xl xl:text-6xl">
-              Ship production apps in{' '}
+              Ship apps in{' '}
               <span className="text-primary relative">
                 hours
                 <span className="bg-primary/30 absolute inset-x-0 -bottom-1 h-0.5" />
