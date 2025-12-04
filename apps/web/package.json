@@ -13,9 +13,7 @@
     "test:unit": "vitest run",
     "test:integration": "echo 'No integration tests for web'",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "vercel-build": "cd ../.. && turbo build --filter=@repo/web",
-    "vercel-ignore-build": "npx turbo-ignore --fallback=HEAD^1"
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
