@@ -10,7 +10,7 @@ datasource db {
   provider = "postgresql"
 }
 
-// Role enum for user permissions
+
 enum Role {
   user
   admin
@@ -95,14 +95,14 @@ model Verification {
   @@map("verifications")
 }
 
-// Upload model for file tracking
+
 model Upload {
   id           String   @id @default(cuid())
-  filename     String   @unique // stored filename (unique)
-  originalName String // user's original filename
+  filename     String   @unique 
+  originalName String 
   mimeType     String
-  size         Int // bytes
-  url          String // public URL
+  size         Int     // in Bytes
+  url          String 
   userId       String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
