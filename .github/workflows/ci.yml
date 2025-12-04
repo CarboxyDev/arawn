@@ -50,13 +50,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate Prisma Client
-        run: pnpm --filter @repo/api db:generate
-        env:
-          DATABASE_URL: postgresql://user:pass@localhost:5432/db
-
       - name: Run typecheck
         run: pnpm run typecheck
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/db
 
   # Tests and build run after lint/typecheck pass
   test:
