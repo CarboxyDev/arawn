@@ -7,10 +7,10 @@ import {
   Code2,
   Database,
   type LucideIcon,
+  MonitorCheck,
   PackageOpen,
   ShieldCheck,
   ShieldPlus,
-  TestTube,
   Zap,
 } from 'lucide-react';
 import React from 'react';
@@ -53,14 +53,14 @@ const CORE_FEATURES = [
       'Complete frontend and API auth flows with email/password, OAuth, and session management.',
   },
   {
-    icon: TestTube,
+    icon: MonitorCheck,
     title: 'Ship with Confidence',
     description:
       'Comprehensive testing with Vitest. Blitzpack comes with a testing infrastructure built in.',
   },
   {
     icon: PackageOpen,
-    title: 'Monorepo Ready',
+    title: 'Monorepo-First',
     description:
       'Shared packages across all apps thanks to the monorepo structure.',
   },

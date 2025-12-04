@@ -46,7 +46,7 @@ const FEATURES: Feature[] = [
       'Zod validation everywhere',
       'Structured logging with Pino',
       'Rate limiting built-in',
-      'Interactive API documentation with Scalar',
+      'API documentation with Scalar',
       'Comprehensive testing infrastructure',
     ],
     featured: true,

@@ -2,12 +2,11 @@
 
 import { Button } from '@repo/packages-ui/button';
 import { motion } from 'framer-motion';
-import { ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
 import Link from 'next/link';
 
 import { AnimatedTerminal } from '@/components/landing/animated-terminal';
 import { Logo } from '@/components/logo';
-import { siteConfig } from '@/config/site';
 
 export function HeroSection() {
   return (
@@ -20,7 +19,7 @@ export function HeroSection() {
         <div className="flex flex-col justify-center space-y-6 lg:space-y-8">
           <div className="space-y-4 lg:space-y-5">
             <h1 className="text-foreground text-center text-4xl font-bold leading-tight tracking-tight lg:text-left lg:text-5xl xl:text-6xl">
-              Ship apps in{' '}
+              Ship products in{' '}
               <span className="text-primary relative">
                 hours
                 <span className="bg-primary/30 absolute inset-x-0 -bottom-1 h-0.5" />
@@ -28,13 +27,13 @@ export function HeroSection() {
               , not months
             </h1>
             <p className="text-muted-foreground mx-auto max-w-xl text-center text-base leading-relaxed lg:mx-0 lg:text-left lg:text-lg">
-              Stop wasting weeks on setting up your next project. Blitzpack
-              ships with auth, API infrastructure, and battle-tested features
-              already configured and working.
+              A complete, production-ready foundation for your next product.
+              Stop configuring infrastructure and start building what makes your
+              product unique.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+          <div className="flex flex-col items-center gap-4 lg:items-start">
             <Button
               asChild
               size="lg"
@@ -45,22 +44,12 @@ export function HeroSection() {
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="hover:text-primary group h-11 px-6 transition-all hover:scale-105 hover:bg-transparent"
-            >
-              <a
-                href={siteConfig.docs}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
-              >
-                <ExternalLink className="size-4" />
-                Documentation
-              </a>
-            </Button>
+            <div className="text-muted-foreground flex items-center gap-2 text-sm">
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10">
+                <Check className="h-3 w-3 text-emerald-600" strokeWidth={3} />
+              </div>
+              <span>Saves 2-3 weeks of infrastructure work</span>
+            </div>
           </div>
         </div>
 
