@@ -1,8 +1,17 @@
-import { QueryUsersSchema } from '@repo/packages-types/pagination';
+import {
+  ErrorResponseSchema,
+  MessageResponseSchema,
+  SuccessResponseSchema,
+} from '@repo/packages-types/api-response';
+import {
+  PaginatedResponseSchema,
+  QueryUsersSchema,
+} from '@repo/packages-types/pagination';
 import {
   CreateUserSchema,
   GetUserByIdSchema,
   UpdateUserSchema,
+  UserSchema,
 } from '@repo/packages-types/user';
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
@@ -19,6 +28,12 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [requireAuth, requireRole(['admin', 'super_admin'])],
       schema: {
         querystring: QueryUsersSchema,
+        response: {
+          200: PaginatedResponseSchema(UserSchema),
+          400: ErrorResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+        },
         description:
           'Get paginated users with filtering and sorting (Admin only)',
         tags: ['Users'],
@@ -36,6 +51,13 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [requireAuth, requireRole(['admin', 'super_admin'])],
       schema: {
         params: GetUserByIdSchema,
+        response: {
+          200: SuccessResponseSchema(UserSchema),
+          400: ErrorResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+          404: ErrorResponseSchema,
+        },
         description: 'Get user by ID (Admin only)',
         tags: ['Users'],
       },
@@ -53,6 +75,13 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [requireAuth, requireRole(['admin', 'super_admin'])],
       schema: {
         body: CreateUserSchema,
+        response: {
+          201: SuccessResponseSchema(UserSchema),
+          400: ErrorResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+          409: ErrorResponseSchema,
+        },
         description: 'Create a new user (Admin only)',
         tags: ['Users'],
       },
@@ -72,6 +101,13 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       schema: {
         params: GetUserByIdSchema,
         body: UpdateUserSchema,
+        response: {
+          200: SuccessResponseSchema(UserSchema),
+          400: ErrorResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+          404: ErrorResponseSchema,
+        },
         description: 'Update user by ID (Admin only)',
         tags: ['Users'],
       },
@@ -95,6 +131,13 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [requireAuth, requireRole(['admin', 'super_admin'])],
       schema: {
         params: GetUserByIdSchema,
+        response: {
+          200: MessageResponseSchema,
+          400: ErrorResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+          404: ErrorResponseSchema,
+        },
         description: 'Delete user by ID (Admin only)',
         tags: ['Users'],
       },

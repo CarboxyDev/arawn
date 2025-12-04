@@ -47,6 +47,26 @@ const swaggerPlugin: FastifyPluginAsync = async (app) => {
         },
         { name: 'Sessions', description: 'Session management endpoints' },
         { name: 'Password', description: 'Password management endpoints' },
+        {
+          name: 'Verification',
+          description: 'Email verification endpoints',
+        },
+        {
+          name: 'Uploads',
+          description: 'File upload and management endpoints',
+        },
+        {
+          name: 'Accounts',
+          description: 'OAuth account management endpoints',
+        },
+        {
+          name: 'Admin',
+          description: 'Admin-only system management endpoints',
+        },
+        {
+          name: 'Metrics',
+          description: 'System metrics and monitoring endpoints',
+        },
       ],
     },
     transform: jsonSchemaTransform,
