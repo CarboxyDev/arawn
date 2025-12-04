@@ -15,7 +15,6 @@
 
 </div>
 
----
 
 ## Why Blitzpack?
 
@@ -23,13 +22,14 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 **Ship your next project faster with battle-tested infrastructure already wired up.**
 
-- **Zero-config setup**: Run a few commands and you're ready to code. Environment files, Docker containers, database migrations—all handled automatically.
 
-- **Full-stack type safety**: Zod schemas define your API contracts once in `packages/types`, then flow automatically to web forms, API validation, and database queries. No duplicate validation logic.
+- **Minimal-config setup**: Run a few commands and you're ready to code. Blitzpack's CLI setup automatically handles all environment files, Docker containers, database migrations, etc.
 
-- **Production-grade infrastructure**: Better-auth with session management and OAuth ready. Request ID tracing, automatic validation, rate limiting, structured logging, and environment-aware error responses out of the box.
+- **Full-stack type safety**: Define your API contracts just once in Zod and then they flow automatically to web forms, API validation, and database queries. No duplicate logic.
 
-- **AI pair programming ready**: Comprehensive CLAUDE.md file acts as the perfect starting point for AI assistants to understand your architecture instantly and can accelerate your development.
+- **Production-grade infrastructure**: Better-auth with session management and OAuth ready. Request ID tracing, automatic validation, rate limiting, structured logging, and environment-aware error responses out of the box. 
+
+- **AI pair programming ready**: Comprehensive CLAUDE.md file acts as the perfect starting point for AI assistants to understand your architecture instantly and accelerate your development.
 
 ## Quick Start
 
