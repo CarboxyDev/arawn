@@ -1,6 +1,8 @@
+import chalk from 'chalk';
 import prompts from 'prompts';
 
 import { DEFAULT_DESCRIPTION } from './constants.js';
+import { isDockerRunning } from './docker.js';
 import { getCurrentDirName, toSlug, validateProjectName } from './utils.js';
 
 export interface ProjectOptions {
@@ -71,4 +73,31 @@ export async function getProjectOptions(
     skipInstall: flags.skipInstall || false,
     useCurrentDir,
   };
+}
+
+export async function promptAutomaticSetup(): Promise<boolean> {
+  const dockerRunning = isDockerRunning();
+
+  if (!dockerRunning) {
+    console.log();
+    console.log(
+      chalk.yellow('  ⚠'),
+      'Docker is not running. Skipping automatic setup.'
+    );
+    console.log(
+      chalk.dim('    Start Docker and run setup steps manually (see below).')
+    );
+    console.log();
+    return false;
+  }
+
+  console.log();
+  const { runSetup } = await prompts({
+    type: 'confirm',
+    name: 'runSetup',
+    message: 'Run initial setup now? (docker compose + database migrations)',
+    initial: true,
+  });
+
+  return runSetup || false;
 }

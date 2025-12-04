@@ -5,8 +5,10 @@ import ora from 'ora';
 import path from 'path';
 import prompts from 'prompts';
 
+import { runPreflightChecks } from '../checks.js';
+import { runDatabaseMigrations, runDockerCompose } from '../docker.js';
 import { initGit, isGitInstalled } from '../git.js';
-import { getProjectOptions } from '../prompts.js';
+import { getProjectOptions, promptAutomaticSetup } from '../prompts.js';
 import { downloadAndPrepareTemplate } from '../template.js';
 import { transformFiles } from '../transform.js';
 import { printError, printHeader, printSuccess } from '../utils.js';
@@ -83,6 +85,12 @@ export async function create(
 ): Promise<void> {
   printHeader();
 
+  // Check requirements (Node.js and pnpm)
+  const checksPass = await runPreflightChecks();
+  if (!checksPass) {
+    process.exit(1);
+  }
+
   const options = await getProjectOptions(projectName, flags);
   if (!options) {
     return;
@@ -129,8 +137,7 @@ export async function create(
 
   try {
     spinner.start('Downloading template from GitHub...');
-    await downloadAndPrepareTemplate(targetDir);
-    spinner.succeed('Downloaded template');
+    await downloadAndPrepareTemplate(targetDir, spinner);
 
     spinner.start('Configuring project...');
     await transformFiles(targetDir, {
@@ -163,9 +170,38 @@ export async function create(
       }
     }
 
+    // Prompt for automatic setup
+    let ranAutomaticSetup = false;
+    const shouldRunSetup = await promptAutomaticSetup();
+
+    if (shouldRunSetup) {
+      console.log();
+      spinner.start('Starting PostgreSQL database...');
+      const dockerSuccess = runDockerCompose(targetDir);
+      if (dockerSuccess) {
+        spinner.succeed('Started PostgreSQL database');
+
+        spinner.start('Running database migrations...');
+        const migrationsSuccess = runDatabaseMigrations(targetDir);
+        if (migrationsSuccess) {
+          spinner.succeed('Database migrations complete');
+          ranAutomaticSetup = true;
+        } else {
+          spinner.warn(
+            'Failed to run migrations. Run "pnpm db:migrate" manually.'
+          );
+        }
+      } else {
+        spinner.warn(
+          'Failed to start Docker. Run "docker compose up -d" manually.'
+        );
+      }
+    }
+
     printSuccess(
       options.projectName,
-      options.useCurrentDir ? '.' : options.projectName
+      options.useCurrentDir ? '.' : options.projectName,
+      ranAutomaticSetup
     );
   } catch (error) {
     spinner.fail();

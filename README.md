@@ -33,23 +33,13 @@ Stop wasting days bootstrapping your next project. Most templates hand you a ske
 
 ## Quick Start
 
-You must have Docker installed and running on your machine.
-
 ```bash
-# Create a new project
 pnpm create blitzpack
-
-# Start PostgreSQL and run migrations
-docker compose up -d
-pnpm db:migrate
-
-# Start development
-pnpm dev
 ```
 
-Optional: Run `pnpm db:seed` to add test data (admin accounts, sample users).
+The setup wizard will guide you through project creation and next steps. Make sure you have Docker installed and running on your machine.
 
-**What's running:**
+**What's running after setup:**
 
 - Web: [http://localhost:3000](http://localhost:3000)
 - API: [http://localhost:8080/api](http://localhost:8080/api)
