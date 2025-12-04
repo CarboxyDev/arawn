@@ -32,19 +32,22 @@ const FAQ_ITEMS: FAQ[] = [
   {
     question: 'Do I need any third-party services or API keys?',
     answer:
-      'Some features like the email system and OAuth require API keys. However, these are optional and are only enabled if you provide the necessary keys in the environment variables.',
+      'Some features like the email system and OAuth require API keys or credentials. However, these are optional and are only enabled if you provide the necessary credentials in the environment variables.',
   },
   {
     question: 'How do I deploy Blitzpack to production?',
     answer: (
       <>
-        Blitzpack includes production-ready Docker configs with multi-stage
-        builds and docker-compose.prod.yml for deployment. You can deploy to any
-        platform that supports Docker (AWS, GCP, DigitalOcean, Railway, etc.).
+        You can choose to deploy the API and web applications to any platform of
+        your choice using Docker or any other containerization tool. Depending
+        on the platform, you may need to create custom deployment
+        configurations.
         <br />
         <br />
-        <span className="text-primary font-medium">
-          We recommend using Railway for deployment.
+        <span className="font-medium">
+          We'll be adding support for easy deployment plugins in the near
+          future. This will make it very easy to deploy to commonly used
+          platforms like Railway and Vercel.
         </span>
       </>
     ),
@@ -52,7 +55,7 @@ const FAQ_ITEMS: FAQ[] = [
   {
     question: 'Do AI agents work well with Blitzpack?',
     answer:
-      "Yes, AI agents work extremely well with Blitzpack.  We've carefully picked the tech stack so it works seamlessly with them. We've bundled a CLAUDE.md file that is automatically used by Claude Code. In case you wish to use any other agent besides Claude Code, you can reuse the content of this file.",
+      "Yes, AI agents work really well with Blitzpack.  We've carefully picked an optimal tech stack for working with them. We've bundled a CLAUDE.md file that is automatically used by Claude Code. In case you wish to use any other agent besides Claude Code, you can reuse the content of this file.",
   },
 ];
 
