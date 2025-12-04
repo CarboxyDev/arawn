@@ -48,8 +48,8 @@ export function HeroSection() {
             <Button
               asChild
               size="lg"
-              variant="ghost"
-              className="border-border hover:bg-muted/50 group h-11 border px-6 transition-all hover:scale-105"
+              variant="outline"
+              className="hover:text-primary group h-11 px-6 transition-all hover:scale-105 hover:bg-transparent"
             >
               <a
                 href={siteConfig.docs}
